@@ -32,7 +32,7 @@ public class ExpertMainAction extends CommonExpertAction{
     }
      private List<Program> setProgramListForExpert(User user)
      {
-         
+         return;
      }
 
     public List<Program> getExpertProgramList() {
