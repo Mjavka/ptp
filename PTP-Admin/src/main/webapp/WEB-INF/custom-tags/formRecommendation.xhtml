@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+    <ui:component>
+        <t:div styleClass="formLine text_#{property.id}" style=" z-index: #{1000 - status.index}" >            
+            <div class="inputElem">
+                <admin:formLabel value="Прізвище" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendSurname}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="Ім’я" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendName}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="По батькові" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendPatronymic}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="Місце роботи" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendWorkplase}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="Посада" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendWorkposition}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="Електронна адреса" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendEmail}" styleClass="inputElem"/>
+            </div>
+            
+            <div class="inputElem">
+                <admin:formLabel value="Контактний телефон" required="true" styleClass="textElem required" />
+                <h:inputText value="#{recom.recomendPhone}" styleClass="inputElem"/>
+            </div>            
+        </t:div>
+    </ui:component>
+    
+</html>

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="editUser" />
+    <ui:param name="pageTitle" value="Редактирование пользователя" />
+
+
+        <ui:define name="body">
+        <div class="centeredContent">
+            <admin:formTitle value="Редактирование пользователя #{userEditAction.editUser.surname} #{userEditAction.editUser.name}"  />
+
+            <admin:formErrorMessage provider="#{userEditAction}" />
+
+            <div class="formContent">
+                <h:form prependId="false">
+                    <div class="formLine">
+                        <admin:formLabel value="Логін (e-mail)" />
+                        <div class="inputElem">
+                            <h:inputText id="login" value="#{userEditAction.editUser.email}" />
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Ім’я"/>
+                        <div class="inputElem">
+                            <h:inputText id="name" value="#{userEditAction.editUser.name}"/><br/>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Прізвище"/>
+                        <div class="inputElem">
+                            <h:inputText id="surname" value="#{userEditAction.editUser.surname}"/><br/>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="По батькові"/>
+                        <div class="inputElem">
+                            <h:inputText id="patronymic" value="#{userEditAction.editUser.patronymic}"/>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Пароль"/>
+                        <div class="inputElem">
+                            <h:inputText id="password" value="#{userEditAction.editUser.password}"/><br/>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Дата народження"/>
+                        <div class="dateElem">
+                            <t:inputDate id="birthday" value="#{userEditAction.editUser.birthday}" styleClass="calendar" type="date" popupCalendar="true"/>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Телефон"/>
+                        <div class="inputElem">
+                            <h:inputText id="phone" value="#{userEditAction.editUser.phone}"/><br/>
+                        </div>
+                    </div>
+
+                    <div class="formLine formLineFile">
+                        <admin:formLabel value="Стать" required="true"/>
+                        <div class="inputElem">
+                            <h:selectOneMenu value="#{userEditAction.editUser.sex}"
+                                             id="sex" required="true">
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItem itemLabel="Чоловіча" itemValue="Чоловіча"/>
+                                <f:selectItem itemLabel="Жіноча" itemValue="Жіноча"/>
+                            </h:selectOneMenu>
+                            <h:message styleClass="errorText" for="sex" />
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Роли"/>
+                        <div class="inputElem">
+                            <t:selectManyCheckbox value="#{userEditAction.userRoles}" layout="pageDirection" >
+                                <f:selectItems value="#{userEditAction.allRole}" var="role" itemValue="#{role.type}" itemLabel="#{role.roleTypeString()}" />
+                            </t:selectManyCheckbox>
+                        </div>
+                    </div>
+
+                <admin:requiredFieldsInfo />
+
+                    <div class="formLine">
+                        <div class="formBottomButtons">
+                            <h:outputLink styleClass="formButton" style="float: right; margin-left: 5px;" value="#{request.contextPath}/userList.htm?faces-redirect=true" >Відмінити</h:outputLink>
+                            <h:commandButton value="Зберегти" action="#{userEditAction.save}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                        </div>
+                    </div>
+
+                </h:form>
+            </div>
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

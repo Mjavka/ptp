@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+    <!-- =================================================================== -->
+    <!-- Define resource service bean                                        -->
+    <!-- =================================================================== -->
+    <bean id="programService" lazy-init="true" class="ua.com.parkcode.web.ptp.services.ProgramService" />
+
+
+
+
+
+    <!-- =================================================================== -->
+    <!-- Service queries definition                                          -->
+    <!-- =================================================================== -->
+
+
+    <sqldb:selectObject id="abstract_Program"
+                        abstract="true"
+                        parent="query"
+                        queryMetadata="Program"
+                        returnClass="ua.com.parkcode.web.ptp.data.Program" >
+
+    </sqldb:selectObject>
+    
+    <sqldb:selectObject id="selectProgramByUuid" parent="abstract_Program">
+        <sqldb:queryTemplate>
+            WHERE pgm.object_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectObject>
+
+    <sqldb:selectList id="selectAllActualProgram"
+                      parent="abstract_Program">
+        <sqldb:queryTemplate>
+            <![CDATA[
+                WHERE   pgm.program_registered_begin_date < current_date
+                AND     pgm.program_end_date > current_date
+            ]]>
+        </sqldb:queryTemplate>
+
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectAllActualProgramByAdmin"
+                      parent="abstract_Program">
+        <sqldb:queryTemplate>
+            <![CDATA[
+                WHERE   pgm.program_registered_begin_date < current_date
+            ]]>
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectAllProgram"
+                      parent="abstract_Program"/>
+    
+    <sqldb:selectSimpleObject id="selectCountStatusUsersByProgram"
+                              parent="query">
+        <sqldb:queryTemplate>
+            SELECT count(*) from USER_PROGRAM_REF AS userprogref
+            WHERE 
+            userprogref.user_program_status = :status
+            AND userprogref.program_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+    
+    <sqldb:selectSimpleObject id="selectCountStatusGenderUsersByProgram"
+                              parent="query">
+        <sqldb:queryTemplate>
+            SELECT count(USER_TABLE.object_uuid)
+            FROM USER_PROGRAM_REF
+            join USER_TABLE on (USER_PROGRAM_REF.user_uuid = USER_TABLE.object_uuid)
+            WHERE 
+            USER_PROGRAM_REF.user_program_status = :status
+            AND USER_TABLE.user_sex = :gender
+            AND USER_PROGRAM_REF.program_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    
+    <sqldb:selectList id="selectNumberOfPrograms"
+                      parent="abstract_Program">
+        <sqldb:queryTemplate>
+            <![CDATA[
+                WHERE   pgm.program_registered_begin_date < current_date
+                AND     pgm.program_registered_end_date > current_date
+                LIMIT  :count
+            ]]>
+        </sqldb:queryTemplate>
+
+    </sqldb:selectList>
+    
+    <sqldb:executeInsert id="insertNewProgram" parent="query" queryMetadata="Program"/>
+
+    <sqldb:executeUpdateByID id="updateProgram" parent="query" queryMetadata="Program"/>
+   
+    
+    <sqldb:execute id="insertUserProgram" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO USER_PROGRAM_REF (  object_uuid,
+            user_uuid,
+            program_uuid,
+            user_program_status
+            
+            )
+            VALUES (:ownerUuid::UUID,
+            :userUuid::UUID,
+            :programUuid::UUID,
+            :userStatusId
+            )
+
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+ 
+    <sqldb:execute id="updateUserProgramStatus" parent="query" >
+        <sqldb:queryTemplate>
+            UPDATE USER_PROGRAM_REF
+            SET user_program_status = :userStatusId
+            WHERE object_uuid   = :ownerUuid::UUID 
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+    
+    <sqldb:selectSimpleObject id="selectCountUserPrograms" parent="query" >
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM USER_PROGRAM_REF
+            WHERE user_uuid = :userUUID::UUID
+            AND program_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    <sqldb:selectSimpleObject id="selectCountUserProgramsByUser" parent="query" >
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM USER_PROGRAM_REF
+            WHERE user_uuid = :userUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+    
+    <sqldb:selectList id="selectActualUserProgramByUserUuid"
+                      parent="query"
+                      queryMetadata="Program"
+                      returnClass="ua.com.parkcode.web.ptp.data.Program">
+
+        <sqldb:queryTemplate>
+            , USER_PROGRAM_REF as u_p_r 
+            WHERE u_p_r.user_uuid = :userUuid::UUID
+            AND  u_p_r.program_uuid = pgm.object_uuid
+        </sqldb:queryTemplate>    
+        
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectSomeProgramInfo" 
+                      parent = "query"
+                      queryMetadata="SomeInfo"
+                      returnClass="ua.com.parkcode.web.ptp.data.SomeInfo">
+        
+        <sqldb:joinTable joinMetadata="some_info" 
+                         joinColumn="user_uuid"
+                         resultPropertyName="listOfProperties"/>
+    </sqldb:selectList>
+
+    <sqldb:selectList id="selectSomeProgramInfoByProgramByStatus" 
+                      parent = "query"
+                      queryMetadata="SomeInfo"
+                      returnClass="ua.com.parkcode.web.ptp.data.SomeInfo">
+        
+        <sqldb:joinTable joinMetadata="some_info" 
+                         joinColumn="user_uuid"
+                         resultPropertyName="listOfProperties"/>
+        <sqldb:queryTemplate>
+            WHERE userprogref.program_uuid= :programUuid::UUID
+            AND userprogref.user_program_status = :status
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+    
+
+
+    <sqldb:execute id="insertEvaluation"
+                   parent="query">
+        <sqldb:queryTemplate>
+            INSERT INTO EVALUATION_TABLE (
+            object_uuid,
+            expert_uuid,
+            owner_uuid,
+            expert_assessment_1,
+            expert_assessment_2,
+            expert_assessment_3,
+            expert_assessment_4,
+            expert_assessment_5,
+            expert_comment)
+            VALUES (:objectUUID::UUID,
+            :userUUID::UUID,
+            :entryUUID::UUID,
+            :expertAssessment1,
+            :expertAssessment2,
+            :expertAssessment3,
+            :expertAssessment4,
+            :expertAssessment5,
+            :comment)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+    <sqldb:selectList id="selectExpertsByProgram" 
+                      parent="query"
+                      queryMetadata="ExpertInfo">
+        <sqldb:queryTemplate>
+            WHERE exp_inf.program_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+        <sqldb:doAfterRow>
+            <sqldb:relation relationType="IN" propertyName="evaluations">
+                <sqldb:selectList   parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.Evaluation"
+                                    queryMetadata="Evaluation">
+                    <sqldb:queryTemplate>
+                        WHERE evl.expert_uuid = :expertInfoUuid
+                    </sqldb:queryTemplate>                    
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectExpertSomeInfo"
+                      parent="query"
+                      returnObject="ua.com.parkcode.web.ptp.data.ExpertSomeInfo"
+                      queryMetadata="ExpertSomeinfo">
+        <sqldb:queryTemplate>
+            SELECT
+            user_program_ref.object_uuid AS owner_uuid,
+            user_table.object_uuid as user_uuid,
+            user_program_ref.program_uuid as program_uuid,
+            user_table.user_surname as user_surname,
+            user_table.user_patronymic as user_patronymic,
+            user_table.user_organization_name as organization_name
+
+            FROM user_table
+            JOIN user_program_ref ON (user_program_ref.user_uuid = user_table.object_uuid)
+            JOIN evaluation_table ON (user_program_ref.object_uuid = evaluation_table.owner_uuid)
+            WHERE evaluation_table.expert_uuid = :expertUuid
+            AND user_program_ref.user_program_status = 1
+        </sqldb:queryTemplate>
+        <sqldb:doAfterRow>
+            <sqldb:relation relationType="IN"
+                            propertyName="resourceList">
+                <sqldb:selectList parent="query"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Recource"
+                                  queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = :ownerUuid
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+               
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+    
+    <sqldb:executeDeleteByID id="deleteEvaluation"
+                             parent="query"
+                             queryMetadata="Evaluation"/>
+
+ 
+    <sqldb:selectList id="selectAllAnkets" 
+                      parent="query" 
+                      queryMetadata="Anket" 
+                      returnClass="ua.com.parkcode.web.ptp.data.Anket" />
+    
+      
+
+    
+
+        
+    <sqldb:selectObject id="selectAnketByUuid" parent="query" queryMetadata="Anket" returnClass="ua.com.parkcode.web.ptp.data.Anket">
+        <sqldb:queryTemplate>
+            WHERE anket.object_uuid = :anketUuid::UUID
+        </sqldb:queryTemplate> 
+           
+    </sqldb:selectObject>
+    
+    <sqldb:selectObject id="selectAnketByName" 
+                        parent="query"
+                        queryMetadata="Anket" 
+                        returnClass="ua.com.parkcode.web.ptp.data.Anket">
+        <sqldb:queryTemplate>
+            WHERE anket.anket_name = :name
+        </sqldb:queryTemplate>    
+    </sqldb:selectObject>
+    
+    <sqldb:executeInsert id="insertAnket" 
+                         parent="query" 
+                         queryMetadata="Anket" >
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="anketUuid">
+                <sqldb:selectUUID />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeInsert>
+    
+    <sqldb:selectList id="selectAnketGroupsByUuid"
+                      queryMetadata="PropertyGroup"
+                      parent="query"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup">
+        <sqldb:queryTemplate>
+            ,ANKET_GROUP_TABLE_REF AS an_gr_ref
+            WHERE prt_g.object_uuid = an_gr_ref.group_uuid
+            AND an_gr_ref.anket_uuid = :anketUuid::UUID
+        </sqldb:queryTemplate>
+        selectExpertsByProgram
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectAnketGroupsByName" 
+                      queryMetadata="PropertyGroup"
+                      parent="query" 
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup">
+        <sqldb:queryTemplate>
+            ,ANKET_GROUP_TABLE_REF AS an_gr_ref
+            WHERE prt_g.object_uuid = an_gr_ref.group_uuid
+            AND an_gr_ref.anket_name = :name
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+    <sqldb:execute id="insertPropertyGroupInAnket" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO ANKET_GROUP_TABLE_REF (anket_uuid, group_uuid) VALUES (:anketUuid::UUID, :groupUuid::UUID)
+        </sqldb:queryTemplate>    
+    </sqldb:execute>
+    
+    <sqldb:selectObject id="selectAnketByProgramUuid" 
+                        parent="query" 
+                        queryMetadata="Anket" 
+                        returnClass="ua.com.parkcode.web.ptp.data.Anket">
+        <sqldb:queryTemplate>
+            ,PROGRAM_ANKET_REF AS pr_ank_ref 
+            WHERE anket.object_uuid = pr_ank_ref.anket_uuid
+            AND pr_ank_ref.program_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectObject>
+    
+    <sqldb:execute id="insertAnketInProgram" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO PROGRAM_ANKET_REF (program_uuid, anket_uuid) VALUES (:programUuid::UUID, :anketUuid::UUID)
+        </sqldb:queryTemplate>    
+    </sqldb:execute>
+
+    <sqldb:selectList id="selectUserProgram"
+                      parent="query">
+        <sqldb:queryTemplate>
+            ,USER_PROGRAM_REF as usr_pgm_ref
+            WHERE   usr_pgm_ref.program_uuid = pgm.object_uuid
+            AND     usr_pgm_ref.user_uuid = :userUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation relationType="IN" propertyName="photo">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 2
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="passport">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 3
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="firstPageForeignPassport">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 4
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+            <sqldb:relation relationType="IN" propertyName="mvs">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 5
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="passportSecondPage">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 6
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+            <sqldb:relation relationType="IN" propertyName="certificateEmployment">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID)
+                        AND res.resource_type = 7
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation propertyName="entryUUID" relationType="IN">
+                <sqldb:selectSimpleObject parent="query"
+                                          returnClass="java.lang.String">
+                    <sqldb:queryTemplate>
+                        SELECT usr_pgm_ref.object_uuid::VARCHAR
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID
+                    </sqldb:queryTemplate>
+                </sqldb:selectSimpleObject>
+            </sqldb:relation>
+            
+            <sqldb:relation propertyName="userStatusId" relationType="IN">
+                <sqldb:selectSimpleObject parent="query"
+                                          returnClass="java.lang.Integer">
+                    <sqldb:queryTemplate>
+                        SELECT usr_pgm_ref.user_program_status
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :uuid::UUID
+                    </sqldb:queryTemplate>
+                </sqldb:selectSimpleObject>
+            </sqldb:relation>
+            
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+
+    <!--AND     pgm.program_end_date > current_date-->
+   
+
+
+
+
+    <sqldb:selectObject id="selectUserFormExpertProgram"
+                        parent="abstract_Program">
+        <sqldb:queryTemplate>
+            WHERE   pgm.object_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+        <sqldb:doAfter mergeParentRelations="true">
+
+            <sqldb:relation relationType="IN" propertyName="evaluations">
+                <sqldb:selectList parent="query"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Evaluation"
+                                  queryMetadata="Evaluation">
+                    <sqldb:queryTemplate>
+                        WHERE evl.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                    </sqldb:queryTemplate>
+                    <sqldb:doAfterRow mergeParentRelations="true">
+                        <sqldb:relation relationType="IN" propertyName="expert">
+                            <sqldb:selectObject parent="query"
+                                                queryMetadata="User"
+                                                returnClass="ua.com.parkcode.web.ptp.data.User">
+                                <sqldb:queryTemplate>
+                                    WHERE usr.object_uuid = (SELECT expert_uuid FROM EVALUATION_TABLE WHERE object_uuid = :evaluationUuid::UUID)
+                                </sqldb:queryTemplate>
+                                <sqldb:doAfter mergeParentRelations="true">
+                                    <sqldb:relation propertyName="role"
+                                                    relationType="IN">
+                                        <sqldb:selectList queryMetadata="Role"
+                                                          returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                                          parent="query">
+                                            <sqldb:queryTemplate>
+                                                ,USER_ROLE_REF as usr_rol_ref
+                                                WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                                                AND     usr_rol_ref.role_uuid = role.object_uuid
+                                            </sqldb:queryTemplate>
+
+                                        </sqldb:selectList>
+                                    </sqldb:relation>
+                                    <sqldb:relation propertyName="expertInfo"
+                                                    relationType="IN">
+                                        <sqldb:selectObject queryMetadata="ExpertInfo"
+                                                            returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                                            parent="query">
+                                            <sqldb:queryTemplate>
+                                                WHERE   exp_inf.user_uuid = :uuid::UUID
+                                            </sqldb:queryTemplate>
+                                            <sqldb:doAfter mergeParentRelations="true">
+                                                <sqldb:relation propertyName="scopeExpert">
+                                                    <sqldb:selectSimpleList parent="query"
+                                                                            returnClass="java.lang.String">
+                                                        <sqldb:queryTemplate>
+                                                            SELECT scp_exp.scope::VARCHAR
+                                                            FROM scope_expert_table as scp_exp
+                                                            WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                                        </sqldb:queryTemplate>
+                                                    </sqldb:selectSimpleList>
+                                                </sqldb:relation>
+                                            </sqldb:doAfter>
+                                        </sqldb:selectObject>
+                                    </sqldb:relation>
+                                </sqldb:doAfter>
+                            </sqldb:selectObject>
+                        </sqldb:relation>
+                    </sqldb:doAfterRow>
+                </sqldb:selectList>
+            </sqldb:relation>
+
+            <sqldb:relation propertyName="entryUUID" relationType="IN">
+                <sqldb:selectSimpleObject parent="query"
+                                          returnClass="java.lang.String">
+                    <sqldb:queryTemplate>
+                        SELECT usr_pgm_ref.object_uuid::VARCHAR
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID
+                    </sqldb:queryTemplate>
+                </sqldb:selectSimpleObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="recommends">
+                <sqldb:selectList   parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.Recommendation"
+                                    queryMetadata="Recommendation">
+                    <sqldb:queryTemplate>
+                        WHERE rcom.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND rcom.recomend = true
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="photo">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 2
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="passport">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 3
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="firstPageForeignPassport">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 4
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+            <sqldb:relation relationType="IN" propertyName="mvs">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 5
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+
+            <sqldb:relation relationType="IN" propertyName="passportSecondPage">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 6
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+            <sqldb:relation relationType="IN" propertyName="certificateEmployment">
+                <sqldb:selectObject parent="query"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForProgram"
+                                    queryMetadata="Resource">
+                    <sqldb:queryTemplate>
+                        WHERE res.owner_uuid = (SELECT usr_pgm_ref.object_uuid::UUID
+                        FROM USER_PROGRAM_REF as usr_pgm_ref
+                        WHERE usr_pgm_ref.user_uuid = :userUUID::UUID
+                        AND usr_pgm_ref.program_uuid = :programUUID::UUID)
+                        AND res.resource_type = 7
+                    </sqldb:queryTemplate>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfter>
+    </sqldb:selectObject>
+
+
+    <sqldb:execute id="insertPropertyGroupInProgram" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO PROGRAM_PROPERTY_GROUP_REF (program_uuid, property_group_uuid) VALUES (:programUUID::UUID , :groupUUID::UUID)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+    <sqldb:selectSimpleObject id="selectCountProgram" parent="query" >
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM PROGRAM_TABLE
+            WHERE object_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    <sqldb:selectSimpleObject id="isAnyProgramEntryedByUser" parent="query">
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM USER_PROGRAM_REF
+            WHERE USER_PROGRAM_REF.user_uuid = :userUuid::UUID
+        </sqldb:queryTemplate>          
+    </sqldb:selectSimpleObject>
+    
+    <sqldb:selectSimpleObject id="selectCountSimpleAnket" parent="query" >
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM ANKET_TABLE
+            WHERE object_uuid = :anketUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+
+
+    
+
+    
+
+
+    <sqldb:selectList id="selectActualProgramsForExpert"
+                      parent="abstract_Program">
+        <sqldb:queryTemplate>
+            <![CDATA[
+            ,RECENSENT_PROGRAM_REF as rcst_pgm_ref
+            WHERE   rcst_pgm_ref.recensent_uuid = :userUUID::UUID
+            AND     rcst_pgm_ref.program_uuid = pgm.object_uuid
+            AND     pgm.program_registered_begin_date < current_date
+            AND     pgm.program_begin_date > current_date
+            ]]>
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+    <sqldb:execute id="insertExpertProgram" parent="query">
+        <sqldb:queryTemplate>
+            INSERT INTO RECENSENT_PROGRAM_REF (recensent_uuid, program_uuid)
+            VALUES (:userUUID::UUID, :programUUID::UUID)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+    <sqldb:execute id="deleteExpertProgram" parent="query">
+        <sqldb:queryTemplate>
+            DELETE FROM RECENSENT_PROGRAM_REF
+            WHERE program_uuid= :programUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+
+    <sqldb:execute id="deleteUserProgram" parent="query">
+        <sqldb:queryTemplate>
+            DELETE FROM PROPERTY_VALUE
+            WHERE owner_uuid = (SELECT object_uuid FROM USER_PROGRAM_REF
+            WHERE program_uuid = :programUUID::UUID
+            AND user_uuid = :userUUID::UUID);
+
+            DELETE FROM USER_PROGRAM_REF
+            WHERE program_uuid = :programUUID::UUID
+            AND user_uuid = :userUUID::UUID;
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+    <sqldb:execute id="deleteProgram" parent="query">
+        <sqldb:queryTemplate>
+            DELETE FROM PROPERTY_VALUE WHERE owner_uuid IN (select object_uuid from "public".user_program_ref WHERE program_uuid = :programUUID::UUID);
+            DELETE FROM PROGRAM_ANKET_REF WHERE program_uuid = :programUUID::UUID;
+            DELETE FROM USER_PROGRAM_REF WHERE program_uuid = :programUUID::UUID;
+            DELETE FROM RECENSENT_PROGRAM_REF WHERE program_uuid = :programUUID::UUID;
+            DELETE FROM PROGRAM_TABLE WHERE object_uuid = :programUUID::UUID;
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+    
+    <sqldb:selectObject id="selectOwnerByUuid" parent="query" queryMetadata="UserProgRefer"
+                        returnClass="ua.com.parkcode.web.ptp.data.UserProgramRef">
+        <sqldb:queryTemplate>
+            WHERE u_p_r.user_uuid = :userUuid::UUID
+            AND u_p_r.program_uuid = :programUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectObject>
+
+</beans>

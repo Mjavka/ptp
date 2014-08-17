@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/public/parkcode/!svn/ver/7805/trunk/root/web/ptp/PTP/src/main/resources/META-INF/config
+END
+site.config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/public/parkcode/!svn/ver/7805/trunk/root/web/ptp/PTP/src/main/resources/META-INF/config/site.config.xml
+END
+modify-configurationManager.spring.xml
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/resources/META-INF/config/modify-configurationManager.spring.xml
+END

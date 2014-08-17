@@ -1,0 +1,45 @@
+Manifest-Version: 1.0
+Export-Package: ua.com.parkcode.web.ptp;uses:="ua.com.parkcode.commons
+ .config,org.apache.commons.codec.binary,org.apache.commons.lang,javax
+ .servlet.http,ua.com.parkcode.web.ptp.data,ua.com.parkcode.commons.ut
+ ils",ua.com.parkcode.web.ptp.actions;uses:="ua.com.parkcode.commons.w
+ eb.faces.actions,org.slf4j,ua.com.parkcode.web.ptp.mail,javax.mail.in
+ ternet,javax.mail.util,ua.com.parkcode.web.ptp.data,ua.com.parkcode.w
+ eb.ptp.services,org.apache.commons.lang,ua.com.parkcode.commons.confi
+ g,javax.servlet,ua.com.parkcode.web.ptp,org.apache.myfaces.custom.fil
+ eupload,ua.com.parkcode.commons.utils,javax.servlet.http,org.springfr
+ amework.transaction,org.springframework.beans.factory.annotation,org.
+ springframework.transaction.support",ua.com.parkcode.web.ptp.data;use
+ s:="ua.com.parkcode.commons.utils,javax.xml.bind.annotation",ua.com.p
+ arkcode.web.ptp.mail;uses:="ua.com.parkcode.commons.config,javax.acti
+ vation,javax.mail.internet,ua.com.parkcode.web.ptp,org.apache.commons
+ .mail,javax.xml.bind,org.slf4j,org.apache.commons.lang,javax.xml.bind
+ .annotation",ua.com.parkcode.web.ptp.services;uses:="ua.com.parkcode.
+ commons.sqldb,org.springframework.beans.factory.annotation,ua.com.par
+ kcode.commons.web.app.services,ua.com.parkcode.web.ptp.data,org.sprin
+ gframework.stereotype,ua.com.parkcode.commons.utils"
+Built-By: mjavka
+Tool: Bnd-0.0.357
+Bundle-Name: PTP :: Commons
+Created-By: Apache Maven Bundle Plugin
+Bundle-Vendor: Park Code
+Build-Jdk: 1.7.0_65
+Bundle-Version: 1.0.0
+Bnd-LastModified: 1408000365943
+Bundle-ManifestVersion: 2
+Import-Package: javax.activation,javax.imageio,javax.mail.internet;ver
+ sion="1.4",javax.mail.util;version="1.4",javax.servlet,javax.servlet.
+ http,javax.xml.bind,javax.xml.bind.annotation,net.sf.jasperreports.en
+ gine,org.apache.commons.codec.binary,org.apache.commons.lang;version=
+ "2.6",org.apache.commons.mail;version="1.3",org.apache.myfaces.custom
+ .fileupload,org.slf4j;version="1.7",org.springframework.beans.factory
+ .annotation,org.springframework.stereotype,org.springframework.transa
+ ction,org.springframework.transaction.support,ua.com.parkcode.commons
+ .config,ua.com.parkcode.commons.sqldb,ua.com.parkcode.commons.utils,u
+ a.com.parkcode.commons.web.app.services,ua.com.parkcode.commons.web.f
+ aces.actions,ua.com.parkcode.web.ptp,ua.com.parkcode.web.ptp.actions,
+ ua.com.parkcode.web.ptp.data,ua.com.parkcode.web.ptp.mail,ua.com.park
+ code.web.ptp.services
+Bundle-SymbolicName: ptp-commons
+Bundle-DocURL: http://parkcode.com.ua
+

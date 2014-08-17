@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+    <!-- =================================================================== -->
+    <!-- Define resource service bean                                        -->
+    <!-- =================================================================== -->
+    <bean id="propertyService" lazy-init="true" class="ua.com.parkcode.web.ptp.services.PropertyService" />
+
+    
+
+    <!-- =================================================================== -->
+    <!-- Service queries definition                                          -->
+    <!-- =================================================================== -->
+
+    <sqldb:selectSimpleList id="selectGroupNameList"
+                            parent="query" >
+        <sqldb:queryTemplate>
+            <![CDATA[
+                SELECT
+                PROPERTY_GROUP_TABLE.group_name 
+                FROM PROPERTY_GROUP_TABLE 
+                ORDER BY PROPERTY_GROUP_TABLE.property_group_order]]>
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleList>
+    
+    <sqldb:selectSimpleList id="selectGroupNameUuidList"
+                            parent="query" >
+        <sqldb:queryTemplate>
+            <![CDATA[
+                SELECT
+                PROPERTY_GROUP_TABLE.group_name ||';'|| PROPERTY_GROUP_TABLE.object_uuid AS group_name_uuid
+                FROM PROPERTY_GROUP_TABLE 
+                ORDER BY PROPERTY_GROUP_TABLE.property_group_order]]>
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleList>
+    
+    <sqldb:selectSimpleObject id="selectCountSimpleGroup" parent="query" >
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM PROPERTY_GROUP_TABLE
+            WHERE object_uuid = :groupUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    <sqldb:executeInsert id="insertPropertyValue" parent="query" queryMetadata="PropertyValue"/>
+    
+
+    <sqldb:execute id="insertPropertyForm" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO FORM_TABLE (object_uuid,
+            property_uuid,
+            owner_uuid)
+            VALUES (:objectUUID::UUID,
+            :propertyUUID::UUID,
+            :ownerUUID::UUID)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+    <sqldb:executeDeleteByID id="deletePropertyForm" parent="query" queryMetadata="PropertyForm"/>
+
+    <sqldb:executeInsert id="insertNewGroup" parent="query" queryMetadata="PropertyGroup">
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="groupUuid">
+                <sqldb:selectUUID />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeInsert>
+    
+    <sqldb:selectList id="selectPropertyForAnket"
+                      queryMetadata="PropertyGroup"
+                      parent="query"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup">
+        <sqldb:queryTemplate>
+            ,ANKET_GROUP_TABLE_REF as ank_gr_ref
+            WHERE       ank_gr_ref.anket_uuid = :anketUUID::UUID
+            AND         ank_gr_ref.group_uuid = prt_g.object_uuid
+            ORDER BY    property_group_order ASC
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+
+            <sqldb:relation propertyName="properties"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Property"
+                                  parent="query"
+                                  returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+                    <sqldb:queryTemplate>
+                        WHERE       prt.group_uuid = :groupUuid::UUID
+                        ORDER BY    property_order ASC
+                    </sqldb:queryTemplate>
+                    <sqldb:join joinMetadata="PropertyAttributes"
+                                joinColumn="attributes_uuid"
+                                referenceColumn="object_uuid"
+                                resultPropertyName="attributes"
+                                returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+                    </sqldb:join>
+
+                    <sqldb:doAfterRow mergeParentRelations="true">
+                        <sqldb:relation propertyName="templateProperty"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="Property"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+                                <sqldb:queryTemplate>
+                                    WHERE       prt.group_uuid  = :objectUuid::UUID
+                                    ORDER BY    property_order ASC
+                                </sqldb:queryTemplate>
+                                <sqldb:join joinMetadata="PropertyAttributes"
+                                            joinColumn="attributes_uuid"
+                                            referenceColumn="object_uuid"
+                                            resultPropertyName="attributes"
+                                            returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+
+                                </sqldb:join>
+                                <sqldb:doAfterRow>
+                                    <sqldb:relation propertyName="variants"
+                                                    relationType="IN">
+                                        <sqldb:selectList parent="query"
+                                                          queryMetadata="PropertyVariant"
+                                                          returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                                            <sqldb:queryTemplate>
+                                                ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                                                WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                                                AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                                                ORDER BY    prt_s_v.object_order ASC
+                                            </sqldb:queryTemplate>
+                                        </sqldb:selectList>
+                                    </sqldb:relation>
+                                </sqldb:doAfterRow>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+
+                        <sqldb:relation propertyName="value" relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyValue"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyValue">
+                                <sqldb:queryTemplate>
+                                    WHERE prt_v.owner_uuid      = :ownerUUID::UUID
+                                    AND   prt_v.property_uuid   = :objectUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+
+                        <sqldb:relation propertyName="variants"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyVariant"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                                <sqldb:queryTemplate>
+                                    ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                                    WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                                    AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                                    ORDER BY    prt_s_v.object_order ASC
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+                    </sqldb:doAfterRow>
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+
+    </sqldb:selectList> 
+    
+    <sqldb:selectList id="selectFormProperty"
+                      parent="query"
+                      queryMetadata="PropertyForm"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyForm">
+        <sqldb:queryTemplate>
+            WHERE       prt_f.property_uuid = :propertyUUID::UUID
+            AND         prt_f.owner_uuid = :ownerUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+
+            <sqldb:relation propertyName="properties"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Property"
+                                  parent="query"
+                                  returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+                    <sqldb:queryTemplate>
+                        WHERE       prt.group_uuid = :propertyUUID::UUID
+                        ORDER BY    property_order ASC
+                    </sqldb:queryTemplate>
+                    <sqldb:join joinMetadata="PropertyAttributes"
+                                joinColumn="attributes_uuid"
+                                referenceColumn="object_uuid"
+                                resultPropertyName="attributes"
+                                returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+                    </sqldb:join>
+                    <sqldb:doAfterRow mergeParentRelations="true">
+                        <sqldb:relation propertyName="value"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyValue"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyValue">
+                                <sqldb:queryTemplate>
+                                    WHERE prt_v.owner_uuid      = :ownerUUID::UUID
+                                    AND   prt_v.property_uuid   = :objectUuid::UUID
+                                    AND   prt_v.form_uuid       = :formUUID::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+                        <sqldb:relation propertyName="variants"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyVariant"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                                <sqldb:queryTemplate>
+                                    ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                                    WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                                    AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                                    ORDER BY    prt_s_v.object_order ASC
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+                    </sqldb:doAfterRow>
+
+                </sqldb:selectList>
+
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+    
+   
+    <sqldb:selectList id="selectPropertyForProgramByFormUuid" queryMetadata="Property"
+                       parent="query"
+                       returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+        <sqldb:queryTemplate>
+            WHERE       prt.group_uuid = :groupUuid::UUID
+            AND         prt.property_type = 'FORM'
+            ORDER BY    property_order ASC
+        </sqldb:queryTemplate>
+        <sqldb:join joinMetadata="PropertyAttributes"
+                                joinColumn="attributes_uuid"
+                                referenceColumn="object_uuid"
+                                resultPropertyName="attributes"
+                                returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+        </sqldb:join>
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="value"
+                                        relationType="IN">
+                <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyValue"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyValue">
+                    <sqldb:queryTemplate>
+                        WHERE prt_v.owner_uuid      = :ownerUuid::UUID
+                        AND   prt_v.property_uuid   = :objectUuid::UUID
+                        AND   prt_v.form_uuid       = :formUuid::UUID
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="variants"
+                                        relationType="IN">
+                <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyVariant"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                    <sqldb:queryTemplate>
+                        ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                        WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                        AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                        ORDER BY    prt_s_v.object_order ASC
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+    
+     <sqldb:selectList id="selectPropertyForProgramByGroupUuid" queryMetadata="Property"
+                       parent="query"
+                       returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+        <sqldb:queryTemplate>
+            WHERE       prt.group_uuid = :groupUuid::UUID
+            ORDER BY    property_order ASC
+        </sqldb:queryTemplate>
+        <sqldb:join joinMetadata="PropertyAttributes"
+                                joinColumn="attributes_uuid"
+                                referenceColumn="object_uuid"
+                                resultPropertyName="attributes"
+                                returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+        </sqldb:join>
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="value"
+                                        relationType="IN">
+                <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyValue"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyValue">
+                    <sqldb:queryTemplate>
+                        WHERE prt_v.owner_uuid      = :ownerUuid::UUID
+                        AND   prt_v.property_uuid   = :objectUuid::UUID
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="variants"
+                                        relationType="IN">
+                <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyVariant"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                    <sqldb:queryTemplate>
+                        ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                        WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                        AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                        ORDER BY    prt_s_v.object_order ASC
+                    </sqldb:queryTemplate>
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+    
+    <sqldb:selectList id="selectProperty"
+                      queryMetadata="PropertyGroup"
+                      parent="query"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup">
+        <sqldb:queryTemplate>
+            ,PROGRAM_PROPERTY_GROUP_REF as pgm_prty_ref
+            WHERE       pgm_prty_ref.program_uuid = :programUUID::UUID
+            AND         pgm_prty_ref.property_group_uuid = prt_g.object_uuid
+            ORDER BY    property_group_order ASC
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+
+            <sqldb:relation propertyName="properties"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Property"
+                                  parent="query"
+                                  returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+                    <sqldb:queryTemplate>
+                        WHERE       prt.group_uuid = :groupUuid::UUID
+                        ORDER BY    property_order ASC
+                    </sqldb:queryTemplate>
+                    <sqldb:join joinMetadata="PropertyAttributes"
+                                joinColumn="attributes_uuid"
+                                referenceColumn="object_uuid"
+                                resultPropertyName="attributes"
+                                returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+                    </sqldb:join>
+
+                    <sqldb:doAfterRow mergeParentRelations="true">
+                        <sqldb:relation propertyName="templateProperty"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="Property"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyForProgram">
+                                <sqldb:queryTemplate>
+                                    WHERE       prt.group_uuid  = :objectUuid::UUID
+                                    ORDER BY    property_order ASC
+                                </sqldb:queryTemplate>
+                                <sqldb:join joinMetadata="PropertyAttributes"
+                                            joinColumn="attributes_uuid"
+                                            referenceColumn="object_uuid"
+                                            resultPropertyName="attributes"
+                                            returnClass="ua.com.parkcode.web.ptp.data.PropertyAttributes">
+
+                                </sqldb:join>
+                                <sqldb:doAfterRow>
+                                    <sqldb:relation propertyName="variants"
+                                                    relationType="IN">
+                                        <sqldb:selectList parent="query"
+                                                          queryMetadata="PropertyVariant"
+                                                          returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                                            <sqldb:queryTemplate>
+                                                ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                                                WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                                                AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                                                ORDER BY    prt_s_v.object_order ASC
+                                            </sqldb:queryTemplate>
+                                        </sqldb:selectList>
+                                    </sqldb:relation>
+                                </sqldb:doAfterRow>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+
+                        <sqldb:relation propertyName="value" relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyValue"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyValue">
+                                <sqldb:queryTemplate>
+                                    WHERE prt_v.owner_uuid      = :ownerUUID::UUID
+                                    AND   prt_v.property_uuid   = :objectUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+
+                        <sqldb:relation propertyName="variants"
+                                        relationType="IN">
+                            <sqldb:selectList parent="query"
+                                              queryMetadata="PropertyVariant"
+                                              returnClass="ua.com.parkcode.web.ptp.data.PropertyVariant">
+                                <sqldb:queryTemplate>
+                                    ,PROPERTY__PROPERTY_SELECT_VARIANT_REF as prt_prt_s_v_ref
+                                    WHERE       prt_prt_s_v_ref.property_uuid = :objectUuid::UUID
+                                    AND         prt_prt_s_v_ref.property_variant_uuid = prt_s_v.object_uuid
+                                    ORDER BY    prt_s_v.object_order ASC
+                                </sqldb:queryTemplate>
+                            </sqldb:selectList>
+                        </sqldb:relation>
+                    </sqldb:doAfterRow>
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+
+    </sqldb:selectList>
+    
+    <sqldb:selectObject id="selectPropertyGroupByUuid" 
+                        parent="query" 
+                        queryMetadata="PropertyGroup">
+        <sqldb:queryTemplate>
+            WHERE groupUuid = :groupUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectObject>
+    
+    <sqldb:selectList id="selectAllGeneralPropertyGroup"
+                      queryMetadata="PropertyGroup"
+                      parent="query"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup">
+        <sqldb:queryTemplate>
+            WHERE   prt_g.general_group = true;
+        </sqldb:queryTemplate>
+
+    </sqldb:selectList>
+    
+    <sqldb:executeInsert id="insertSimpleProperty" parent="query" queryMetadata="SimpleProperty">
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="objectUuid">
+                <sqldb:selectUUID />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeInsert> 
+    
+    <sqldb:selectObject  id="selectSimplePropertyByUUID" parent="query" queryMetadata="SimpleProperty">
+    </sqldb:selectObject>
+    
+    <sqldb:executeDeleteByID id="deletePropertyValue" parent="query" queryMetadata="PropertyValue"/>
+    
+    
+    <sqldb:selectList id="selectAllAnketValueByOwner" 
+                      parent="query"
+                      returnClass="ua.com.parkcode.web.ptp.data.PropertyGroup"
+                      queryMetadata="PropertyValue">
+        <sqldb:queryTemplate>
+            JOIN USER_PROGRAM_REF ON (PROPERTY_VALUE.owner_uuid = USER_PROGRAM_REF.object_uuid)
+            WHERE USER_PROGRAM_REF.object_uuid = :ownerUuid::UUID
+        </sqldb:queryTemplate>
+        
+    </sqldb:selectList>
+</beans>

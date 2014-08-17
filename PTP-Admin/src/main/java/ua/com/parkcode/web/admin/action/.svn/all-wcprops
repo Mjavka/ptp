@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/public/parkcode/!svn/ver/7877/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action
+END
+UserFormListAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/public/parkcode/!svn/ver/7870/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/UserFormListAction.java
+END
+UserProgramListAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/UserProgramListAction.java
+END
+UserFormAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/public/parkcode/!svn/ver/7854/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/UserFormAction.java
+END
+LoginManagerAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/LoginManagerAction.java
+END
+ProgramListAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/public/parkcode/!svn/ver/7750/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/ProgramListAction.java
+END
+ChangePersonalDataAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/public/parkcode/!svn/ver/7763/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/ChangePersonalDataAction.java
+END
+UserEditAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/public/parkcode/!svn/ver/7657/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/UserEditAction.java
+END
+ProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/public/parkcode/!svn/ver/7807/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/ProgramAction.java
+END
+RecommendAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/public/parkcode/!svn/ver/7877/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/RecommendAction.java
+END
+UserListAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/java/ua/com/parkcode/web/admin/action/UserListAction.java
+END

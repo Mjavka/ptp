@@ -1,0 +1,675 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ua.com.parkcode.web.admin.action;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.parkcode.commons.utils.MapUtils;
+import ua.com.parkcode.commons.utils.StringUtils;
+import ua.com.parkcode.commons.web.app.mail.MailManager;
+import ua.com.parkcode.commons.web.faces.actions.AbstractAction;
+import static ua.com.parkcode.commons.web.faces.actions.AbstractAction.getFacesContext;
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.pdf.PdfManager;
+import ua.com.parkcode.web.ptp.PropertyManager;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.PropertyForProgram;
+import ua.com.parkcode.web.ptp.data.PropertyForm;
+import ua.com.parkcode.web.ptp.data.PropertyGroup;
+import ua.com.parkcode.web.ptp.data.PropertyValue;
+import ua.com.parkcode.web.ptp.data.Recommendation;
+import ua.com.parkcode.web.ptp.pdf.FieldPdf;
+import ua.com.parkcode.web.ptp.services.ProgramService;
+import ua.com.parkcode.web.ptp.services.RecommendService;
+import ua.com.parkcode.web.ptp.services.UserService;
+
+/**
+ * <b>Предназначение:</b><br/>
+ * <p>
+ * </p>
+ *
+ * <br/><b>Описание:</b><br/>
+ * <p>
+ * </p>
+ *
+ * <br/>Создан 2013.08.23<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name = "userFormAction")
+@SessionScoped
+public class UserFormAction extends AbstractAction
+{
+
+    private static final long serialVersionUID = 9172398232830712551L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserFormAction.class);
+
+    private transient ProgramService programService;
+    private transient UserService userService;
+    private transient RecommendService recommendService;
+
+    private Program program;
+
+    private String comment;
+
+    private StringBuilder pdfContent;
+    private final int leftColumnWidth = 180;
+    private final int rightColumnWidth = 350;
+
+    private static final String MAIL_TEMPLATE__ACCEPT = "TemplateAcceptForm";
+    private static final String MAIL_TEMPLATE__CANCEL = "TemplateCancelForm";
+    private static final String MAIL_TEMPLATE__RECOMMEND = "TemplateRecommendUser";
+
+    private static final String MAIL_PARAM__COMMENT = "COMMENT";
+    private static final String MAIL_PARAM__USER_FIO = "USER_FIO";
+    private static final String MAIL_PARAM__RECOMMEND_LINK = "RECOMMEND_LINK";
+
+    private static final int DEFAULT_BUFFER_SIZE = 10240;
+
+    public String selectProgram(Program program)
+    {
+        setErrorMessage(null);
+        comment = null;
+        this.program = program;
+        this.program.setGroups(getProgramService().selectPropertyByProgram(this.program.getEntryUUID(), this.program.getUuid()));
+        return "programCheck.htm?faces-redirect=true";
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Getter & Setter">
+    public String getComment()
+    {
+        return comment;
+    }
+
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
+
+    public Program getProgram()
+    {
+        return program;
+    }
+
+    public void setProgram(Program program)
+    {
+        this.program = program;
+    }
+// </editor-fold>
+
+
+
+
+
+    private FieldPdf addFieldsForJRXML(int x, int y, PropertyForProgram property)
+    {
+        int leftColumnMaxLengthLine = 29;
+        int rightColumnMaxLengthLine = 55;
+        int fieldPading = 5;
+        int height = 12;
+
+        int propertyNameHeight = height;
+        int valueHeight = height;
+        int valueY = y;
+        int totalValueHeight = 0;
+
+        StringBuilder field = new StringBuilder();
+        try
+        {
+            if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+            {
+
+                int fieldWidth = leftColumnWidth + 300;
+                int fieldHeight = height;
+
+                if (StringUtils.isNotBlank(property.getPropertyName()) && property.getPropertyName().length() > 60)
+                {
+                    double s = (double) property.getPropertyName().length() / 60;
+                    int line = (int) Math.ceil(s);
+                    fieldHeight = fieldHeight * line;
+                }
+
+                if (StringUtils.isNotBlank(property.getPropertyName()))
+                {
+                    field.append(PdfManager.createStaticText(x, y, fieldWidth, fieldHeight + (fieldPading*2), "Left", "Arial12", property.getPropertyName()));
+                    return new FieldPdf(x, y, fieldWidth, fieldHeight + (fieldPading*2), field.toString());
+                }
+                else
+                {
+                    return new FieldPdf(x, y, fieldWidth, fieldPading, "");
+                }
+
+            }
+            else
+            {
+
+                if(property.getValue()== null || property.getValue().isEmpty())
+                {
+                    return new FieldPdf(x, y, 0, 0, "");
+                }
+
+                if (property.getPropertyName().length() >= leftColumnMaxLengthLine)
+                {
+                    double s = (double) property.getPropertyName().length() / leftColumnMaxLengthLine;
+                    int line = (int) Math.ceil(s);
+                    propertyNameHeight = propertyNameHeight * line;
+                }
+
+                field.append(PdfManager.createStaticText(x, y, leftColumnWidth, propertyNameHeight, "Left", "Arial", property.getPropertyName()));
+
+                for (PropertyValue val : property.getValue())
+                {
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXTAREA)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXT)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__AUTOCOMPLETE)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__SELECT_TEXT))
+                    {
+                        if (StringUtils.isNotBlank(val.getValueString()) && val.getValueString().length() >= rightColumnMaxLengthLine)
+                        {
+                            double s = (double) val.getValueString().length() / rightColumnMaxLengthLine;
+                            int line = (int) Math.ceil(s);
+                            valueHeight = valueHeight * line;
+                            if(valueHeight > 750)
+                            {
+                                valueHeight = 300;
+                            }
+                        }
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.getValueString()));
+                    }
+
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__DATE))
+                    {
+                        if (StringUtils.isNotBlank(val.getValueTimestampString()) && val.getValueTimestampString().length() > rightColumnMaxLengthLine)
+                        {
+                            double s = (double) val.getValueString().length() / rightColumnMaxLengthLine;
+                            int line = (int) Math.ceil(s);
+                            valueHeight = valueHeight * line;
+                        }
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.getValueTimestampString()));
+                    }
+
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOX)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOXSINGLE))
+                    {
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.isValueBoolean() ? "Так" : "Ні"));
+                    }
+
+                    valueY = valueY + valueHeight + fieldPading;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error PDF generation", ex);
+            return new FieldPdf(x, y, 0, 0, "");
+        }
+
+        return new FieldPdf(x, y, leftColumnWidth + rightColumnWidth + 10, (propertyNameHeight>totalValueHeight? propertyNameHeight: totalValueHeight), field.toString());
+    }
+
+    private OutputStream  generatePDF(Program program)
+    {
+        Program pgm = program;
+        pgm.setGroups(getProgramService().selectPropertyByProgram(program.getEntryUUID(), program.getUuid()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        Map<String, Object> property = new HashMap<String, Object>();
+        int pageHeight = 769;
+
+        int padingBotom = 5;
+        int Y = 120;
+        int leftX = 22;
+        int textFieldHeight = 15;
+        int pageBotom = 1;
+
+
+        pdfContent = new StringBuilder();
+        pdfContent.append("<band height=\""+pageHeight+"\" splitType=\"Stretch\">\n"
+                          + "			<rectangle radius=\"0\">\n"
+                          + "				<reportElement x=\""+leftX+"\" y=\"10\" width=\"83\" height=\"95\" uuid=\"46b8ba65-1d19-4d14-b86c-9dd6f7684f44\"/>\n"
+                          + "			</rectangle>\n"
+                          + "			<staticText>\n"
+                          + "				<reportElement style=\"Arial\" x=\""+leftX+"\" y=\"29\" width=\"83\" height=\"46\" uuid=\"07e5dee3-36d4-46d0-a02e-0b88f19c664f\"/>\n"
+                          + "				<textElement textAlignment=\"Center\" verticalAlignment=\"Middle\"/>\n"
+                          + "				<text><![CDATA[Місце\n"
+                          + "для фотографії\n"
+                          + "3,5 х 4 см]]></text>\n"
+                          + "			</staticText>\n"
+                          + "			<staticText>\n"
+                          + "				<reportElement style=\"Arial\" x=\"209\" y=\"19\" width=\"192\" height=\"46\" uuid=\"0bed03fb-fe79-407b-b8ea-4491fcf2dc8f\"/>\n"
+                          + "				<textElement textAlignment=\"Center\"/>\n"
+                          + "				<text><![CDATA[Анкета кандидата для участі у програмі ]]></text>\n"
+                          + "			</staticText>\n"
+                          + "			<staticText>\n"
+                          + "				<reportElement style=\"Arial\" x=\"118\" y=\"75\" width=\"385\" height=\"40\" uuid=\"127048e0-e1fe-475a-9ab3-4a27c3deece1\"/>\n"
+                          + "				<textElement textAlignment=\"Center\" verticalAlignment=\"Middle\"/>\n"
+                          + "				<text><![CDATA[" + pgm.getName() + "]]></text>\n"
+                          + "			</staticText>\n");
+        for(PropertyGroup group : program.getGroups())
+        {
+            if (group.getProperties() != null && !group.getProperties().isEmpty())
+            {
+                if (Y + padingBotom + textFieldHeight > pageHeight - pageBotom)
+                {
+                    pdfContent.append(PdfManager.closePage());
+                    pdfContent.append(PdfManager.openPage(pageHeight));
+                    pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                    Y = 10;
+                }
+                Y = Y + padingBotom;
+                pdfContent.append(PdfManager.createStaticText(leftX, Y, leftColumnWidth + 100, textFieldHeight, "Left", "Arial12", group.getName()));
+                Y = Y + textFieldHeight;
+
+                for (PropertyForProgram programProperty : group.getProperties())
+                {
+                    if (!programProperty.getPropertyType().equals(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                    {
+
+                        Y = Y + padingBotom;
+                        FieldPdf field = addFieldsForJRXML(leftX, Y, programProperty);
+                        if (Y + field.getHeight() > pageHeight - pageBotom)
+                        {
+                            pdfContent.append(PdfManager.closePage());
+                            pdfContent.append(PdfManager.openPage(pageHeight));
+                            pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                            Y = 10;
+                            field = addFieldsForJRXML(leftX, Y, programProperty);
+                        }
+                        pdfContent.append(field.getField());
+                        Y = Y + field.getHeight();
+
+                    }
+                    else
+                    {
+                        if (StringUtils.isNotBlank(programProperty.getPropertyName()))
+                        {
+                            if (Y + padingBotom + textFieldHeight + 15 > pageHeight - pageBotom)
+                            {
+                                pdfContent.append(PdfManager.closePage());
+                                pdfContent.append(PdfManager.openPage(pageHeight));
+                                pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                                Y = 10;
+                            }
+                            Y = Y + padingBotom;
+                            pdfContent.append(PdfManager.createStaticText(leftX, Y, leftColumnWidth + 250, textFieldHeight + 15, "Left", "Arial12", programProperty.getPropertyName()));
+                            Y = Y + textFieldHeight + 15;
+                        }
+                        if (programProperty.getForm() != null && !programProperty.getForm().isEmpty())
+                        {
+                            for (PropertyForm form : programProperty.getForm())
+                            {
+                                for (PropertyForProgram prt : form.getProperties())
+                                {
+                                    Y = Y + padingBotom;
+                                    FieldPdf field = addFieldsForJRXML(leftX, Y, prt);
+                                    if (Y + field.getHeight() > pageHeight - pageBotom)
+                                    {
+                                        pdfContent.append(PdfManager.closePage());
+                                        pdfContent.append(PdfManager.openPage(pageHeight));
+                                        pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, null, "Arial", null));
+                                        Y = 10;
+                                        field = addFieldsForJRXML(leftX, Y, prt);
+                                    }
+                                    pdfContent.append(field.getField());
+                                    Y = Y + field.getHeight();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        pdfContent.append("	</band>");
+        property.put("PDF_CONTENT", pdfContent.toString());
+        try
+        {
+            out.write(PdfManager.getInstance().createPDF("template_user_form_ptp", property));
+            return out;
+        }
+        catch (IOException ex)
+        {
+            LOGGER.error("Error create output stream", ex);
+            return null;
+        }
+
+    }
+
+    public void downLoad(Program program) throws IOException
+    {
+        ByteArrayOutputStream out = (ByteArrayOutputStream) generatePDF(program);
+
+        HttpServletResponse response = (HttpServletResponse) getFacesContext().getExternalContext().getResponse();
+
+        if (out.size() == 0)
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        response.reset();
+        response.setBufferSize(DEFAULT_BUFFER_SIZE);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Length", String.valueOf(out.size()));
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + StringUtils.doTransliteration(program.getUser().getSurname())+"_"+StringUtils.doTransliteration(program.getUser().getName())+".pdf" + "\"");
+
+        OutputStream output = null;
+        try
+        {
+            output = response.getOutputStream();
+
+            output.write(out.toByteArray());
+        }
+        finally
+        {
+            output.close();
+        }
+        getFacesContext().responseComplete();
+        out.close();
+    }
+
+    public String save()
+    {
+        try
+        {
+            getProgramService().saveUserProgram(program);
+            for (PropertyGroup group : program.getGroups())
+            {
+                if (group.getProperties() != null && !group.getProperties().isEmpty())
+                {
+                    for (PropertyForProgram property : group.getProperties())
+                    {
+                        if (!property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+                        {
+                            if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                            {
+                                getProgramService().savePropertyFormType(property);
+                            }
+                            else
+                            {
+                                if (property.getValue() != null && !property.getValue().isEmpty())
+                                {
+                                    for (PropertyValue val : property.getValue())
+                                    {
+                                        getProgramService().savePropertyValue(val);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error update program", ex);
+            setErrorMessage("Ошыбка сохранения");
+            return null;
+        }
+
+        return "programUserFormList.htm?faces-redirect=true";
+    }
+
+    public String abortAccept()
+    {
+        program.setReview(false);
+        program.setAccept(false);
+        try
+        {
+            getProgramService().updateUserProgram(program);
+
+            List<Recommendation> rec = getRecommendService().selectRecommendationsByOwner(program.getEntryUUID());
+            if (rec != null && !rec.isEmpty())
+            {
+                for (Recommendation recommendation : rec)
+                {
+                    getRecommendService().deleteRecomendation(recommendation.getUuid());
+                }
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error update program", ex);
+            setErrorMessage("Ошыбка сохранения");
+            return null;
+        }
+
+        return "programUserFormList.htm?faces-redirect=true";
+    }
+
+    public String accept()
+    {
+        setErrorMessage(null);
+
+//        Program pgm = getProgramService().selectProgramByUUID(program.getUuid());
+//        if(!pgm.isReview())
+//        {
+//            setErrorMessage("Анкета уже проверена");
+//            return null;
+//        }
+        program.setReview(false);
+        program.setAccept(true);
+
+        try
+        {
+            getProgramService().saveUserProgram(program);
+            for (PropertyGroup group : program.getGroups())
+            {
+                if (group.getProperties() != null && !group.getProperties().isEmpty())
+                {
+                    for (PropertyForProgram property : group.getProperties())
+                    {
+                        if (!property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+                        {
+                            if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                            {
+                                getProgramService().savePropertyFormType(property);
+                            }
+                            else
+                            {
+                                for (PropertyValue val : property.getValue())
+                                {
+                                    getProgramService().savePropertyValue(val);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error update program", ex);
+            setErrorMessage("Ошыбка сохранения");
+            return null;
+        }
+        recommendDataCreate(program);
+        try
+        {
+            MailManager.getInstance().sendMail(
+                    MAIL_TEMPLATE__ACCEPT,
+                    new InternetAddress(program.getUser().getEmail()),
+                    MapUtils.<String, Object>map(
+                    ApplicationManager.MAIL_PARAM__USER_NAME, program.getUser().getName(),
+                    ApplicationManager.MAIL_PARAM__USER_SURNAME, program.getUser().getSurname()
+            )
+            );
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error mail send", ex);
+            setErrorMessage("Ошыбка отправки сообщения");
+            return null;
+        }
+
+        return "programUserFormList.htm?faces-redirect=true";
+    }
+
+    public String cancel()
+    {
+        setErrorMessage(null);
+
+//        Program pgm = getProgramService().selectProgramByUUID(program.getUuid());
+//        if(!pgm.isReview())
+//        {
+//            setErrorMessage("Анкета уже проверена");
+//            return null;
+//        }
+        program.setReview(false);
+        program.setAccept(false);
+
+        try
+        {
+            getProgramService().updateUserProgram(program);
+            List<Recommendation> rec = getRecommendService().selectRecommendationsByOwner(program.getEntryUUID());
+            if (rec != null && !rec.isEmpty())
+            {
+                for (Recommendation recommendation : rec)
+                {
+                    getRecommendService().deleteRecomendation(recommendation.getUuid());
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error update program", ex);
+            setErrorMessage("Ошыбка сохранения");
+            return null;
+        }
+
+        try
+        {
+            if (comment == null)
+            {
+                comment = "";
+            }
+            MailManager.getInstance().sendMail(
+                    MAIL_TEMPLATE__CANCEL,
+                    new InternetAddress(program.getUser().getEmail(), program.getUser().getName()),
+                    MapUtils.<String, Object>map(
+                    MAIL_PARAM__COMMENT, comment,
+                    ApplicationManager.MAIL_PARAM__USER_NAME, program.getUser().getName(),
+                    ApplicationManager.MAIL_PARAM__USER_SURNAME, program.getUser().getSurname()
+            ));
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error mail send", ex);
+            return null;
+        }
+
+        return "programUserFormList.htm?faces-redirect=true";
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Service">
+    public UserService getUserService()
+    {
+        if (userService == null)
+        {
+            userService = evaluateExpression("userService");
+        }
+        return userService;
+    }
+
+    public ProgramService getProgramService()
+    {
+        if (programService == null)
+        {
+            programService = evaluateExpression("programService");
+        }
+        return programService;
+    }
+
+    public RecommendService getRecommendService()
+    {
+        if (recommendService == null)
+        {
+            recommendService = evaluateExpression("recommendService");
+        }
+        return recommendService;
+    }
+// </editor-fold>
+
+
+    private void recommendDataCreate(Program program)
+    {
+        Recommendation first = new Recommendation();
+        Recommendation second = new Recommendation();
+        try
+        {
+            List<Recommendation> rec = getRecommendService().selectRecommendationsByOwner(program.getEntryUUID());
+            if (rec != null && !rec.isEmpty())
+            {
+                for (Recommendation recommendation : rec)
+                {
+                    getRecommendService().deleteRecomendation(recommendation.getUuid());
+                }
+
+            }
+
+            first.setRecomendName(PropertyManager.getPropertyByID("recommend_one_name", program).getValue().get(0).getValueString());
+            first.setRecomendSurname(PropertyManager.getPropertyByID("recommend_one_surname", program).getValue().get(0).getValueString());
+            first.setRecomendPatronymic(PropertyManager.getPropertyByID("recommend_one_patronymic", program).getValue().get(0).getValueString());
+            first.setRecomendPhone(PropertyManager.getPropertyByID("recommend_one_phone", program).getValue().get(0).getValueString());
+            first.setRecomendEmail(PropertyManager.getPropertyByID("recommend_one_email", program).getValue().get(0).getValueString());
+            first.setRecomendWorkplase(PropertyManager.getPropertyByID("recommend_one_workplase", program).getValue().get(0).getValueString());
+            first.setRecomendWorkposition(PropertyManager.getPropertyByID("recommend_one_workposition", program).getValue().get(0).getValueString());
+
+            second.setRecomendName(PropertyManager.getPropertyByID("recommend_two_name", program).getValue().get(0).getValueString());
+            second.setRecomendSurname(PropertyManager.getPropertyByID("recommend_two_surname", program).getValue().get(0).getValueString());
+            second.setRecomendPatronymic(PropertyManager.getPropertyByID("recommend_two_patronymic", program).getValue().get(0).getValueString());
+            second.setRecomendPhone(PropertyManager.getPropertyByID("recommend_two_phone", program).getValue().get(0).getValueString());
+            second.setRecomendEmail(PropertyManager.getPropertyByID("recommend_two_email", program).getValue().get(0).getValueString());
+            second.setRecomendWorkplase(PropertyManager.getPropertyByID("recommend_two_workplase", program).getValue().get(0).getValueString());
+            second.setRecomendWorkposition(PropertyManager.getPropertyByID("recommend_two_workposition", program).getValue().get(0).getValueString());
+
+            getRecommendService().saveRecomendation(first, program.getEntryUUID());
+            getRecommendService().saveRecomendation(second, program.getEntryUUID());
+
+            MailManager.getInstance().sendMail(
+                    MAIL_TEMPLATE__RECOMMEND,
+                    new InternetAddress(first.getRecomendEmail()),
+                    MapUtils.<String, Object>map(
+                    MAIL_PARAM__USER_FIO, program.getUser().getSurname() + " " + program.getUser().getName() + " " + program.getUser().getPatronymic(),
+                    MAIL_PARAM__RECOMMEND_LINK, ApplicationManager.getSiteURL() + "recommend.htm?r=" + first.getRecomendUuid() + "&owner=" + program.getEntryUUID() + "&program=" + program.getUuid() + "&user=" + program.getUser().getUuid()
+            ));
+
+            MailManager.getInstance().sendMail(
+                    MAIL_TEMPLATE__RECOMMEND,
+                    new InternetAddress(second.getRecomendEmail()),
+                    MapUtils.<String, Object>map(
+                    MAIL_PARAM__USER_FIO, program.getUser().getSurname() + " " + program.getUser().getName() + " " + program.getUser().getPatronymic(),
+                    MAIL_PARAM__RECOMMEND_LINK, ApplicationManager.getSiteURL() + "recommend.htm?r=" + second.getRecomendUuid() + "&owner=" + program.getEntryUUID() + "&program=" + program.getUuid() + "&user=" + program.getUser().getUuid()
+            ));
+        }
+        catch (Exception ex)
+        {
+            setErrorMessage("Ощибка обработки рекомендодателей");
+            LOGGER.error("Error recommend", ex);
+        }
+    }
+}

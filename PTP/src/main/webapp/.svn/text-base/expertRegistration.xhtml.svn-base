@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="expertRegistration" />
+        <ui:param name="pageTitle" value="Реєстрація експерта" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <ptp:formErrorMessage provider="#{expertRegistrationAction}" />
+                <div class="formContent">
+                    <ptp:formTitle value="Анкета експерта" />
+                    <h:form prependId="false" enctype="multipart/form-data">
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Прізвище та ім’я англійською мовою" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="nameEN" value="#{expertRegistrationAction.userAccount.expertInfo.nameEn}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="nameEN" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Skype"/>
+                            <div class="inputElem">
+                                <h:inputText id="Skype" value="#{expertRegistrationAction.userAccount.expertInfo.skype}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="Skype" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Назва організації/установи, в якій ви працюєте (українською)" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="organizationName" value="#{expertRegistrationAction.userAccount.expertInfo.organizationName}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="organizationName" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Посада (українською)" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="position" value="#{expertRegistrationAction.userAccount.expertInfo.position}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="position" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Назва організації /установи (англійською)" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="organizationNameEN" value="#{expertRegistrationAction.userAccount.expertInfo.organizationNameEN}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="organizationNameEN" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Посада (англійською)" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="positionEN" value="#{expertRegistrationAction.userAccount.expertInfo.positionEN}"  requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="positionEN" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Веб-сайт організації " required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="organizationWebSite" value="#{expertRegistrationAction.userAccount.expertInfo.organizationWebSite}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="organizationWebSite" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Форма власності організації/установи, в якій ви працюєте" required="false" />
+                            <div class="inputElem">
+                                <h:selectOneMenu id="ownership" value="#{expertRegistrationAction.userAccount.expertInfo.ownership}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItem itemLabel="приватна" itemValue="приватна"/>
+                                    <f:selectItem itemLabel="державна" itemValue="державна"/>
+                                    <f:selectItem itemLabel="недержавна" itemValue="недержавна"/>
+                                    <f:selectItem itemLabel="комунальна" itemValue="комунальна"/>
+                                </h:selectOneMenu>
+                                <h:message styleClass="errorText" for="ownership" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Вулиця" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="street" value="#{expertRegistrationAction.userAccount.expertInfo.street}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="street" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Будинок" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="house" value="#{expertRegistrationAction.userAccount.expertInfo.house}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="house" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Корпус" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="pavilion" value="#{expertRegistrationAction.userAccount.expertInfo.pavilion}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="pavilion" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Офіс" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="office" value="#{expertRegistrationAction.userAccount.expertInfo.office}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="office" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Місто (село)" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="city" value="#{expertRegistrationAction.userAccount.expertInfo.city}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="city" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Область" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="region" value="#{expertRegistrationAction.userAccount.expertInfo.region}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="region" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Індекс" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="index" value="#{expertRegistrationAction.userAccount.expertInfo.index}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="index" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Робочий телефон" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="workPhone" value="#{expertRegistrationAction.userAccount.expertInfo.workPhone}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="workPhone" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Факс" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="fax" value="#{expertRegistrationAction.userAccount.expertInfo.fax}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="fax" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Робоча електронна пошта" required="false" />
+                            <div class="inputElem">
+                                <h:inputText id="workEmail" value="#{expertRegistrationAction.userAccount.expertInfo.workEmail}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="workEmail" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Прикріпіть, будь ласка, своє резюме (.doc)" required="true" />
+                            <t:div styleClass="inputElem passport" rendered="#{expertRegistrationAction.userAccount.expertInfo.rezume == null}">
+                                <t:inputFileUpload value="#{expertRegistrationAction.uploadedRezume}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem passport" rendered="#{expertRegistrationAction.userAccount.expertInfo.rezume != null}">
+                                <h:outputText value="Файл завантажено #{expertRegistrationAction.userAccount.expertInfo.rezume.originalName}"/><br/>
+                                <t:inputFileUpload value="#{expertRegistrationAction.uploadedRezume}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                        </t:div>
+
+                        <t:div styleClass="formLine"  id="scopeExpert">
+                            <ptp:formLabel value="Сфера експертизи" required="false" />
+                            <ui:repeat value="#{expertRegistrationAction.scope}" var="scop">
+                                <div class="inputElem">
+                                    <h:selectOneMenu  value="#{scop.value}" >
+                                        <f:selectItem itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{expertRegistrationAction.actualItem(scop)}" var="item" itemLabel="#{item.label}" itemValue="#{item.value}" itemDisabled="#{item.disabled}"/>
+                                        <f:ajax render="@form" execute="@form" listener="#{expertRegistrationAction.updateSelectedValue()}" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </ui:repeat>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                            <div class="plusMinusContainer" >
+                                <h:commandLink styleClass="plusBtn" action="#{expertRegistrationAction.addValueScope()}"  rendered="#{expertRegistrationAction.scope.size()&lt;3}">
+                                    <f:ajax render="scopeExpert" execute="scopeExpert" listener="#{expertRegistrationAction.updateSelectedValue()}"/>
+                                </h:commandLink>
+                                <h:commandLink styleClass="minusBtn" action="#{expertRegistrationAction.deleteValueScope()}" rendered="#{expertRegistrationAction.scope.size()>1}">
+                                    <f:ajax render="scopeExpert" execute="scopeExpert" listener="#{expertRegistrationAction.updateSelectedValue()}"/>
+                                </h:commandLink>
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine" >
+                            <ptp:formLabel value="Напишіть, будь ласка, ваші напрацювання у сфері вашої експертизи. " required="false" />
+                            <div class="inputElem">
+                                <h:inputTextarea id="expertText" value="#{expertRegistrationAction.userAccount.expertInfo.expertText}" required="false" requiredMessage="Поле обовязкове"/>
+                                <h:message styleClass="errorText" for="expertText" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="" rendered="true"/>
+                            </div>
+                        </t:div>
+                        <ptp:requiredFieldsInfo />
+                        <div class="formLine">
+                            <div class="formBottomButtons">
+                                <h:outputLink styleClass="formButton " style="float: right; margin-left: 5px;" value="javascript:history.back()" >Відмінити</h:outputLink>
+                                <h:commandButton value="Зберегти" action="#{expertRegistrationAction.register()}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

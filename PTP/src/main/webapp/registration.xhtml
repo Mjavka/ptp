@@ -1,0 +1,268 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="registration" />
+        <ui:param name="pageTitle" value="Реєстрація" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <ptp:formErrorMessage provider="#{registrationAction}" />
+                <div class="formContent">
+                    <div style="font-size: 14px;">
+                        <p>Шановний відвідувачу!</p>
+                        <br/>
+                        <p>Ми радо вітаємо Ваше зацікавлення у доступі до ресурсів нашого сайту. Саме тут Ви можете скористатися он-лайн реєстрацією для участі у програмах проекту міжнародної технічної допомоги «Навчальні програми професійного зростання» Агентства США з міжнародного розвитку.: прізвище, ім’я по батькові – українською мовою; дату народження вибрати зі списку, що випадає під датою, місяцем, роком.  Після реєстрації Ви не зможете змінити цю інформацію, зокрема, і під час заповнення анкети.</p>
+                        <br/>
+                        <p>Звертаємо Вашу увагу, що інформація, яку Ви подаєте про себе, буде автоматично заповнюватися у відповідних полях анкети й інших документів.  Відтак просимо досить коректно вказувати відомості про себе.</p>
+                        <br/>
+                        <p>Для завершення реєстрації на сайті необхідно зайти у свою поштову скриньку, яку Ви вкажете,  і перейти за посиланням, що міститиметься у листі, надісланому Вам нашим сайтом.</p>
+                        <br/>
+                        <p>Реєстрація на цьому сайт й подання про себе інформації відбувається відповідно до  <a href="http://ptp.ceume.org.ua/ugoda-konfidencijnosti">Угоди конфіденційності</a> , яка є договором приєднання. Використання Вами сервісів сайту свідчить про приєднання Вас до даної Угоди повністю та підтверджує Вашу згоду з наведеними у ній умовами.</p>
+                        <br/>
+                    </div>
+                    <h:form prependId="false" enctype="multipart/form-data">
+                        <div class="formLine">
+                            <ptp:formLabel value="Логін (e-mail)" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="qscgu" value="#{registrationAction.userAccount.email}" maxlength="128"
+                                             required="true" requiredMessage="Поле обов’язкове">
+                                    <t:validateEmail />
+                                </h:inputText><br/>
+                                <h:message styleClass="errorText" for="qscgu" />
+
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="Пароль" required="true" />
+                            <div class="inputElem">
+                                <h:inputSecret id="password" value="#{registrationAction.userAccount.password}" maxlength="128"
+                                               required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="password" />
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="Повторіть пароль" required="true" />
+                            <div class="inputElem">
+                                <h:inputSecret id="passwordConfirm" value="#{registrationAction.confirmPassword}" maxlength="128"
+                                               required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="passwordConfirm" />
+                            </div>
+                        </div>
+                        <div class="formLine">
+                            <ptp:formLabel value="Прізвище" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="surname" value="#{registrationAction.userAccount.surname}" maxlength="255"
+                                             required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="surname" />
+                                <div class="commentElem" style="width: 100%;">
+                                    <h:outputText value="Українською мовою" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="Ім’я" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="name" value="#{registrationAction.userAccount.name}" maxlength="255"
+                                             required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="name" />
+                                <div class="commentElem" style="width: 100%;">
+                                    <h:outputText value="Українською мовою" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="По батькові" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="patronymic" value="#{registrationAction.userAccount.patronymic}" maxlength="255"
+                                             required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="patronymic" />
+                                <div class="commentElem" style="width: 100%;">
+                                    <h:outputText value="Українською мовою" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="Телефон моб.:" required="true" />
+                            <div class="inputElem">
+                                <h:inputText id="phone" value="#{registrationAction.userAccount.phone}" maxlength="255"
+                                             required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                <h:message styleClass="errorText" for="phone" />
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <ptp:formLabel value="Дата народження" required="true"/>
+                            <div class="dateElem">
+
+                                <t:div>
+                                    День <t:selectOneMenu styleClass="selectedDay">
+                                        <f:selectItem  itemLabel="1" itemValue="1" /><f:selectItem  itemLabel="2" itemValue="2" /><f:selectItem  itemLabel="3" itemValue="3" />
+                                        <f:selectItem  itemLabel="4" itemValue="4" /><f:selectItem  itemLabel="5" itemValue="5" /><f:selectItem  itemLabel="6" itemValue="6" />
+                                        <f:selectItem  itemLabel="7" itemValue="7" /><f:selectItem  itemLabel="8" itemValue="8" /><f:selectItem  itemLabel="9" itemValue="9" />
+                                        <f:selectItem  itemLabel="10" itemValue="10" /><f:selectItem  itemLabel="11" itemValue="11" /><f:selectItem  itemLabel="12" itemValue="12" />
+                                        <f:selectItem  itemLabel="13" itemValue="13" /><f:selectItem  itemLabel="14" itemValue="14" /><f:selectItem  itemLabel="15" itemValue="15" />
+                                        <f:selectItem  itemLabel="16" itemValue="16" /><f:selectItem  itemLabel="17" itemValue="17" /><f:selectItem  itemLabel="18" itemValue="18" />
+                                        <f:selectItem  itemLabel="19" itemValue="19" /><f:selectItem  itemLabel="20" itemValue="20" /><f:selectItem  itemLabel="21" itemValue="21" />
+                                        <f:selectItem  itemLabel="22" itemValue="22" /><f:selectItem  itemLabel="23" itemValue="23" /><f:selectItem  itemLabel="24" itemValue="24" />
+                                        <f:selectItem  itemLabel="25" itemValue="25" /><f:selectItem  itemLabel="26" itemValue="26" /><f:selectItem  itemLabel="27" itemValue="27" />
+                                        <f:selectItem  itemLabel="28" itemValue="28" /><f:selectItem  itemLabel="29" itemValue="29" /><f:selectItem  itemLabel="30" itemValue="30" />
+                                        <f:selectItem  itemLabel="31" itemValue="31" />
+                                    </t:selectOneMenu>
+                                    Місяць <t:selectOneMenu styleClass="selectedMonth">
+                                        <f:selectItem  itemLabel="Січень"   itemValue="1" />
+                                        <f:selectItem  itemLabel="Лютий"    itemValue="2" />
+                                        <f:selectItem  itemLabel="Березень" itemValue="3" />
+                                        <f:selectItem  itemLabel="Квітень"  itemValue="4" />
+                                        <f:selectItem  itemLabel="Травень"  itemValue="5" />
+                                        <f:selectItem  itemLabel="Червень"  itemValue="6" />
+                                        <f:selectItem  itemLabel="Липень"   itemValue="7" />
+                                        <f:selectItem  itemLabel="Серпень"  itemValue="8" />
+                                        <f:selectItem  itemLabel="Вересень" itemValue="9" />
+                                        <f:selectItem  itemLabel="Жовтень"  itemValue="10" />
+                                        <f:selectItem  itemLabel="Листопад" itemValue="11" />
+                                        <f:selectItem  itemLabel="Грудень"  itemValue="12" />
+                                    </t:selectOneMenu>
+                                    Рік <t:selectOneMenu styleClass="selectedYear" >
+                                        <f:selectItems value="#{registrationAction.yearsDiapazon(-100,0)}" var="year" itemLabel="#{year}" itemValue="#{year}" />
+                                    </t:selectOneMenu>
+                                    <h:inputText value="#{registrationAction.userAccount.stringBirthdayDate}" styleClass="calendar" style="display: none"/>
+
+                                    <script type="text/javascript">
+                                        function updateSelected(dates) {
+                                            $j('.selectedMonth').val(dates.length ? dates[0].getMonth() + 1 : '');
+                                            $j('.selectedDay').val(dates.length ? dates[0].getDate() : '');
+                                            $j('.selectedYear').val(dates.length ? dates[0].getFullYear() : '');
+                                            checkLinkedDays();
+                                        }
+
+
+                                        $j(function() {
+                                            $j('.selectedDay,.selectedMonth,.selectedYear').change(checkLinkedDays());
+                                        });
+
+
+                                        function checkLinkedDays()
+                                        {
+//                              Не использовать метод datepick.daysInMonth он неправильно вычисляет количество дней
+                                            year = $j('.selectedYear').val();
+                                            month = $j('.selectedMonth').val();
+                                            var days = 33 - new Date(year, month - 1, 33).getDate();
+                                            var daysInMonth = days;
+                                            $j('.selectedDay option:gt(27)').attr('disabled', false);
+                                            $j('.selectedDay option:gt(' + (daysInMonth - 1) + ')').attr('disabled', true);
+                                            if ($j('.selectedDay').val() > daysInMonth) {
+                                                $j('.selectedDay').val(daysInMonth);
+                                            }
+                                        }
+                                        $j(function() {
+                                            $j('.calendar').datepick({
+                                                yearRange: '-100y:' + new Date().getFullYear(), dateFormat: 'dd.mm.yyyy',
+                                                alignment: 'bottomRight', showOnFocus: false,
+                                                onSelect: updateSelected,
+                                                showTrigger: '.trigger'}, $j.datepick.regional['uk']);
+                                        });
+
+                                        $j(document).ready(function() {
+                                            var st = $j('.calendar').val();
+                                            if (st != "") {
+                                                var date = [new Date(st.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1'))];
+                                                updateSelected(date);
+                                            }
+                                            else
+                                            {
+                                                var date = [new Date()];
+                                                updateSelected(date);
+                                            }
+                                        });
+                                        $j('.selectedMonth,.selectedDay,.selectedYear').change(function() {
+                                            $j('.calendar').datepick('setDate', new Date($j('.selectedYear').val(), $j('.selectedMonth').val() - 1, $j('.selectedDay').val()));
+                                        });
+                                    </script>
+
+                                </t:div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="formLine formLineFile">
+                            <ptp:formLabel value="Стать" required="true"/>
+                            <div class="inputElem">
+                                <h:selectOneMenu value="#{registrationAction.userAccount.sex}" requiredMessage="Поле обов’язкове"
+                                                 id="sex" required="true">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItem itemLabel="Чоловіча" itemValue="Чоловіча"/>
+                                    <f:selectItem itemLabel="Жіноча" itemValue="Жіноча"/>
+                                </h:selectOneMenu>
+                                <h:message styleClass="errorText" for="sex" />
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <input type="checkbox" name="confidential" id="confidential"/><h:outputLabel value="Приєднуюсь до"/><h:outputLink value="http://ptp.ceume.org.ua/ugoda-konfidencijnosti">Угоди конфіденційності</h:outputLink>
+                        </div>
+
+
+                        <div class="formLine" style="left: 10000px; position: absolute;">
+                            <ptp:formLabel value="Логін (e-mail)"/>
+                            <div class="inputElem">
+                                <h:inputText id="mail" value="#{registrationAction.honey}" maxlength="128">
+                                </h:inputText><br/>
+                            </div>
+                        </div>
+
+                        <ptp:requiredFieldsInfo />
+
+                        <script type="text/javascript">
+                            $j(document).ready(function() {
+                                chekConfidential();
+                            });
+                            function chekConfidential()
+                            {
+                                if (!$j('#confidential').prop("checked"))
+                                {
+                                    $j('#register').attr("disabled", true);
+                                    $j('#register').addClass('formButtonDisabled');
+                                }
+                                else
+                                {
+                                    $j('#register').attr("disabled", false);
+                                    $j('#register').removeClass('formButtonDisabled');
+                                }
+                            }
+                            ;
+                            $j(function() {
+                                $j('#confidential').change(function() {
+                                    chekConfidential();
+                                });
+                            });
+
+                        </script>
+                        <div class="formLine">
+                            <div class="formBottomButtons">
+                                <h:outputLink styleClass="formButton" style="float: right; margin-left: 5px;" value="javascript:history.back()" >Відмінити</h:outputLink>
+                                <h:commandButton styleClass="formButton " id="register" style="float: right; margin-left: 5px;" value="Зареєструватися" action="#{registrationAction.register}"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

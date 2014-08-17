@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+
+    <!-- =================================================================== -->
+    <!-- metadata definition                                                 -->
+    <!-- =================================================================== -->
+
+    <sqldb:metadata id="Program" tableName="PROGRAM_TABLE" tableAlias="pgm">
+        <sqldb:field propertyName="uuid"                        columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="name"                        columnName="program_name"/>
+        <sqldb:field propertyName="nameEn"                      columnName="program_name_en"/>
+        <sqldb:field propertyName="comment"                     columnName="comment"/>
+        <sqldb:field propertyName="country"                     columnName="program_country"/>
+        <sqldb:field propertyName="region"                      columnName="program_region"/>
+        <sqldb:field propertyName="programRegisteredBeginDate"  columnName="program_registered_begin_date"/>
+        <sqldb:field propertyName="programRegisteredEndDate"    columnName="program_registered_end_date"/>
+        <sqldb:field propertyName="programBeginDate"            columnName="program_begin_date"/>
+        <sqldb:field propertyName="programEndDate"              columnName="program_end_date"/>
+        <sqldb:field propertyName="coordinatorUuid"             columnName="coordinator_uuid"/>
+        <sqldb:field propertyName="programType"                 columnName="program_type"/>
+    </sqldb:metadata>
+
+
+    <sqldb:metadata id="Evaluation" tableName="EVALUATION_TABLE" tableAlias="evl">
+        <sqldb:field propertyName="evaluationUuid"              columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="expertAssessment1"           columnName="expert_assessment_1"/>
+        <sqldb:field propertyName="expertAssessment2"           columnName="expert_assessment_2"/>
+        <sqldb:field propertyName="expertAssessment3"           columnName="expert_assessment_3"/>
+        <sqldb:field propertyName="expertAssessment4"           columnName="expert_assessment_4"/>
+        <sqldb:field propertyName="expertAssessment5"           columnName="expert_assessment_5"/>
+        <sqldb:field propertyName="comment"                     columnName="expert_comment"/>
+    </sqldb:metadata>
+
+    <sqldb:metadata id="UserProgRefer" tableName="USER_PROGRAM_REF" tableAlias="u_p_r">
+        <sqldb:field propertyName="userStatusId"                            columnName="user_program_status"/>
+        <sqldb:field propertyName="ownerUuid"                               columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="userUuid"                                columnName="user_uuid"   columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="programUuid"                             columnName="program_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+    </sqldb:metadata>
+    
+     <sqldb:metadata id="SomeInfo" tableName="USER_PROGRAM_REF" tableAlias="userprogref" >
+        <sqldb:field propertyName="userUuid"                               columnName="user_uuid" primaryKey="true" columnValueFunction="@::varchar"/>
+        <sqldb:field propertyName="ownerUuid"                               columnName="object_uuid" columnValueFunction="@::varchar"/>
+        <sqldb:field propertyName="programUuid"                               columnName="program_uuid" columnValueFunction="@::varchar"/>
+        <sqldb:field propertyName="userStatus"                              columnName="user_program_status"/>
+     </sqldb:metadata>
+
+    <sqldb:metadata id="some_info" tableName="SOME_INFO" tableAlias="someinfo">
+        <sqldb:field propertyName="property"                       columnName="property"/>
+        <sqldb:field propertyName="resource"                       columnName="resource"/>
+        <sqldb:field propertyName="expert"                         columnName="expert"/>
+    </sqldb:metadata>
+    
+    <sqldb:metadata id="ExpertSomeinfo">
+        <sqldb:field propertyName="userUuid"                       columnName="user_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="ownerUuid"                      columnName="owner_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="programUuid"                    columnName="program_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+
+        <sqldb:field propertyName="userName"                       columnName="user_name"/>        
+        <sqldb:field propertyName="user_surname"                   columnName="user_surname"/>
+        <sqldb:field propertyName="userpatronymic"                 columnName="user_patronymic"/>
+        <sqldb:field propertyName="userWorkPlace"                  columnName="organization_name"/>
+    </sqldb:metadata>
+</beans>
+

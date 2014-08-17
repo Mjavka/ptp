@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <div class="tittleblock"><b>СИСТЕМА БЕЗКОШТОВНОЇ ПРАВОВОЇ ДОПОМОГИ НАСЕЛЕННЮ</b></div> 
+                <div style="margin-top: 40px; ">
+                    
+                    <div style="position: absolute;width: 150px;display: block;padding-top: 4px;"><b>Програма</b></div>
+                    <div style="position: absolute;width: 150px;display: block;margin-top: 47px"><b>Назва події</b></div>
+                    <div style="position: absolute;width: 150px;display: block;margin-top: 93px"><b>Дата події</b></div>
+                    <div style="width: 150px;position: absolute;left: 415px;top: 158px;"><b>Час події</b></div>
+                    <div style="position: absolute;width: 150px;display: block;margin-top: 135px"><b>Опис події</b></div>
+                    <div style="position: absolute;width: 150px;display: block;margin-top: 235px"><b>Місце події</b></div>
+                    <div style="position: absolute;width: 150px;display: block;margin-top: 280px"><b>Цільова аудиторія</b></div>
+                   
+                    
+                    <div style="width: 844px; margin-left: 117px;position: relative">
+                    <select style="border: 1px solid #cacaca; background: #FFFFFF;width: 100%;height: 25px;">
+                         <option>Поліпшення рівня задовоеності населення роботою суду через професійний розвиток працівників суду шляхом налагодження взаємодії...</option>
+                         <option>Пункт 2</option>
+                     </select>
+                         
+                         <input type="text" style="border: 1px solid #cacaca;margin-top: 20px;width: 625px;height: 23px;"></input>
+                        <div style="float:right;margin-top: 25px;" class="iconadd"><a style="text-decoration: none;border-bottom: 1px dashed #0198f3; color:#0198f3">Додати програму</a></div>
+                        <br><input type="text" style="border: 1px solid #cacaca;margin-top: 20px;width: 33px;height: 23px;margin-right: 10px;"></input>
+                        <select style="border: 1px solid #cacaca; background: #FFFFFF;width: 107px;height: 25px;margin-right: 10px;">
+                         <option>Пункт 1</option>
+                         <option>Пункт 2</option>
+                     </select>
+                        <input type="text" style="border: 1px solid #cacaca;margin-top: 20px;width: 80px;height: 23px;"></input>
+                        <input type="text" style="border: 1px solid #cacaca;margin-top: 20px;width: 32px;height: 23px;margin-left: 110px;"><b style="padding-left: 5px;padding-right: 5px;">:</b></input>
+                        <input type="text" style="border: 1px solid #cacaca;margin-top: 20px;width: 32px;height: 23px;"></input> 
+                        </br>
+                        <br>
+                            <textarea name="comment" style="resize: none;width: 100%; height: 72px; margin-top: 20px;"></textarea>
+                        </br>
+                        <br>
+                            <input type="text" style="width: 100%; height: 23px;margin-top: 20px;border: 1px solid #cacaca"></input>
+                        </br>
+                        <br>
+                            <select style="width: 295px; height: 25px;border: 1px solid #cacaca;background: #FFFFFF;margin-top: 20px;">
+                                 <option>Пункт 1</option>
+                                 <option>Пункт 2</option>
+                            </select>
+                        </br>
+                         
+                    </div>
+                    </div>
+                <div class="blockbuttons">
+                    <input class="buttonuserlist" type="button" value="Підтвердити" style="float:right;" onclick="location.href='google.com.ua'">
+                        <div style="position: absolute; left:275px">
+                        <div class="iconadd"><a style="text-decoration: none;border-bottom: 1px dashed #0198f3; color:#0198f3">Додати аудиторію</a></div>
+                        </div>
+                    </input>
+                    </div>
+                </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

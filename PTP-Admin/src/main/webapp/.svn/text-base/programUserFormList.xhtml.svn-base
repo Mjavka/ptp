@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="programUserFormList" />
+        <ui:param name="pageTitle" value="Список форм " />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Список форм" />
+                <admin:formErrorMessage provider="#{userFormListAction}" />
+                <div class="formContent">
+                    <h:form prependId="false">
+                        <div class="formLine" style="width: 580px;">
+                            <admin:formLabel value="Программа" style="width:68px;"/>
+                            <div class="inputElem" style="float: left;">
+                                <h:selectOneMenu value="#{userFormListAction.filterVariantProgram}" style="width: 100%;">
+                                    <f:selectItems value="#{userFormListAction.filterVariantsProgram}" var="filterVariantProgram" itemValue="#{filterVariantProgram}" itemLabel="#{filterVariantProgram}"/>
+                                    <f:ajax event="change" render="@form" listener="#{userFormListAction.filteredPrograms()}" />
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="formLine" style="width: 200px;">
+                            <admin:formLabel value="Статус" />
+                            <div class="inputElem" >
+                                <h:selectOneMenu value="#{userFormListAction.filterVariantStatus}" >
+                                    <f:selectItems value="#{userFormListAction.filterVariantsStatus}" var="filterVariant" itemValue="#{filterVariant}" itemLabel="#{filterVariant}"/>
+                                    <f:ajax event="change" render="@form" listener="#{userFormListAction.filteredPrograms()}" />
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="formBottomButtons">
+                            <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{userFormListAction.downLoadExcelInfo()}" value="Инфо Excel"/>
+                            <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{userFormListAction.downLoadExcelRating()}" value="Рейтинг Excel"/>
+                        </div>
+                        <h:dataTable value="#{userFormListAction.programs}" var="program"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+
+                            <h:column  >
+                                <!-- column header -->
+                                <f:facet name="header">№</f:facet>
+                                <!-- row record -->
+                                #{userFormListAction.programs.indexOf(program)+1}
+                            </h:column>
+                            <h:column >
+                                <!-- column header -->
+                                <f:facet name="header">
+                                    <h:commandLink action="#{userFormListAction.sortBySurname()}">
+                                        Пользователь
+                                    </h:commandLink>
+                                </f:facet>
+                                <!-- row record -->
+                                #{program.user.surname} #{program.user.name} #{program.user.patronymic}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Персональні дані</f:facet>
+                                email: <a href="mailto:#{program.user.email}">#{program.user.email}</a><br/>
+                                Моб.тел: #{program.userMobilePhone}<br/>
+                                <b>Основне місце роботи</b><br/>
+                                Назва організації/установи: #{program.workPlaceOrganization}<br/>
+                                Посада: #{program.workPlacePost}<br/>
+                                Область:#{program.workPlaseRegion}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Файлы</f:facet>
+                                <h:outputLink rendered="#{program.photo != null}" value="#{userFormListAction.siteURL}#{program.photo.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Фото</h:outputLink>
+                                <h:outputLink rendered="#{program.passport != null}" value="#{userFormListAction.siteURL}#{program.passport.resourcePath}" style="position: relative; float: left; width: 100% " target="blank">Паспорт 1с</h:outputLink>
+                                <h:outputLink rendered="#{program.passportSecondPage != null}" value="#{userFormListAction.siteURL}#{program.passportSecondPage.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Паспорт 2с</h:outputLink>
+                                <h:outputLink rendered="#{program.firstPageForeignPassport != null}" value="#{userFormListAction.siteURL}#{program.firstPageForeignPassport.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Загран Паспорт</h:outputLink>
+                                <h:outputLink rendered="#{program.mvs != null}" value="#{userFormListAction.siteURL}#{program.mvs.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Резюме</h:outputLink>
+                                <h:outputLink rendered="#{program.certificateEmployment != null}" value="#{userFormListAction.siteURL}#{program.certificateEmployment.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Довідка з місця роботи</h:outputLink>
+                                <t:div rendered="#{program.recommends != null}">
+                                    <ui:repeat value="#{program.recommends}" var="recommend" varStatus="recS">
+                                        <h:outputLink style="position: relative; float: left; width: 100%" value="#recommend_#{program.entryUUID}_#{recS.index+1}" class="nyroModal" >Рекомендация #{recS.index+1}</h:outputLink>
+                                        <div id="recommend_#{program.entryUUID}_#{recS.index+1}" class="recommend">
+                                            <t:div styleClass="formLine formLabel label2Conteiner" >
+                                                <div class="titleElem">
+                                                    <h:outputText value="Рекомендодавець:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Прізвище"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendSurname}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="Ім'я"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendName}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="По батькові"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendPatronymic}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark" >
+                                                <admin:formLabel value="Телефон"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendPhone}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Місце роботи"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendWorkplase}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="Посада"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendWorkposition}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div styleClass="formLine formLabel label2Conteiner" style="padding-top: 20px;">
+                                                <div class="titleElem">
+                                                    <h:outputText value="Рекомендація:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="У якій якості та як довго ви знаєте кандидата"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.howLongKnown}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div styleClass="formLine formLabel label2Conteiner" >
+                                                <div class="titleElem">
+                                                    <h:outputText value="Надайте, будь ласка, оцінку кандидатові за критеріями:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="Лідерський потенціал"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.liderPotential}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Професійність"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.professionalism}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="Гнучкість"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.flexibility}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Мотивація"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.motivation}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="На вашу думку, які найкращі якості притаманні кандидату?"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.bestQuality}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Будь ласка, опишіть, чому ви вважаєте, що кандидат підготовлений до даної програми та відповідає тематиці стажування з огляду на його діяльність. Наведіть, будь ласка, конкретні приклади на підтвердження своїх тверджень."  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.whyCorrespondsProgram}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine dark">
+                                                <admin:formLabel value="Як, на вашу думку, кандидат зможе застосувати досвід та знання, набуті під час стажування, в своїй організації, рідному місті/області чи у відповідній галузі?"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.canApplyKnowledge}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <admin:formLabel value="Будь ласка, наведіть конкретний приклад успішно реалізованого раніше проекту чи інших досягнень кандидата   в професійній сфері, що відповідає тематиці очікуваного стажування."  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.achievementCandidate}" />
+                                                </div>
+                                            </t:div>
+                                        </div>
+                                    </ui:repeat>
+                                </t:div>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:commandLink action="#{userFormListAction.sortByEvaluation()}">
+                                        Оценка
+                                    </h:commandLink>
+                                </f:facet>
+                                <t:div rendered="#{program.evaluations != null}">
+                                    <h:outputLink style="position: relative; float: left; width: 100%" value="#evaluation_#{program.entryUUID}" class="nyroModal" >#{program.sumOfEvaluation()}</h:outputLink>
+                                    <div id="evaluation_#{program.entryUUID}" class="recommend">
+                                        <h:dataTable value="#{program.evaluations}" var="evaluat"
+                                                     styleClass="order-table"
+                                                     headerClass="order-table-header"
+                                                     rowClasses="order-table-odd-row,order-table-even-row">
+                                            <h:column>
+                                                <f:facet name="header">ФИО</f:facet>
+                                                #{evaluat.expert.surname} #{evaluat.expert.name} #{evaluat.expert.patronymic}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">1</f:facet>
+                                                #{evaluat.expertAssessment1}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">2</f:facet>
+                                                #{evaluat.expertAssessment2}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">3</f:facet>
+                                                #{evaluat.expertAssessment3}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">4</f:facet>
+                                                #{evaluat.expertAssessment4}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">5</f:facet>
+                                                #{evaluat.expertAssessment5}
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header">Сумма</f:facet>
+                                                #{evaluat.expertAssessment1+evaluat.expertAssessment2+evaluat.expertAssessment3+evaluat.expertAssessment4+evaluat.expertAssessment5}
+                                            </h:column>
+                                        </h:dataTable>
+                                    </div>
+                                </t:div>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Действия</f:facet>
+                                <h:commandLink rendered="#{(loginAction.currentUser.roleIs(2)||loginAction.currentUser.roleIs(3))}" action="#{userFormAction.selectProgram(program)}">Анкета</h:commandLink><br/>
+                                <h:outputLink  rendered="#{(loginAction.currentUser.roleIs(2)||loginAction.currentUser.roleIs(3))}" value="#{userFormListAction.siteURL}/uploadFile.htm?pgmF=#{program.entryUUID}&amp;mu=#{loginAction.currentUser.uuid}" style="position: relative; float: left; width: 100%" target="blank">Догрузить документы</h:outputLink><br/>
+                                <h:commandLink rendered="#{(loginAction.currentUser.roleIs(2)||loginAction.currentUser.roleIs(3))}" id="getDownload" value="Скачать PDF" action="#{userFormAction.downLoad(program)}"/>
+                            </h:column>
+
+                        </h:dataTable>
+                        <script type="text/javascript">
+                            $j(function() {
+                                $j('.nyroModal').nyroModal();
+                            });
+                        </script>
+                    </h:form>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

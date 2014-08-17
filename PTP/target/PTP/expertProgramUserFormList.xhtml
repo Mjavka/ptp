@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="expertProgramUserFormList" />
+        <ui:param name="pageTitle" value="Список форм на проверку" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <ptp:formTitle value="Список кандидатів на оцінку " />
+
+                <ptp:formErrorMessage provider="#{showUserForExpertProgramAction}" />
+
+                <div class="formContent">
+                    <h:form prependId="false" rendered="#{showUserForExpertProgramAction.programs.size()!=0}">
+
+                        <div class="formBottomButtons">
+                            <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{showUserForExpertProgramAction.downLoadExcelRating()}" value="Рейтинг Excel"/>
+                        </div>
+                        <h:dataTable value="#{showUserForExpertProgramAction.programs}" var="program"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+                            <h:column>
+                                <!-- column header -->
+                                <f:facet name="header">№</f:facet>
+                                <!-- row record -->
+                                #{showUserForExpertProgramAction.programs.indexOf(program)+1}
+                            </h:column>
+                            <h:column >
+                                <!-- column header -->
+                                <f:facet name="header">Пользователь</f:facet>
+                                <!-- row record -->
+                                #{program.user.surname} #{program.user.name}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Программа</f:facet>
+                                    #{program.name}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Оцінка</f:facet>
+                                <h:commandLink action="#{showUserForExpertProgramAction.evaluateUserForm(program)}">#{showUserForExpertProgramAction.evaluateSum(program)}</h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Файлы</f:facet>
+                                <h:outputLink rendered="#{program.photo != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.photo.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Фото</h:outputLink>
+                                <h:outputLink rendered="#{program.passport != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.passport.resourcePath}" style="position: relative; float: left; width: 100% " target="blank">Паспорт 1с</h:outputLink>
+                                <h:outputLink rendered="#{program.passportSecondPage != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.passportSecondPage.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Паспорт 2с</h:outputLink>
+                                <h:outputLink rendered="#{program.firstPageForeignPassport != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.firstPageForeignPassport.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Загран Паспорт</h:outputLink>
+                                <h:outputLink rendered="#{program.mvs != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.mvs.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Резюме</h:outputLink>
+                                <h:outputLink rendered="#{program.certificateEmployment != null}" value="#{showUserForExpertProgramAction.siteURL}#{program.certificateEmployment.resourcePath}" style="position: relative; float: left; width: 100%" target="blank">Довідка з місця роботи</h:outputLink>
+                                <t:div rendered="#{program.recommends != null}">
+                                    <ui:repeat value="#{program.recommends}" var="recommend" varStatus="recS">
+                                        <h:outputLink style="position: relative; float: left; width: 100%" value="#recommend_#{program.entryUUID}_#{recS.index+1}" class="nyroModal" >Рекомендация #{recS.index+1}</h:outputLink>
+                                        <div id="recommend_#{program.entryUUID}_#{recS.index+1}" class="recommend">
+                                            <t:div styleClass="formLine formLabel label2Conteiner" >
+                                                <div class="titleElem">
+                                                    <h:outputText value="Рекомендодавець:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Прізвище"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendSurname}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="Ім'я"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendName}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="По батькові"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendPatronymic}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark" >
+                                                <ptp:formLabel value="Телефон"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendPhone}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Місце роботи"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendWorkplase}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="Посада"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.recomendWorkposition}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div styleClass="formLine formLabel label2Conteiner" style="padding-top: 20px;">
+                                                <div class="titleElem">
+                                                    <h:outputText value="Рекомендація:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="У якій якості та як довго ви знаєте кандидата"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.howLongKnown}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div styleClass="formLine formLabel label2Conteiner" >
+                                                <div class="titleElem">
+                                                    <h:outputText value="Надайте, будь ласка, оцінку кандидатові за критеріями:" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="Лідерський потенціал"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.liderPotential}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Професійність"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.professionalism}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="Гнучкість"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.flexibility}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Мотивація"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.motivation}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="На вашу думку, які найкращі якості притаманні кандидату?"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.bestQuality}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Будь ласка, опишіть, чому ви вважаєте, що кандидат підготовлений до даної програми та відповідає тематиці стажування з огляду на його діяльність. Наведіть, будь ласка, конкретні приклади на підтвердження своїх тверджень."  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.whyCorrespondsProgram}" />
+                                                </div>
+                                            </t:div>
+
+                                            <t:div  styleClass="formLine dark">
+                                                <ptp:formLabel value="Як, на вашу думку, кандидат зможе застосувати досвід та знання, набуті під час стажування, в своїй організації, рідному місті/області чи у відповідній галузі?"  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.canApplyKnowledge}" />
+                                                </div>
+                                            </t:div>
+                                            <t:div  styleClass="formLine">
+                                                <ptp:formLabel value="Будь ласка, наведіть конкретний приклад успішно реалізованого раніше проекту чи інших досягнень кандидата   в професійній сфері, що відповідає тематиці очікуваного стажування."  />
+                                                <div class="inputElem">
+                                                    <h:outputText value="#{recommend.achievementCandidate}" />
+                                                </div>
+                                            </t:div>
+                                        </div>
+                                    </ui:repeat>
+                                </t:div>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Дія</f:facet>
+                                <h:commandLink action="#{showUserForExpertProgramAction.selectUserForm(program)}">Відкрити</h:commandLink>
+                            </h:column>
+
+                        </h:dataTable>
+                    </h:form>
+                </div>
+
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

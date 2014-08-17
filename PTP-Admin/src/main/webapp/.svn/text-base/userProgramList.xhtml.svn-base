@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="userProgramList" />
+    <ui:param name="pageTitle" value="Список пользователей подписаних на програму" />
+
+
+        <ui:define name="body">
+        <div class="centeredContent">
+            <admin:formTitle value="Список пользователей подписаних на програму #{userProgramList.program.name}" />
+
+            <admin:formErrorMessage provider="#{userProgramList}" />
+
+            <div class="formContent">
+                <h:form prependId="false">
+                    <h:dataTable value="#{userProgramList.allUserRegisteredProgram}" var="user"
+    			styleClass="order-table"
+    			headerClass="order-table-header"
+    			rowClasses="order-table-odd-row,order-table-even-row">
+
+    			<h:column>
+    				<!-- column header -->
+    				<f:facet name="header">Имя</f:facet>
+    				<!-- row record -->
+    				#{user.name}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">Фамилия</f:facet>
+    				#{user.surname}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">E-mail</f:facet>
+    				#{user.email}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">Дата рождения</f:facet>
+    				#{user.birthday}
+    			</h:column>
+
+                        <h:column rendered="#{loginAction.currentUser.roleIs(3)}">
+    				<f:facet name="header">Роли</f:facet>
+                                <ui:repeat value="#{user.role}" var="role">
+                                    <h:outputLabel value="#{role.roleTypeString()}"/><br/>
+                                </ui:repeat>
+    			</h:column>
+
+                        <h:column rendered="#{loginAction.currentUser.roleIs(3)}">
+    				<f:facet name="header">Действия</f:facet>
+                                <h:commandLink rendered="#{loginAction.currentUser.roleIs(3)}" action="#{userEditAction.doEditUser(user)}">Редактировать</h:commandLink><br/>
+    			</h:column>
+
+    		</h:dataTable>
+            </h:form>
+            </div>
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

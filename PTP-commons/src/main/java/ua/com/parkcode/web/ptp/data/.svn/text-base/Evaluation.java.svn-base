@@ -1,0 +1,121 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ua.com.parkcode.web.ptp.data;
+
+import java.io.Serializable;
+import ua.com.parkcode.commons.utils.UUIDUtils;
+
+
+/**
+ * <b>Предназначение:</b><br/>
+ *   <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ *   <p></p>
+ *
+ * <br/>Создан 2013.11.28<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+public class Evaluation implements Serializable{
+
+    private static final long serialVersionUID = -75423536863325499L;
+
+    private String  evaluationUuid;
+
+    private User    expert;
+
+    private int     expertAssessment1 = 0;
+    private int     expertAssessment2 = 0;
+    private int     expertAssessment3 = 0;
+    private int     expertAssessment4 = 0;
+    private int     expertAssessment5 = 0;
+
+
+    // <editor-fold defaultstate="collapsed" desc="getter && setter">
+
+    public String getEvaluationUuid()
+    {
+        if(evaluationUuid == null)
+        {
+            evaluationUuid = UUIDUtils.randomUUIDString();
+        }
+        return evaluationUuid;
+    }
+
+    public void setEvaluationUuid(String evaluationUuid)
+    {
+        this.evaluationUuid = evaluationUuid;
+    }
+
+    public User getExpert()
+    {
+        return expert;
+    }
+
+    public void setExpert(User expert)
+    {
+        this.expert = expert;
+    }
+
+    public int getExpertAssessment1()
+    {
+        return expertAssessment1;
+    }
+
+    public void setExpertAssessment1(int expertAssessment1)
+    {
+        this.expertAssessment1 = expertAssessment1;
+    }
+
+    public int getExpertAssessment2()
+    {
+        return expertAssessment2;
+    }
+
+    public void setExpertAssessment2(int expertAssessment2)
+    {
+        this.expertAssessment2 = expertAssessment2;
+    }
+
+    public int getExpertAssessment3()
+    {
+        return expertAssessment3;
+    }
+
+    public void setExpertAssessment3(int expertAssessment3)
+    {
+        this.expertAssessment3 = expertAssessment3;
+    }
+
+    public int getExpertAssessment4()
+    {
+        return expertAssessment4;
+    }
+
+    public void setExpertAssessment4(int expertAssessment4)
+    {
+        this.expertAssessment4 = expertAssessment4;
+    }
+
+    public int getExpertAssessment5()
+    {
+        return expertAssessment5;
+    }
+
+    public void setExpertAssessment5(int expertAssessment5)
+    {
+        this.expertAssessment5 = expertAssessment5;
+    }
+
+// </editor-fold>
+
+
+
+
+
+}

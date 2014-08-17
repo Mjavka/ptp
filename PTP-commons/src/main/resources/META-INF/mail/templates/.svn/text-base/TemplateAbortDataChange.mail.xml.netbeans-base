@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MailTemplate type="html">
+    <subject>Зміна персональних данних</subject>
+    <pageContent><![CDATA[
+Шановний(а) $$_USER__SURNAME_$$ $$_USER__NAME_$$,
+<br/>
+Ваші реєстраційні дані на ресурсі ptp.ceume.org.ua <b>не змінено</b> згідно вашого запиту.
+<br/>
+Коментар: $$_COMMENT_$$
+<br/>
+З повагою,
+Адміністрація PTP
+]]>
+    </pageContent>
+</MailTemplate>

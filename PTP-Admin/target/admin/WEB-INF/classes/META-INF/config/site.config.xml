@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <!-- e-mail sending configuration -->
+    <mail>
+        <!-- FROM e-mail field on send -->
+        <from>support@ptp.ua</from>
+        <!-- FROM NAME e-mail field on send -->
+        <fromName>PTP</fromName>
+    </mail>
+
+    <site>
+
+        <!-- E-mail which will be sent as support email for user -->
+        <supportEmail>support@ptp.ua</supportEmail>
+
+
+        <!-- The relative path to dir for complete orders serialization -->
+        <ordersDirPath>/WEB-INF/data/resource</ordersDirPath>
+
+        <url>http://profile.ceume.org.ua/</url>
+
+
+        <enterNotificationReceiver>
+            <email>artem@parkcode.com.ua</email>
+        </enterNotificationReceiver>
+    </site>
+
+</configuration>

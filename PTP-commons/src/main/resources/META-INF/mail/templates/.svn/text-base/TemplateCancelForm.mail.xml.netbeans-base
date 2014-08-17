@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MailTemplate type="plain">
+    <subject>Перевірка анкети</subject>
+    <pageContent><![CDATA[
+Шановний(а) $$_USER__SURNAME_$$ $$_USER__NAME_$$,
+
+Ваша анкета не пройшла перевірку і повернена вам на дозаповнення
+
+
+Коментарій: $$_COMMENT_$$
+
+
+З повагою,
+Адміністрація PTP
+]]>
+    </pageContent>
+</MailTemplate>

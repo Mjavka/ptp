@@ -1,0 +1,661 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ua.com.parkcode.web.ptp.actions;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.parkcode.commons.utils.StringUtils;
+import ua.com.parkcode.commons.web.faces.actions.AbstractAction;
+import static ua.com.parkcode.commons.web.faces.actions.AbstractAction.getFacesContext;
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.data.Evaluation;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.User;
+import ua.com.parkcode.web.ptp.services.ProgramService;
+import ua.com.parkcode.web.ptp.services.UserService;
+
+
+/**
+ * <b>Предназначение:</b><br/>
+ *   <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ *   <p></p>
+ *
+ * <br/>Создан 2013.08.21<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name = "showUserForExpertProgramAction")
+@SessionScoped
+public class ShowUserForExpertProgramAction extends AbstractAction{
+
+    private static final long serialVersionUID = -2447973375715997L;
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowUserForExpertProgramAction.class);
+
+    private Program program;
+
+    private List<Program> programs;
+
+    private transient UserService userService;
+
+    private transient ProgramService programService;
+
+    private transient Evaluation evaluate;
+
+
+    public int evaluateSum(Program program)
+    {
+        int sum = 0;
+        if(program != null)
+        {
+            if(program.getEvaluations()!=null && !program.getEvaluations().isEmpty())
+            {
+                User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+                for(Evaluation ev : program.getEvaluations())
+                {
+                    if(ev.getExpert().getUuid().equalsIgnoreCase(expert.getUuid()))
+                    {
+                        sum = ev.getExpertAssessment1()+ev.getExpertAssessment2()+ev.getExpertAssessment3()+ev.getExpertAssessment4()+ev.getExpertAssessment5();
+                    }
+                }
+            }
+        }
+        return sum;
+    }
+
+    public void sortByEvaluation()
+    {
+        //ascending order
+        Collections.sort(programs, new Comparator<Program>()
+        {
+
+            @Override
+            public int compare(Program p1, Program p2)
+            {
+                int totalP1 = 0;
+                int totalP2 = 0;
+                int result;
+                User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+                if (p1.getEvaluations() != null && !p1.getEvaluations().isEmpty())
+                {
+
+                    for (Evaluation eval1 : p1.getEvaluations())
+                    {
+                        if (eval1.getExpert().getUuid().equalsIgnoreCase(expert.getUuid()))
+                        {
+                            totalP1 = totalP1 + eval1.getExpertAssessment1()
+                                    + eval1.getExpertAssessment2()
+                                    + eval1.getExpertAssessment3()
+                                    + eval1.getExpertAssessment4()
+                                    + eval1.getExpertAssessment5();
+                        }
+                    }
+                }
+                if (p2.getEvaluations() != null && !p2.getEvaluations().isEmpty())
+                {
+                    for (Evaluation eval2 : p2.getEvaluations())
+                    {
+                        if (eval2.getExpert().getUuid().equalsIgnoreCase(expert.getUuid()))
+                        {
+                            totalP2 = totalP2 + eval2.getExpertAssessment1()
+                                    + eval2.getExpertAssessment2()
+                                    + eval2.getExpertAssessment3()
+                                    + eval2.getExpertAssessment4()
+                                    + eval2.getExpertAssessment5();
+                        }
+                    }
+                }
+                result = totalP2 - totalP1;
+                return result;
+            }
+
+        });
+    }
+
+    public String selectProgram(Program program)
+    {
+        try{
+            List<User> expertUserList = getUserService().selectAllUserInProgram(program.getUuid());
+            if (expertUserList != null && !expertUserList.isEmpty())
+            {
+                User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+                programs = new ArrayList<Program>();
+                for (User user : expertUserList)
+                {
+                    Program pgm;
+                    pgm = getProgramService().selectUserFormExpertProgram(program.getUuid(), user.getUuid());
+                    if (pgm != null)
+                    {
+                        if (pgm.isAccept())
+                        {
+                            pgm.setUser(user);
+                            if (pgm.getEvaluations() == null || pgm.getEvaluations().isEmpty())
+                            {
+                                Evaluation eval = new Evaluation();
+
+                                if(expert.roleIs(ApplicationManager.USER_ROLE__REVIEWER))
+                                {
+                                    eval.setExpert(expert);
+                                }
+                                List<Evaluation> evaluations = new ArrayList<Evaluation>();
+                                evaluations.add(eval);
+                                pgm.setEvaluations(evaluations);
+                            }
+
+                            programs.add(pgm);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                programs = new ArrayList<Program>();
+            }
+            if(programs != null && !programs.isEmpty())
+            {
+                sortByEvaluation();
+            }
+            return "expertProgramUserFormList.htm?faces-redirect=true";
+        }
+        catch(Exception ex)
+        {
+            LOGGER.error("Error", ex);
+            return null;
+        }
+
+    }
+
+
+      // <editor-fold defaultstate="collapsed" desc="Exel generator">
+    private static void writePNGPicturePOI(Sheet workSheet, BufferedImage bImage, int col, int row)
+    {
+        try
+        {
+            Drawing drawing = null;
+            ClientAnchor anchor = null;
+
+            ByteArrayOutputStream byteArrayImg = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "png", byteArrayImg);
+            int pictureIdx = workSheet.getWorkbook().addPicture(byteArrayImg.toByteArray(),
+                                                                Workbook.PICTURE_TYPE_PNG);
+            anchor = new HSSFClientAnchor();
+            anchor.setCol1(col);
+            anchor.setRow1(row);
+
+            drawing = workSheet.createDrawingPatriarch();
+            Picture pict = drawing.createPicture(anchor, pictureIdx);
+            pict.resize();
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error insert image", ex);
+        }
+    }
+
+    private OutputStream generateExcelRating()
+    {
+        int expertCount = 0;
+
+        User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //Blank workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+
+        //Create a blank sheet
+        HSSFSheet sheet = workbook.createSheet("Employee Data");
+
+        // <editor-fold defaultstate="collapsed" desc="exel header">
+        CellRangeAddress logoImageRegion = new CellRangeAddress(0, 0, 0, 1);
+        sheet.addMergedRegion(logoImageRegion);
+
+        InputStream in = getClass().getResourceAsStream("/img/usaid_logo.png");
+
+        Row logo = sheet.createRow(0);
+        Cell logoText = logo.createCell(2);
+
+        logo.setHeight((short) 1100);
+        sheet.setColumnWidth(2, 13000);
+
+        logoText.setCellValue("Навчальні програми \n професійного зростання");
+
+        CellStyle logoTextStyle = workbook.createCellStyle();
+        logoTextStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        logoTextStyle.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        logoTextStyle.setWrapText(true);
+
+        HSSFFont logoFont = workbook.createFont();
+        logoFont.setFontHeightInPoints((short)15);
+        logoFont.setColor(HSSFColor.DARK_BLUE.index);
+        logoTextStyle.setFont(logoFont);
+
+        logoText.setCellStyle(logoTextStyle);
+
+        try
+        {
+            BufferedImage bImageFromConvert = ImageIO.read(in);
+            writePNGPicturePOI(sheet, bImageFromConvert, 0, 0);
+        }
+        catch (IOException ex)
+        {
+            LOGGER.error("Error read image", ex);
+        }
+
+
+        Row headProgram = sheet.createRow(1);
+        headProgram.setHeight((short)900);
+        sheet.setColumnWidth(1, 9000);
+        Cell programName =headProgram.createCell(0);
+
+        programName.setCellValue(programs.get(0).getName());
+
+        CellStyle programNameStyle = workbook.createCellStyle();
+        programNameStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        programNameStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        programNameStyle.setWrapText(true);
+        programNameStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
+        programNameStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+
+        HSSFFont programNameFont = workbook.createFont();
+        programNameFont.setFontHeightInPoints((short)17);
+
+        programNameStyle.setFont(programNameFont);
+
+        programName.setCellStyle(programNameStyle);
+
+        Row headExpertProgram = sheet.createRow(2);
+        headExpertProgram.setHeight((short)800);
+        sheet.setColumnWidth(1, 9000);
+        Cell expertName =headExpertProgram.createCell(0);
+
+        expertName.setCellValue("Експерт: "+ expert.getSurname()+" "+expert.getName()+" "+expert.getPatronymic());
+
+        CellStyle expertNameStyle = workbook.createCellStyle();
+        expertNameStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        expertNameStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        expertNameStyle.setWrapText(true);
+        expertNameStyle.setFillForegroundColor(IndexedColors.SKY_BLUE.index);
+        expertNameStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+
+        HSSFFont expertNameFont = workbook.createFont();
+        expertNameFont.setFontHeightInPoints((short)17);
+
+        expertNameStyle.setFont(expertNameFont);
+
+        expertName.setCellStyle(expertNameStyle);
+// </editor-fold>
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setAlignment(CellStyle.ALIGN_JUSTIFY);
+        headerStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        headerStyle.setWrapText(true);
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.index);
+        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        Row tableHeader = sheet.createRow(3);
+
+        Cell num = tableHeader.createCell(0);
+        num.setCellValue("№");
+        num.setCellStyle(headerStyle);
+        CellRangeAddress numRegion = new CellRangeAddress(3, 4, 0, 0);
+        sheet.addMergedRegion(numRegion);
+
+        Cell candidat = tableHeader.createCell(1);
+        candidat.setCellValue("Кандидат");
+        candidat.setCellStyle(headerStyle);
+        CellRangeAddress candidatRegion = new CellRangeAddress(3, 4, 1, 1);
+        sheet.addMergedRegion(candidatRegion);
+
+        Cell workPlace = tableHeader.createCell(2);
+        workPlace.setCellValue("Основне місце роботи");
+        workPlace.setCellStyle(headerStyle);
+        CellRangeAddress workPlaceRegion = new CellRangeAddress(3, 4, 2, 2);
+        sheet.addMergedRegion(workPlaceRegion);
+
+        Cell ownership = tableHeader.createCell(3);
+        ownership.setCellValue("Форма власності організації");
+        ownership.setCellStyle(headerStyle);
+        CellRangeAddress ownershipRegion = new CellRangeAddress(3, 4, 3, 3);
+        sheet.addMergedRegion(ownershipRegion);
+
+        Cell workPosition = tableHeader.createCell(4);
+        workPosition.setCellValue("Посада");
+        workPosition.setCellStyle(headerStyle);
+        CellRangeAddress workPositionRegion = new CellRangeAddress(3, 4, 4, 4);
+        sheet.addMergedRegion(workPositionRegion);
+
+        Cell workPlaseAdress = tableHeader.createCell(5);
+        workPlaseAdress.setCellValue("Область, місто (місця роботи)");
+        workPlaseAdress.setCellStyle(headerStyle);
+        CellRangeAddress workPlaseAdressRegion = new CellRangeAddress(3, 4, 5, 5);
+        sheet.addMergedRegion(workPlaseAdressRegion);
+
+
+
+        Cell expertCell = null;
+
+        int columnNum = 6;
+
+        expertCell = tableHeader.createCell(columnNum);
+        expertCell.setCellValue("Оцінка");
+        CellStyle expertCellStyle = workbook.createCellStyle();
+        expertCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        expertCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        expertCellStyle.setWrapText(true);
+        expertCellStyle.setFillForegroundColor(IndexedColors.LIME.index);
+        expertCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        expertCell.setCellStyle(expertCellStyle);
+
+        CellStyle expertStyle = workbook.createCellStyle();
+        expertStyle.setAlignment(CellStyle.ALIGN_JUSTIFY);
+        expertStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        expertStyle.setWrapText(true);
+
+        sheet.setColumnWidth(columnNum, 3000);
+
+        CellRangeAddress ratingCellRegion = new CellRangeAddress(3, 4, columnNum, columnNum);
+        sheet.addMergedRegion(ratingCellRegion);
+
+
+
+
+
+        //Iterate over data and write to sheet
+
+        int rownum = 5;
+
+        List<Program> objArr = programs;
+
+        for (Program obj : objArr)
+        {
+            Row row = sheet.createRow(rownum++);
+            Cell cellNum = row.createCell(0);
+            cellNum.setCellValue(objArr.indexOf(obj)+1);
+
+            Cell cellFIO = row.createCell(1);
+            cellFIO.setCellValue(obj.getUser().getSurname()+" "+obj.getUser().getName()+" "+obj.getUser().getPatronymic());
+
+            Cell workPlase = row.createCell(2);
+            workPlase.setCellValue(obj.getWorkPlaceOrganization());
+
+            Cell workPlaseOwnership = row.createCell(3);
+            workPlaseOwnership.setCellValue(obj.getWorkPlaseOwnership());
+
+            Cell workPlasePost = row.createCell(4);
+            workPlasePost.setCellValue(obj.getWorkPlacePost());
+
+            Cell workPlaseRegion = row.createCell(5);
+            workPlaseRegion.setCellValue(obj.getWorkPlaseRegion());
+
+            int total = 0;
+            total = total + evaluateSum(obj);
+            Cell totalsum = row.createCell(6);
+            totalsum.setCellValue(total);
+        }
+
+
+
+        CellRangeAddress programNameRegion = new CellRangeAddress(1, 1, 0, 6);
+        sheet.addMergedRegion(programNameRegion);
+
+        CellRangeAddress programExpertNameRegion = new CellRangeAddress(2, 2, 0, 6);
+        sheet.addMergedRegion(programExpertNameRegion);
+
+        try
+        {
+            workbook.write(out);
+            return out;
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error create output stream", ex);
+            return null;
+        }
+    }
+
+    public void downLoadExcelRating() throws IOException
+    {
+        ByteArrayOutputStream out = (ByteArrayOutputStream) generateExcelRating();
+
+        HttpServletResponse response = (HttpServletResponse) getFacesContext().getExternalContext().getResponse();
+
+        if (out.size() == 0)
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        response.reset();
+        response.setBufferSize(out.size());
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Length", String.valueOf(out.size()));
+        response.setHeader("Content-Disposition", "attachment;filename=\"Rating_" + StringUtils.doTransliteration(programs.get(0).getName()) + ".xls" + "\"");
+
+        OutputStream output = null;
+        try
+        {
+            output = response.getOutputStream();
+
+            output.write(out.toByteArray());
+        }
+        finally
+        {
+            output.close();
+        }
+        getFacesContext().responseComplete();
+        out.close();
+    }
+
+// </editor-fold>
+
+
+
+
+    // <editor-fold defaultstate="collapsed" desc="Getter && Setter">
+
+
+
+    public Evaluation getEvaluate()
+    {
+        return evaluate;
+    }
+
+    public void setEvaluate(Evaluation evaluate)
+    {
+        this.evaluate = evaluate;
+    }
+
+
+
+    public Program getProgram()
+    {
+        return program;
+    }
+
+    public void setProgram(Program program)
+    {
+        this.program = program;
+    }
+
+
+    public List<Program> getPrograms()
+    {
+        return programs;
+    }
+
+    public void setPrograms(List<Program> programs)
+    {
+        this.programs = programs;
+    }
+// </editor-fold>
+
+
+    protected final UserService getUserService()
+    {
+        if (userService == null)
+        {
+            userService = evaluateExpression("userService");
+        }
+        return userService;
+    }
+
+    protected final ProgramService getProgramService()
+    {
+        if (programService == null)
+        {
+            programService = evaluateExpression("programService");
+        }
+        return programService;
+    }
+
+    private void recount(Program pgm)
+    {
+        if (pgm !=null)
+        {
+            pgm.setTotalEvaluation(evaluate.getExpertAssessment1()+evaluate.getExpertAssessment2()+evaluate.getExpertAssessment3()+evaluate.getExpertAssessment4()+evaluate.getExpertAssessment5());
+        }
+    }
+
+    public String evaluateUserForm(Program program)
+    {
+        setErrorMessage(null);
+        evaluate = null;
+        try
+        {
+            User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+            this.program = program;
+            for(Evaluation e: program.getEvaluations())
+            {
+                if(e.getExpert().getUuid().equalsIgnoreCase(expert.getUuid()))
+                {
+                    evaluate = e;
+                }
+            }
+
+            if(evaluate == null)
+            {
+                evaluate = new Evaluation();
+                evaluate.setExpert(expert);
+
+                program.getEvaluations().add(evaluate);
+            }
+            recountEvaluation();
+            return "expertUserFormEvaluation.htm?faces-redirect=true";
+        }
+        catch (Exception ex)
+        {
+            setErrorMessage("Произошла непредвиденная ошибка");
+            LOGGER.error("Error select program", ex);
+            return null;
+        }
+    }
+
+
+    public String selectUserForm(Program program)
+    {
+        setErrorMessage(null);
+        evaluate = null;
+        try
+        {
+            User expert = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+            this.program = program;
+            this.program.setGroups(getProgramService().selectPropertyByProgram(this.program.getEntryUUID(), this.program.getUuid()));
+            for(Evaluation e: program.getEvaluations())
+            {
+                if(e.getExpert().getUuid().equalsIgnoreCase(expert.getUuid()))
+                {
+                    evaluate = e;
+                }
+            }
+
+            if(evaluate == null)
+            {
+                evaluate = new Evaluation();
+                evaluate.setExpert(expert);
+
+                program.getEvaluations().add(evaluate);
+            }
+            recountEvaluation();
+            return "expertUserForm.htm?faces-redirect=true";
+        }
+        catch (Exception ex)
+        {
+            setErrorMessage("Произошла непредвиденная ошибка");
+            LOGGER.error("Error select program", ex);
+            return null;
+        }
+
+    }
+
+
+    public void recountEvaluation(){
+        if(this.program != null){
+            recount(this.program);
+        }
+    }
+
+    public String evaluation()
+    {
+        setErrorMessage(null);
+        try
+        {
+            getProgramService().saveEvaluation(evaluate, program.getEntryUUID());
+        }
+        catch(Exception ex)
+        {
+            setErrorMessage("Помилка при онцінці");
+            LOGGER.error("Error for evaluation", ex);
+            return null;
+        }
+        sortByEvaluation();
+        return "expertProgramUserFormList.htm?faces-redirect=true";
+    }
+
+
+    public String getSiteURL()
+    {
+        return ApplicationManager.getSiteURL().substring(0, ApplicationManager.getSiteURL().length()-1);
+    }
+}
+
+

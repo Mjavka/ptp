@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/public/parkcode/!svn/ver/7836/trunk/root/web/ptp/PTP-Admin/src/main/resources
+END
+messages_en.properties
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/resources/messages_en.properties
+END
+log4j.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/resources/log4j.xml
+END
+messages.properties
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-Admin/src/main/resources/messages.properties
+END

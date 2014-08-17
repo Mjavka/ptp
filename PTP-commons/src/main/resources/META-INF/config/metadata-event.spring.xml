@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+
+    <!-- =================================================================== -->
+    <!-- metadata definition                                                 -->
+    <!-- =================================================================== -->
+
+    <sqldb:metadata id="Event" tableName="EVENT_TABLE" tableAlias="evt">
+        <sqldb:field propertyName="uuid"                        columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="programUuid"                 columnName="program_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="ownerUuid"                   columnName="owner_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="eventName"                   columnName="event_name"/>
+        <sqldb:field propertyName="eventDescription"            columnName="event_description"/>
+        <sqldb:field propertyName="eventTypeId"                 columnName="event_type"/>  
+        <sqldb:field propertyName="eventStartDate"              columnName="event_start_date"/>
+        <sqldb:field propertyName="eventEndDate"                columnName="event_end_date"/>      
+    </sqldb:metadata>
+    
+    <sqldb:metadata id="NewExpertEvent" tableName="EVENT_TABLE" tableAlias="exp_evt">
+        <sqldb:field propertyName="uuid"                        columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="eventName"                   columnName="event_name"/>
+        <sqldb:field propertyName="eventDescription"            columnName="event_description"/>
+        <sqldb:field propertyName="eventTypeId"                 columnName="event_type"/> 
+        <sqldb:field propertyName="eventStartDate"              columnName="event_start_date"/>
+        <sqldb:field propertyName="eventEndDate"                columnName="event_end_date"/>       
+    </sqldb:metadata>
+</beans>

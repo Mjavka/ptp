@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="programUserFormList" />
+        <ui:param name="pageTitle" value="Список форм " />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Список форм" />
+                <admin:formErrorMessage provider="#{userFormListAction}" />
+                <div class="formContent">
+                    <h:form prependId="false">
+                        <div class="formLine">
+                            
+                        <h:dataTable value="#{userFormListAction.programs}" var="program"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+
+                            <h:column  >
+                                <!-- column header -->
+                                <f:facet name="header">№</f:facet>
+                                <!-- row record -->
+                                #{userFormListAction.programs.indexOf(program)+1}
+                            </h:column>
+                            <h:column >
+                                <!-- column header -->
+                                <f:facet name="header">
+                                    <h:commandLink>
+                                        Пользователь
+                                    </h:commandLink>
+                                </f:facet>
+                                <!-- row record -->
+                                #{program.userSurname} #{program.userName} #{program.patronymic}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Персональні дані</f:facet>
+                                email: <a href="mailto:#{program.email}">#{program.email}</a><br/>
+                                Моб.тел: #{program.userMobilePhone}<br/>
+                                <b>Основне місце роботи</b><br/>
+                                Назва організації/установи: #{program.workPlaceOrganization}<br/>
+                                Посада: #{program.workPlacePost}<br/>
+                                Область: #{program.workPlaseRegion}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Файлы</f:facet>
+                                <h:outputLink rendered="#{program.photo != null}" value="#{userFormListAction.siteURL}#{program.photo}" style="position: relative; float: left; width: 100%" target="blank">Фото</h:outputLink>
+                                <h:outputLink rendered="#{program.passport != null}" value="#{userFormListAction.siteURL}#{program.passport}" style="position: relative; float: left; width: 100% " target="blank">Паспорт 1с</h:outputLink>
+                                <h:outputLink rendered="#{program.passportSecondPage != null}" value="#{userFormListAction.siteURL}#{program.passportSecondPage}" style="position: relative; float: left; width: 100%" target="blank">Паспорт 2с</h:outputLink>
+                                <h:outputLink rendered="#{program.firstPageForeignPassport != null}" value="#{userFormListAction.siteURL}#{program.firstPageForeignPassport}" style="position: relative; float: left; width: 100%" target="blank">Загран Паспорт</h:outputLink>
+                                <h:outputLink rendered="#{program.mvs != null}" value="#{userFormListAction.siteURL}#{program.mvs}" style="position: relative; float: left; width: 100%" target="blank">Резюме</h:outputLink>
+                                <h:outputLink rendered="#{program.certificateEmployment != null}" value="#{userFormListAction.siteURL}#{program.certificateEmployment}" style="position: relative; float: left; width: 100%" target="blank">Довідка з місця роботи</h:outputLink>
+                                
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:commandLink>
+                                        Оценка
+                                    </h:commandLink>
+                                </f:facet>
+                                <t:div rendered="#{program.sumEvaluation != null}">
+                                    <h:outputLink style="position: relative; float: left; width: 100%" value="#evaluation_#{program.sumEvaluation}" class="nyroModal" >
+                                        #{program.sumEvaluation} 
+
+                                    </h:outputLink>   
+                                    <div id="evaluation" class="recommend">
+                                        <h:dataTable value="evaluations">
+                                            
+                                        </h:dataTable>
+                                    </div>
+                                </t:div>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Действия</f:facet>
+                            </h:column>
+                        </h:dataTable>
+                        </div>
+                        <script type="text/javascript">
+                            $j(function() {
+                                $j('.nyroModal').nyroModal();
+                            });
+                        </script>
+                    </h:form>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

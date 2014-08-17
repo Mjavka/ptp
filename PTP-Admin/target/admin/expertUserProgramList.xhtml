@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+
+        <ui:define name="body">
+            <h:form>
+                <div class="centeredContent">
+                    <div class="tittleblock"><b>ЛАСКАВО ПРОСИМО</b></div> 
+                    <div style="margin-top: 30px; margin-bottom: 30px;">
+                        <div class="iconquestion"><a style="text-decoration: none;border-bottom: 1px dashed #0198f3;color:#0198f3">Як оцінювати анкету</a></div>
+                    </div>
+                    <div class="blockfortable">
+
+                        <h:dataTable value="#{expertUserProgramList.fillExpertSomeInfo(expertUserProgramList.currentProgram)}" var="userForExpert"
+                                     styleClass="tableone"
+                                     border="0"
+                                     headerClass="tableHeader"
+                                     rowClasses="tableDefault,tableGray">
+
+                            <h:column>
+                                <div style="width: 60px;">
+                                    <!-- column header -->
+                                    <f:facet name="header">№</f:facet>
+                                    <!-- row record -->
+                                    #{ExpertEvaluationsPage.expertSomeInfo.indexOf(userForExpert)+1}
+                                </div>
+                            </h:column>
+                            <h:column>
+                                <div style="width: 130px;">
+                                    <!-- column header -->
+                                    <f:facet name="header">Користувач</f:facet>
+                                    <!-- row record -->
+                                    #{userForExpert.userFio}
+                                </div>
+                            </h:column>
+                            <h:column>
+                                <div style="width: 460px;">
+                                    <!-- column header -->
+                                    <f:facet name="header">Місце роботи</f:facet>
+                                    <!-- row record -->
+                                    #{userForExpert.userWorkPlace}
+                                </div>
+                            </h:column>
+                            <h:column>
+                                <div style="width: 90px;">
+                                    <!-- column header -->
+                                    <f:facet name="header"><b style="color: #0198f3; border-bottom: 1px dashed #0198f3;text-align: center">Оцінка</b></f:facet>
+                                    <!-- row record -->
+                                    #{userForExpert.sumExpertEvaluation}
+                                </div>
+                            </h:column>
+                            <h:column>
+                                <div style="width: 140px;">
+                                    <!-- column header -->
+                                    <f:facet name="header"><b>Файли</b></f:facet>
+                                    <!-- row record -->
+                                    <div class="usermaindocumentbox">
+                                        <div class="userdocumentboxleft">
+                                            <ul style="list-style-type: none; float:left; ">
+                                                <li style="padding-top: 5px;">Фото:</li>
+                                                <li style="padding-top: 10px;">Паспорта:</li>
+                                                <li style="padding-top: 10px;">Документи:</li>
+                                            </ul>   
+                                        </div>
+                                        <div class="userdocumentboxright">
+                                            <h:outputLink target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.photo}" styleClass="fotobox"  rendered="#{userForExpert.photo != null and !userForExpert.photo.trim().isEmpty()}"/>
+                                            <t:div styleClass="fotoboxgray" rendered="#{userForExpert.photo == null || userForExpert.photo.trim().isEmpty()}">
+                                            </t:div>
+                                            <h:outputLink title="C1" target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.passport}" rendered="#{userForExpert.passport != null and !userForExpert.passport.trim().isEmpty()}">
+                                                <div class ="userlistboxsmall">C1</div>
+                                            </h:outputLink>
+                                            <t:div styleClass="userlistboxsmallgray" rendered="#{userForExpert.passport == null || userForExpert.passport.trim().isEmpty()}">
+                                                C1
+                                            </t:div>
+                                            <h:outputLink title="C2" target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.passportSecondPage}" rendered="#{userForExpert.passportSecondPage != null and !userForExpert.passportSecondPage.trim().isEmpty()}">
+                                                <div class ="userlistboxsmall">C2</div>
+                                            </h:outputLink>
+                                            <t:div styleClass="userlistboxsmallgray" rendered="#{userForExpert.passportSecondPage == null || userForExpert.passportSecondPage.trim().isEmpty()}">
+                                                C2
+                                            </t:div>
+                                            <h:outputLink title="ЗГ" target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.firstPageForeignPassport}" rendered="#{userForExpert.firstPageForeignPassport != null and !userForExpert.firstPageForeignPassport.trim().isEmpty()}">
+                                                <div class ="userlistboxsmall">ЗГ</div>
+                                            </h:outputLink>
+                                            <t:div styleClass="userlistboxsmallgray" rendered="#{userForExpert.firstPageForeignPassport == null || userForExpert.firstPageForeignPassport.trim().isEmpty()}">
+                                                ЗГ
+                                            </t:div>
+                                            <h:outputLink title="РЕЗ" target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.mvs}" rendered="#{userForExpert.mvs != null and !userForExpert.mvs.trim().isEmpty()}">
+                                                <div class ="userlistboxbig">РЕЗ</div>
+                                            </h:outputLink>
+                                            <t:div styleClass="userlistboxbiggray" rendered="#{userForExpert.mvs == null || userForExpert.mvs.trim().isEmpty()}">
+                                                РЕЗ
+                                            </t:div>
+                                            <h:outputLink title="ДОВ" target="blank"  value="#{ExpertEvaluationsPage.getSiteURL()}#{userForExpert.certificateEmployment}" rendered="#{userForExpert.certificateEmployment != null and !userForExpert.certificateEmployment.trim().isEmpty()}">
+                                                <div class ="userlistboxbig">ДОВ</div>
+                                            </h:outputLink>
+                                            <t:div styleClass="userlistboxbiggray" rendered="#{userForExpert.certificateEmployment == null || userForExpert.certificateEmployment.trim().isEmpty()}">
+                                                ДОВ
+                                            </t:div>
+
+                                            <ui:repeat  value="#{userForExpert.recommends}"
+                                                        rendered="#{userForExpert.recommends !=null || !userForExpert.recommends.isEmpty()}" var="recommendation">
+                                                <div class="userlistboxbig rec1">РЕК</div>
+                                                <div  style="display: none;"><admin:formRecommendation recom="#{recommendation}"/></div>
+                                            </ui:repeat>
+                                            <t:div rendered="#{userForExpert.recommends == null || userForExpert.recommends.isEmpty()}">
+                                                <div class="userlistboxbiggray">РЕК</div>
+                                                <div class="userlistboxbiggray">РЕК</div>
+                                            </t:div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:column>
+                            <h:column>
+                                <div style="width: 460px;">
+                                    <!-- column header -->
+                                    <f:facet name="header">Дія</f:facet>
+                                    <!-- row record -->
+                                    <t:div style="margin-bottom: 5px;"><a style="color:#0198f3;" href="www.google.com.ua">Відкрити</a></t:div>
+                                    <t:div rendered="#{userForExpert.evaluated()}" class="iconsuccess" style="text-decoration: none;color:#00aa04;font-size: 10px;">Оцінено</t:div>
+                                </div>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+                </div>
+            </h:form>
+            <script type="text/javascript">
+
+                jQuery(".rec1").click(function() {
+                    jQuery(this).next().modal({
+                        show: {
+                            effect: "blind",
+                            duration: 300
+                        },
+                        hide: {
+                            effect: "explode",
+                            duration: 300
+                        }
+                    });
+
+                });
+
+            </script>
+        </ui:define>
+    </ui:composition>
+</html>

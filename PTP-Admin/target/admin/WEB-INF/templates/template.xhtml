@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view locale="#{i18n.currentLanguage}" contentType="text/html" encoding="UTF-8">
+        <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta http-equiv="Content-Language" content="uk" />
+            <meta http-equiv="Pragma" content="no-cache" />
+            <meta name="robots" content="noindex,nofollow" /><!-- @TODO: change this on 'ALL' for production -->
+            <meta name="allow-search" content="no" /><!-- @TODO: change this on 'yes' for production -->
+            <meta http-equiv="Author" content="Park Code (support@parkcode.com.ua)" />
+
+            <link rel="shortcut icon" href="#{request.contextPath}/images/favicon.ico" />
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/styles.css" />
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/jquery-ui.css"/>
+            <!--<script type="text/javascript" src="#{request.contextPath}/scripts/jquery-1.6.2.min.js"></script>-->
+            <!--<script type="text/javascript" src="#{request.contextPath}/scripts/jquery-1.9.1.js"></script>-->
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery-1.8.3.min.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery-ui.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.datepick.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.datepick-uk.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.checkbox.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.checkbox.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/reveal.css"/>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.reveal.js"></script>
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/basic.css"/>
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/basic_ie.css"/>
+
+
+            <script type="text/javascript" src="#{request.contextPath}/scripts/basic.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/scripts/jquery.simplemodal.js"></script>
+
+            <script type="text/javascript">
+                jQuery.noConflict();
+                var $j = jQuery;
+            </script>
+
+            <script>
+                (function($) {
+                    $(function() {
+
+                        $('input.styled').checkbox();
+
+                    })
+
+
+                })(jQuery)
+            </script>
+
+            <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    jQuery('#allcheck').change(function() {
+                        ;
+
+                        if (jQuery('#allcheck').attr("checked")) {
+                            jQuery(".styled2:enabled").prop('checked', true).trigger('refresh');
+                        } else {
+                            jQuery(".styled2:enabled").prop('checked', false).trigger('refresh');
+                        }
+                    });
+                });
+
+            </script>
+
+            <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    jQuery(".dialog").dialog({
+                        autoOpen: false,
+                        show: {
+                            duration: 300
+                        },
+                        hide: {
+                            duration: 300
+                        }
+                    });
+                    jQuery(".buttonDialog").click(function() {
+                        jQuery(".dialog").dialog("open");
+                    });
+
+                });
+            </script> 
+
+
+            <link rel="stylesheet" href="styles/nyroModal.css" type="text/css" media="screen" />
+
+            <script type="text/javascript" src="scripts/jquery.nyroModal.custom.js"></script>
+            <!--[if IE 6]>
+                    <script type="text/javascript" src="js/jquery.nyroModal-ie6.min.js"></script>
+            <![endif]-->
+            <script type="text/javascript">
+                $j(function() {
+                    $j('.nyroModal').nyroModal();
+                });
+            </script>
+
+            <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+            <script>
+
+
+                function open_pop_up(box) {
+                    $j("#overlay").show();
+                    $j(box).center_pop_up();
+                    $j(box).show(500);
+                }
+                function close_pop_up(box) {
+                    $j("#overlay").hide();
+                    $j(box).hide(500);
+                }
+                $j(document).ready(function() {
+                    jQuery.fn.center_pop_up = function() {
+                        this.css('position', 'absolute');
+                        this.css('top', ($j(window).height() - this.height()) / 2 + $j(window).scrollTop() + 'px');
+                        this.css('left', ($j(window).width() - this.width()) / 2 + $j(window).scrollLeft() + 'px');
+                    };
+                });
+            </script>
+            <title>#{pageTitle}</title>
+            <meta name="keywords" content="#{!empty metaKeywords ? metaKeywords : 'default keywords'}" />
+            <meta name="description" content="#{!empty metaDescription ? metaDescription : 'default description'}" />
+
+            <ui:insert name="head"></ui:insert>
+        </h:head>
+        <h:body>
+            <div id="page" class="hfeed site">
+                <header id="masthead" class="site-header" role="banner">
+                    <div class="header-top">
+                        <div class="ceume-logo"></div>
+                        <ui:remove>
+                            <div class="logo"></div>
+                            <div class="logoText">PARTICIPANT TRAINING PROGRAM IN UKRAINE</div>
+                            <div class="langs"><span>EN</span>|<a href="javascript:void(0);">UA</a></div>
+                        </ui:remove>
+                        <div class="searchBLock">
+                            <input type="text" class="searchField" value="" name="s" id="s" />
+                            <input type="submit" id="searchsubmit" class="searchBtn" value=" " />
+                        </div>
+
+                    </div>
+                    <div class="header-right-link">
+                        <h:outputLink  styleClass="#{pageId=='registration'? 'active' : ''}" rendered="#{!loginAction.loggedIn}"  value="#{request.contextPath}/registration.htm">Реєстрація</h:outputLink>
+                        <ui:remove><h:outputLink  styleClass="#{pageId=='profile'? 'active' : ''}" rendered="#{loginAction.loggedIn}"  value="#{request.contextPath}/profile.htm">Профіль</h:outputLink></ui:remove>
+                    </div>
+                    <div class="header-enter-exit-link">
+                        <h:panelGroup rendered="#{loginAction.loggedIn}">
+                            <h:form>
+                                <t:commandButton rendered="#{loginAction.loggedIn}" action="#{loginAction.logout}" value="Вихід"></t:commandButton>
+                            </h:form>
+                        </h:panelGroup>
+                    </div>
+
+                    <nav id="site-navigation" class="main-navigation" role="navigation">
+                        <div class="nav-menu">
+                            <ul>
+                                <li class="#{pageId=='login'? 'current_page_item' : 'page_item'} ">
+                                    <a href="#{request.contextPath}/" title="Головна">Головна</a>
+                                    <ui:remove>
+                                        <ul>
+                                            <li><a href="http://ptp.com.ua/" title="Головна">- Головна2</a></li>
+                                            <li><a href="http://ptp.com.ua/" title="Головна">- Пример</a></li>
+                                            <li><a href="http://ptp.com.ua/" title="Головна">- Головна сторынка</a></li>
+                                            <li><a href="http://ptp.com.ua/" title="Головна">- Головна 45</a></li>
+                                        </ul>
+                                    </ui:remove>
+                                </li>
+                                <li class="#{pageId=='userList'? 'current_page_item' : 'page_item'}" >
+                                    <a href="#{request.contextPath}/userList.htm">Користувачі</a>
+                                </li>
+                                <li class="#{pageId=='programList'? 'current_page_item' : 'page_item'}">
+                                    <a href="#{request.contextPath}/programList.htm">Програми</a>
+                                </li>
+                                <li class="#{pageId=='programUserFormList'? 'current_page_item' : 'page_item'}">
+                                    <h:form>
+                                        <h:commandLink action="#{userFormListAction.initEntryList()}" onclick="open_pop_up('#pop-up');">Документи</h:commandLink>
+                                    </h:form>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </nav>
+
+                </header>
+
+                <div id="main" class="wrapper">
+                    <ui:insert name="body"></ui:insert>
+                </div>
+                <div class="empty"></div>
+            </div>
+            <div class="footerContainer">
+                <b>Copyright 2013</b> Створення цього веб-сайту стало можливим завдяки підтримці Американського Народу, наданій через Агентство США з міжнародного розвитку (USAID). Зміст цього веб-сайту є винятковою відповідальністю World Learning і його субконтрактера - Консорціуму із удосконалення менеджмент-освіти в Україні (CEUME) як виконавців проекту міжнародної технічної допомоги «Навчальні програми професійного зростання»  і не обов’язково відбиває погляди та позицію USAID або Уряду Сполучених Штатів Америки. <a href="/ugoda-konfidencijnosti ">Угода конфіденційності</a>
+            </div>
+            <ui:insert name="underFooter"></ui:insert>
+            <div id="pop-up">
+                <div style="position: relative; float: left; width: 33%; height: 100%"><img style="margin: 0 0 0 20px;" alt="load" src="images/load.gif"/></div>
+                <div style="position: relative; float: left; width: 67%; height: 100%; "><p style="font-size: 32px; padding-top: 2px;">Зачекайте</p></div>
+            </div>
+            <div id="overlay"></div>
+        </h:body>
+    </f:view>
+</html>

@@ -1,0 +1,1355 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ua.com.parkcode.web.ptp.actions;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.activation.DataSource;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.mail.internet.InternetAddress;
+import javax.mail.util.ByteArrayDataSource;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ua.com.parkcode.commons.utils.DateTimeUtils;
+import ua.com.parkcode.commons.utils.IOUtils;
+import ua.com.parkcode.commons.utils.MapUtils;
+import ua.com.parkcode.commons.utils.UUIDUtils;
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.PropertyForProgram;
+import ua.com.parkcode.web.ptp.data.PropertyGroup;
+import ua.com.parkcode.web.ptp.data.PropertyValue;
+import ua.com.parkcode.web.ptp.data.User;
+import ua.com.parkcode.commons.utils.StringUtils;
+import ua.com.parkcode.web.ptp.pdf.PdfManager;
+import ua.com.parkcode.web.ptp.PropertyManager;
+import ua.com.parkcode.web.ptp.data.PropertyForm;
+import ua.com.parkcode.web.ptp.data.Recommendation;
+import ua.com.parkcode.web.ptp.data.Resource;
+import ua.com.parkcode.web.ptp.data.ResourceForProgram;
+import ua.com.parkcode.web.ptp.mail.MailManager;
+import ua.com.parkcode.web.ptp.pdf.FieldPdf;
+import ua.com.parkcode.web.ptp.services.RecommendService;
+import ua.com.parkcode.web.ptp.services.ResourceService;
+
+/**
+ * <b>Предназначение:</b><br/>
+ * <p>
+ * </p>
+ *
+ * <br/><b>Описание:</b><br/>
+ * <p>
+ * </p>
+ *
+ * <br/>Создан 2013.07.08<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name = "programAction")
+@SessionScoped
+public class ProgramAction extends AbstractProgramAction
+{
+
+    private static final long serialVersionUID = -149914382844208067L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProgramAction.class);
+
+    public static final String MAIL_TEMPLATE__PROGRAM_ENTERED            = "TemplateUserEnteredProgram";
+
+    private static final String MAIL_TEMPLATE__ACCEPT                   = "TemplateAcceptForm";
+    private static final String MAIL_TEMPLATE__RECOMMEND                = "TemplateRecommendUser";
+
+    private static final String MAIL_PARAM__USER_FIO                    = "USER_FIO";
+    private static final String MAIL_PARAM__USER_EMAIL                  = "USER_EMAIL";
+    private static final String MAIL_PARAM__PROGRAM_NAME                = "PROGRAM_NAME";
+    private static final String MAIL_PARAM__PROGRAM__TABLE_CONTENT      = "PROGRAM__TABLE_CONTENT";
+    private static final String MAIL_PARAM__RECOMMEND_LINK              = "RECOMMEND_LINK";
+    private static final String MAIL_PARAM__PROGRAM_DATE                = "PROGRAM_DATE";
+    private static final String MAIL_PARAM__FIRST_RECOMMEND_FIO_EMAIL   = "FIRST_RECOMMEND_FIO_EMAIL";
+    private static final String MAIL_PARAM__SECOND_RECOMMEND_FIO_EMAIL  = "SECOND_RECOMMEND_FIO_EMAIL";
+
+    private Program program;
+    private PropertyGroup group;
+
+    private transient UploadedFile uploadedPhoto;
+    private transient UploadedFile uploadedPassport;
+    private transient UploadedFile uploadedPassportSecondPage;
+    private transient UploadedFile uploadedForeignPassport;
+    private transient UploadedFile uploadedMVS;
+    private transient UploadedFile uploadedСertificateEmployment;
+
+    private transient ResourceService resourceService;
+    private transient RecommendService recommendService;
+
+    private String message;
+    private StringBuilder pdfContent;
+    private final int leftColumnWidth = 180;
+    private final int rightColumnWidth = 350;
+
+
+    // <editor-fold defaultstate="collapsed" desc="Getter && Setter">
+    public UploadedFile getUploadedPassportSecondPage()
+    {
+        return uploadedPassportSecondPage;
+    }
+
+    public void setUploadedPassportSecondPage(UploadedFile uploadedPassportSecondPage)
+    {
+        this.uploadedPassportSecondPage = uploadedPassportSecondPage;
+    }
+
+    public UploadedFile getUploadedСertificateEmployment()
+    {
+        return uploadedСertificateEmployment;
+    }
+
+    public void setUploadedСertificateEmployment(UploadedFile uploadedСertificateEmployment)
+    {
+        this.uploadedСertificateEmployment = uploadedСertificateEmployment;
+    }
+
+    public UploadedFile getUploadedMVS()
+    {
+        return uploadedMVS;
+    }
+
+    public void setUploadedMVS(UploadedFile uploadedMVS)
+    {
+        this.uploadedMVS = uploadedMVS;
+    }
+
+    public UploadedFile getUploadedPhoto()
+    {
+        return uploadedPhoto;
+    }
+
+    public void setUploadedPhoto(UploadedFile uploadedPhoto)
+    {
+        this.uploadedPhoto = uploadedPhoto;
+    }
+
+    public UploadedFile getUploadedPassport()
+    {
+        return uploadedPassport;
+    }
+
+    public void setUploadedPassport(UploadedFile uploadedPassport)
+    {
+        this.uploadedPassport = uploadedPassport;
+    }
+
+    public UploadedFile getUploadedForeignPassport()
+    {
+        return uploadedForeignPassport;
+    }
+
+    public void setUploadedForeignPassport(UploadedFile uploadedForeignPassport)
+    {
+        this.uploadedForeignPassport = uploadedForeignPassport;
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public void setMessage(String message)
+    {
+        this.message = message;
+    }
+
+    public Program getProgram()
+    {
+        return program;
+    }
+
+    public void setProgram(Program program)
+    {
+        this.program = program;
+    }
+    // </editor-fold>
+
+    public String selectProgram(Program program)
+    {
+        setErrorMessage(null);
+        group = null;
+        message = null;
+        try
+        {
+            User user = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+            if (getProgramService().isProgramAlreadyEntry(program, user))
+            {
+                setErrorMessage("Ви вже підписані на дану програму");
+                return null;
+            }
+
+            if (isLogined())
+            {
+                program = getProgramService().selectProgramByUUID(program.getUuid());
+                program.setEntryUUID(UUIDUtils.randomUUIDString());
+                program.setUser(user);
+                this.program = program;
+                createProperyValue();
+            }
+            else
+            {
+                return "programList.htm?faces-redirect=true";
+            }
+            return "programEntry.htm?faces-redirect=true";
+        } catch (Exception ex)
+        {
+            LOGGER.error("Error entry program", ex);
+            return null;
+        }
+
+    }
+
+
+    // <editor-fold defaultstate="collapsed" desc="Group selector">
+    public PropertyGroup getGroup()
+    {
+        String groupUUID = getRequest().getParameter("gu");
+        if (groupUUID == null & group == null)
+        {
+            group = program.getGroups().get(0);
+        }
+        else
+        {
+            for (PropertyGroup g : program.getGroups())
+            {
+                if (g.getGroupUuid().equalsIgnoreCase(groupUUID))
+                {
+                    group = g;
+                }
+            }
+        }
+        return group;
+    }
+
+    public String nextGroup()
+    {
+        message = null;
+        int index = program.getGroups().indexOf(group);
+        if (index < program.getGroups().size() - 1)
+        {
+            group = program.getGroups().get(index + 1);
+        }
+        return "programEntry.htm?gu=" + group.getGroupUuid() + "&faces-redirect=true";
+    }
+
+    public String prevGroup()
+    {
+        message = null;
+        int index = program.getGroups().indexOf(group);
+        if (index > 0)
+        {
+            group = program.getGroups().get(index - 1);
+        }
+        return "programEntry.htm?gu=" + group.getGroupUuid() + "&faces-redirect=true";
+    }
+// </editor-fold>
+
+
+
+    // <editor-fold defaultstate="collapsed" desc="Pdf Generator">
+
+
+    private FieldPdf addFieldsForJRXML(int x, int y, PropertyForProgram property)
+    {
+        int leftColumnMaxLengthLine = 29;
+        int rightColumnMaxLengthLine = 55;
+        int fieldPading = 5;
+        int height = 12;
+
+        int propertyNameHeight = height;
+        int valueHeight = height;
+        int valueY = y;
+        int totalValueHeight = 0;
+
+        StringBuilder field = new StringBuilder();
+        try
+        {
+            if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+            {
+
+                int fieldWidth = leftColumnWidth + 300;
+                int fieldHeight = height;
+
+                if (StringUtils.isNotBlank(property.getPropertyName()) && property.getPropertyName().length() > 60)
+                {
+                    double s = (double) property.getPropertyName().length() / 60;
+                    int line = (int) Math.ceil(s);
+                    fieldHeight = fieldHeight * line;
+                }
+
+                if (StringUtils.isNotBlank(property.getPropertyName()))
+                {
+                    field.append(PdfManager.createStaticText(x, y, fieldWidth, fieldHeight + (fieldPading*2), "Left", "Arial12", property.getPropertyName()));
+                    return new FieldPdf(x, y, fieldWidth, fieldHeight + (fieldPading*2), field.toString());
+                }
+                else
+                {
+                    return new FieldPdf(x, y, fieldWidth, fieldPading, "");
+                }
+
+            }
+            else
+            {
+
+                if(property.getValue()== null || property.getValue().isEmpty())
+                {
+                    return new FieldPdf(x, y, 0, 0, "");
+                }
+
+                if (property.getPropertyName().length() >= leftColumnMaxLengthLine)
+                {
+                    double s = (double) property.getPropertyName().length() / leftColumnMaxLengthLine;
+                    int line = (int) Math.ceil(s);
+                    propertyNameHeight = propertyNameHeight * line;
+                }
+
+                field.append(PdfManager.createStaticText(x, y, leftColumnWidth, propertyNameHeight, "Left", "Arial", property.getPropertyName()));
+
+                for (PropertyValue val : property.getValue())
+                {
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXTAREA)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXT)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__AUTOCOMPLETE)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__SELECT_TEXT))
+                    {
+                        if (StringUtils.isNotBlank(val.getValueString()) && val.getValueString().length() >= rightColumnMaxLengthLine)
+                        {
+                            double s = (double) val.getValueString().length() / rightColumnMaxLengthLine;
+                            int line = (int) Math.ceil(s);
+                            valueHeight = valueHeight * line;
+                            if(valueHeight > 750)
+                            {
+                                valueHeight = 300;
+                            }
+                        }
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.getValueString()));
+                    }
+
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__DATE))
+                    {
+                        if (StringUtils.isNotBlank(val.getValueTimestampString()) && val.getValueTimestampString().length() > rightColumnMaxLengthLine)
+                        {
+                            double s = (double) val.getValueString().length() / rightColumnMaxLengthLine;
+                            int line = (int) Math.ceil(s);
+                            valueHeight = valueHeight * line;
+                        }
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.getValueTimestampString()));
+                    }
+
+                    if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOX)
+                        || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOXSINGLE))
+                    {
+                        totalValueHeight = totalValueHeight + valueHeight + fieldPading;
+                        field.append(PdfManager.createStaticText(x + 10 + leftColumnWidth, valueY, rightColumnWidth, valueHeight, "Left", "Arial", val.isValueBoolean() ? "Так" : "Ні"));
+                    }
+
+                    valueY = valueY + valueHeight + fieldPading;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error PDF generation", ex);
+            return new FieldPdf(x, y, 0, 0, "");
+        }
+
+        return new FieldPdf(x, y, leftColumnWidth + rightColumnWidth + 10, (propertyNameHeight>totalValueHeight? propertyNameHeight: totalValueHeight), field.toString());
+    }
+
+    public ByteArrayOutputStream generateAplicationFormPDF(Program program) throws IOException
+    {
+        Program pgm = program;
+//        pgm.setGroups(getProgramService().selectPropertyByProgram(program.getEntryUUID(), program.getUuid()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        Map<String, Object> property = new HashMap<String, Object>();
+        int pageHeight = 769;
+
+        int padingBotom = 5;
+        int Y = 120;
+        int leftX = 22;
+        int textFieldHeight = 15;
+        int pageBotom = 1;
+
+        pdfContent = new StringBuilder();
+        pdfContent.append("<band height=\"" + pageHeight + "\" splitType=\"Stretch\">\n"
+                + "			<rectangle radius=\"0\">\n"
+                + "				<reportElement x=\"" + leftX + "\" y=\"10\" width=\"83\" height=\"95\" uuid=\"46b8ba65-1d19-4d14-b86c-9dd6f7684f44\"/>\n"
+                + "			</rectangle>\n"
+                + "			<staticText>\n"
+                + "				<reportElement style=\"Arial\" x=\"" + leftX + "\" y=\"29\" width=\"83\" height=\"46\" uuid=\"07e5dee3-36d4-46d0-a02e-0b88f19c664f\"/>\n"
+                + "				<textElement textAlignment=\"Center\" verticalAlignment=\"Middle\"/>\n"
+                + "				<text><![CDATA[Місце\n"
+                + "для фотографії\n"
+                + "3,5 х 4 см]]></text>\n"
+                + "			</staticText>\n"
+                + "			<staticText>\n"
+                + "				<reportElement style=\"Arial\" x=\"209\" y=\"19\" width=\"192\" height=\"46\" uuid=\"0bed03fb-fe79-407b-b8ea-4491fcf2dc8f\"/>\n"
+                + "				<textElement textAlignment=\"Center\"/>\n"
+                + "				<text><![CDATA[Анкета кандидата для участі у програмі ]]></text>\n"
+                + "			</staticText>\n"
+                + "			<staticText>\n"
+                + "				<reportElement style=\"Arial\" x=\"118\" y=\"75\" width=\"385\" height=\"40\" uuid=\"127048e0-e1fe-475a-9ab3-4a27c3deece1\"/>\n"
+                + "				<textElement textAlignment=\"Center\" verticalAlignment=\"Middle\"/>\n"
+                + "				<text><![CDATA[" + pgm.getName() + "]]></text>\n"
+                + "			</staticText>\n");
+        for(PropertyGroup group : program.getGroups())
+        {
+            if (group.getProperties() != null && !group.getProperties().isEmpty())
+            {
+                if (Y + padingBotom + textFieldHeight > pageHeight - pageBotom)
+                {
+                    pdfContent.append(PdfManager.closePage());
+                    pdfContent.append(PdfManager.openPage(pageHeight));
+                    pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                    Y = 10;
+                }
+                Y = Y + padingBotom;
+                pdfContent.append(PdfManager.createStaticText(leftX, Y, leftColumnWidth + 100, textFieldHeight, "Left", "Arial12", group.getName()));
+                Y = Y + textFieldHeight;
+
+                for (PropertyForProgram programProperty : group.getProperties())
+                {
+                    if (!programProperty.getPropertyType().equals(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                    {
+
+                        Y = Y + padingBotom;
+                        FieldPdf field = addFieldsForJRXML(leftX, Y, programProperty);
+                        if (Y + field.getHeight() > pageHeight - pageBotom)
+                        {
+                            pdfContent.append(PdfManager.closePage());
+                            pdfContent.append(PdfManager.openPage(pageHeight));
+                            pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                            Y = 10;
+                            field = addFieldsForJRXML(leftX, Y, programProperty);
+                        }
+                        pdfContent.append(field.getField());
+                        Y = Y + field.getHeight();
+
+                    }
+                    else
+                    {
+                        if (StringUtils.isNotBlank(programProperty.getPropertyName()))
+                        {
+                            if (Y + padingBotom + textFieldHeight + 15 > pageHeight - pageBotom)
+                            {
+                                pdfContent.append(PdfManager.closePage());
+                                pdfContent.append(PdfManager.openPage(pageHeight));
+                                pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, "Left", "Arial", ""));
+                                Y = 10;
+                            }
+                            Y = Y + padingBotom;
+                            pdfContent.append(PdfManager.createStaticText(leftX, Y, leftColumnWidth + 250, textFieldHeight + 15, "Left", "Arial12", programProperty.getPropertyName()));
+                            Y = Y + textFieldHeight + 15;
+                        }
+                        if (programProperty.getForm() != null && !programProperty.getForm().isEmpty())
+                        {
+                            for (PropertyForm form : programProperty.getForm())
+                            {
+                                for (PropertyForProgram prt : form.getProperties())
+                                {
+                                    Y = Y + padingBotom;
+                                    FieldPdf field = addFieldsForJRXML(leftX, Y, prt);
+                                    if (Y + field.getHeight() > pageHeight - pageBotom)
+                                    {
+                                        pdfContent.append(PdfManager.closePage());
+                                        pdfContent.append(PdfManager.openPage(pageHeight));
+                                        pdfContent.append(PdfManager.createStaticText(0, 0, 200, 1, null, "Arial", null));
+                                        Y = 10;
+                                        field = addFieldsForJRXML(leftX, Y, prt);
+                                    }
+                                    pdfContent.append(field.getField());
+                                    Y = Y + field.getHeight();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        pdfContent.append("	</band>");
+        property.put("PDF_CONTENT", pdfContent.toString());
+        out.write(PdfManager.getInstance().createPDF("template_user_form_ptp", property));
+
+        return out;
+
+    }
+
+// </editor-fold>
+
+    private void createValue(PropertyForProgram prt, String formUUID)
+    {
+        if (!prt.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+        {
+            if (prt.getValue() == null || prt.getValue().isEmpty())
+            {
+                try
+                {
+                    PropertyValue propertyValue = new PropertyValue();
+                    propertyValue.setPropertyUuid(prt.getObjectUuid());
+                    propertyValue.setOwnerUuid(program.getEntryUUID());
+                    propertyValue.setOwnerClass("PropertyForProgram");
+                    propertyValue.setUuid(UUIDUtils.randomUUIDString());
+                    propertyValue.setFormUUID(formUUID);
+
+                    if (prt.getPropertyDefaultValue() != null)
+                    {
+                        User currentUser = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+
+                        if (currentUser != null && currentUser.getDefaultValue() != null)
+                        {
+                            if (currentUser.getDefaultValue().containsKey(prt.getPropertyDefaultValue()))
+                            {
+                                Object data = currentUser.getDefaultValue().get(prt.getPropertyDefaultValue());
+                                if (data != null)
+                                {
+                                    if (data instanceof String)
+                                    {
+                                        propertyValue.setValue((String) data);
+                                    }
+                                    if (data instanceof Date)
+                                    {
+                                        propertyValue.setValue((Date) data);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    List<PropertyValue> val = new ArrayList<PropertyValue>();
+                    val.add(propertyValue);
+                    prt.setValue(val);
+                } catch (Exception ex)
+                {
+                    LOGGER.error("Error create value", ex);
+                }
+
+            }
+            else
+            {
+                if (prt.getPropertyDefaultValue() != null)
+                {
+                    try
+                    {
+                        for (PropertyValue value : prt.getValue())
+                        {
+                            User currentUser = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+
+                            if (currentUser != null && currentUser.getDefaultValue() != null)
+                            {
+                                if (currentUser.getDefaultValue().containsKey(prt.getPropertyDefaultValue()))
+                                {
+                                    Object data = currentUser.getDefaultValue().get(prt.getPropertyDefaultValue());
+                                    if (data instanceof String)
+                                    {
+                                        value.setValue((String) data);
+                                    }
+                                    if (data instanceof Date)
+                                    {
+                                        value.setValue((Date) data);
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception ex)
+                    {
+                        LOGGER.error("Error create value", ex);
+                    }
+                }
+            }
+        }
+    }
+
+    private void createProperyValue()
+    {
+        if (program.getGroups() != null)
+        {
+            List<PropertyGroup> groups = program.getGroups();
+
+            for (PropertyGroup group : groups)
+            {
+                if (group.getProperties() != null)
+                {
+                    for (PropertyForProgram groupProperty : group.getProperties())
+                    {
+                        if (groupProperty.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                        {
+                            if (groupProperty.getForm() == null || groupProperty.getForm().isEmpty())
+                            {
+                                PropertyForm form = new PropertyForm();
+                                form.setFormUUID(UUIDUtils.randomUUIDString());
+                                form.setProperties(groupProperty.getTemplateProperty());
+                                form.setOwnerUUID(program.getEntryUUID());
+                                if (form.getProperties() != null && !form.getProperties().isEmpty())
+                                {
+                                    for (PropertyForProgram formProperty : form.getProperties())
+                                    {
+                                        createValue(formProperty, form.getFormUUID());
+                                    }
+                                }
+                                List<PropertyForm> forms = new ArrayList<PropertyForm>();
+                                forms.add(form);
+                                groupProperty.setForm(forms);
+                            }
+                            else
+                            {
+                                for (PropertyForm form : groupProperty.getForm())
+                                {
+                                    for (PropertyForProgram formProperty : form.getProperties())
+                                    {
+                                        createValue(formProperty, form.getFormUUID());
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            createValue(groupProperty, null);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public String editProgram(Program program)
+    {
+        setErrorMessage(null);
+        group = null;
+        message = null;
+        if (!program.isReview() && !program.isAccept())
+        {
+            try
+            {
+                this.program = program;
+
+                User loginUser = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+
+                this.program.setUser(loginUser);
+
+                this.program.setGroups(getProgramService().selectPropertyByProgram(this.program.getEntryUUID(), this.program.getUuid()));
+
+                createProperyValue();
+
+                return "programEntry.htm?faces-redirect=true";
+            } catch (Exception ex)
+            {
+                LOGGER.error("Error ", ex);
+                return null;
+            }
+        }
+        else
+        {
+            setMessage("Анкета на перевірці і закрита на редагування");
+            return null;
+        }
+
+    }
+
+    public String exitProgram(Program program)
+    {
+        setErrorMessage(null);
+        group = null;
+        message = null;
+        if (!program.isReview() && !program.isAccept())
+        {
+            try
+            {
+                this.program = program;
+
+                User loginUser = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+
+                this.program.setUser(loginUser);
+
+                getProgramService().deleteUserProgram(this.program.getUser().getUuid(), this.program.getUuid());
+                return null;
+            } catch (Exception ex)
+            {
+                LOGGER.error("Error ", ex);
+                return null;
+            }
+        }
+        else
+        {
+            setMessage("Анкета на перевірці і закрита на редагування");
+            return null;
+        }
+
+    }
+
+    public String doEntry()
+    {
+        setErrorMessage(null);
+        message = null;
+        try
+        {
+
+            boolean noErrors = true;
+            //проверка полей
+            noErrors = PropertyManager.validation(program);
+
+            if (program.getPhoto() == null && uploadedPhoto == null && noErrors)
+            {
+                noErrors = false;
+                setErrorMessage("Потрібно додати фото");
+            }
+
+            if (program.getPassport() == null && uploadedPassport == null && noErrors)
+            {
+                noErrors = false;
+                setErrorMessage("Потрібно додати копію першої сторінки паспорта ");
+            }
+
+            if (program.getPassportSecondPage() == null && uploadedPassportSecondPage == null && noErrors)
+            {
+                noErrors = false;
+                setErrorMessage("Потрібно додати копію другої сторінки паспорта ");
+            }
+
+            if (program.getMvs() == null && uploadedMVS == null && noErrors)
+            {
+                noErrors = false;
+                setErrorMessage("Потрібно додати резюме");
+            }
+
+            if (program.getCertificateEmployment() == null && uploadedСertificateEmployment == null && noErrors)
+            {
+                noErrors = false;
+                setErrorMessage("Потрібно додати довідку з місця роботи (або Виписку з Єдиного державного реєстру юридичних осіб та фізичних осіб-підприємців)");
+            }
+
+//            noErrors = true;
+            if (noErrors)
+            {
+//                флаг подачи на проверку
+//                program.setReview(true);
+
+                program.setReview(false);
+                program.setAccept(true);
+//                program.setAccept(false);
+
+                Recommendation first = new Recommendation();
+                Recommendation second = new Recommendation();
+                try
+                {
+                    List<Recommendation> rec = getRecommendService().selectRecommendationsByOwner(program.getEntryUUID());
+                    if (rec != null && !rec.isEmpty())
+                    {
+                        for (Recommendation recommendation : rec)
+                        {
+                            getRecommendService().deleteRecomendation(recommendation.getUuid());
+                        }
+
+                    }
+
+                    first.setRecomendName(PropertyManager.getPropertyByID("recommend_one_name", program).getValue().get(0).getValueString());
+                    first.setRecomendSurname(PropertyManager.getPropertyByID("recommend_one_surname", program).getValue().get(0).getValueString());
+                    first.setRecomendPatronymic(PropertyManager.getPropertyByID("recommend_one_patronymic", program).getValue().get(0).getValueString());
+                    first.setRecomendPhone(PropertyManager.getPropertyByID("recommend_one_phone", program).getValue().get(0).getValueString());
+                    first.setRecomendEmail(PropertyManager.getPropertyByID("recommend_one_email", program).getValue().get(0).getValueString());
+                    first.setRecomendWorkplase(PropertyManager.getPropertyByID("recommend_one_workplase", program).getValue().get(0).getValueString());
+                    first.setRecomendWorkposition(PropertyManager.getPropertyByID("recommend_one_workposition", program).getValue().get(0).getValueString());
+
+                    second.setRecomendName(PropertyManager.getPropertyByID("recommend_two_name", program).getValue().get(0).getValueString());
+                    second.setRecomendSurname(PropertyManager.getPropertyByID("recommend_two_surname", program).getValue().get(0).getValueString());
+                    second.setRecomendPatronymic(PropertyManager.getPropertyByID("recommend_two_patronymic", program).getValue().get(0).getValueString());
+                    second.setRecomendPhone(PropertyManager.getPropertyByID("recommend_two_phone", program).getValue().get(0).getValueString());
+                    second.setRecomendEmail(PropertyManager.getPropertyByID("recommend_two_email", program).getValue().get(0).getValueString());
+                    second.setRecomendWorkplase(PropertyManager.getPropertyByID("recommend_two_workplase", program).getValue().get(0).getValueString());
+                    second.setRecomendWorkposition(PropertyManager.getPropertyByID("recommend_two_workposition", program).getValue().get(0).getValueString());
+
+                    if (first.getRecomendEmail().equals(second.getRecomendEmail()))
+                    {
+                        setErrorMessage("Пошта рекомендодавців не повинна співпадати");
+                        return null;
+                    }
+
+                    //сохранение анкети вибраной программы
+                    save();
+
+//                  сохранение рекомендодателей
+                    getRecommendService().saveRecomendation(first, program.getEntryUUID());
+                    getRecommendService().saveRecomendation(second, program.getEntryUUID());
+
+                    MailManager.getInstance().sendMail(
+                            MAIL_TEMPLATE__RECOMMEND,
+                            new InternetAddress(first.getRecomendEmail()),
+                            MapUtils.<String, Object>map(
+                            MAIL_PARAM__USER_FIO, first.getRecomendSurname() + " " + first.getRecomendName() + " " + first.getRecomendPatronymic(),
+                            MAIL_PARAM__RECOMMEND_LINK, ApplicationManager.getSiteURL() + "recommend.htm?r=" + first.getRecomendUuid() + "&owner=" + program.getEntryUUID() + "&program=" + program.getUuid() + "&user=" + program.getUser().getUuid(),
+                            MAIL_PARAM__PROGRAM_NAME, program.getName(),
+                            MAIL_PARAM__PROGRAM_DATE, program.getProgramRegisteredEndDate(),
+                            ApplicationManager.MAIL_PARAM__USER_NAME, program.getUser().getName(),
+                            ApplicationManager.MAIL_PARAM__USER_SURNAME, program.getUser().getSurname()
+                    ));
+
+                    MailManager.getInstance().sendMail(
+                            MAIL_TEMPLATE__RECOMMEND,
+                            new InternetAddress(second.getRecomendEmail()),
+                            MapUtils.<String, Object>map(
+                            MAIL_PARAM__USER_FIO, second.getRecomendSurname() + " " + second.getRecomendName() + " " + second.getRecomendPatronymic(),
+                            MAIL_PARAM__RECOMMEND_LINK, ApplicationManager.getSiteURL() + "recommend.htm?r=" + second.getRecomendUuid() + "&owner=" + program.getEntryUUID() + "&program=" + program.getUuid() + "&user=" + program.getUser().getUuid(),
+                            MAIL_PARAM__PROGRAM_NAME, program.getName(),
+                            MAIL_PARAM__PROGRAM_DATE, program.getStringProgramRegisteredEndDate(),
+                            ApplicationManager.MAIL_PARAM__USER_NAME, program.getUser().getName(),
+                            ApplicationManager.MAIL_PARAM__USER_SURNAME, program.getUser().getSurname()
+                    ));
+
+                } catch (Exception ex)
+                {
+                    setErrorMessage("Помилка обробки рекомендодавців");
+                    LOGGER.error("Error recommend", ex);
+                    return null;
+                }
+
+                sendMail(program);
+                Map<String, DataSource> attachDoc = new HashMap<String, DataSource>();
+
+                DataSource sourcePDF = new ByteArrayDataSource(generateAplicationFormPDF(program).toByteArray(), "application/pdf");
+
+                DataSource sourceDOCZgoda = new ByteArrayDataSource(getClass().getResourceAsStream("/META-INF/doc/ZgodaNaZbirDanih.doc"), "application/msword");
+                DataSource sourceDOCZasvidchennya = new ByteArrayDataSource(getClass().getResourceAsStream("/META-INF/doc/Zasvidchennya.doc"), "application/msword");
+
+                attachDoc.put("Application.pdf", sourcePDF);
+                attachDoc.put("Zgoda_na_zbIr_personalnih_danih.doc", sourceDOCZgoda);
+                attachDoc.put("ZasvIdchennya_uchasnika.doc", sourceDOCZasvidchennya);
+
+                MailManager.getInstance().sendMailDateSourse(
+                        null,
+                        MAIL_TEMPLATE__ACCEPT,
+                        new InternetAddress(program.getUser().getEmail()),
+                        null,
+                        MapUtils.<String, Object>map(
+                        ApplicationManager.MAIL_PARAM__USER_NAME, program.getUser().getName(),
+                        ApplicationManager.MAIL_PARAM__USER_SURNAME, program.getUser().getSurname(),
+                        MAIL_PARAM__PROGRAM_NAME, program.getName(),
+                        MAIL_PARAM__PROGRAM_DATE, program.getStringProgramRegisteredEndDate(),
+                        MAIL_PARAM__FIRST_RECOMMEND_FIO_EMAIL, first.getRecomendSurname() + " " + first.getRecomendName() + " " + first.getRecomendPatronymic() + " - " + first.getRecomendEmail(),
+                        MAIL_PARAM__SECOND_RECOMMEND_FIO_EMAIL, second.getRecomendSurname() + " " + second.getRecomendName() + " " + second.getRecomendPatronymic() + " - " + second.getRecomendEmail()
+                ), attachDoc
+                );
+            }
+            else
+            {
+                if(getErrorMessage() == null || getErrorMessage().isEmpty()){
+                    setErrorMessage("Не всі обов’язкові поля заповнені");
+                }
+                return null;
+            }
+
+            clear();
+            return "entryed.htm?faces-redirect=true";
+        } catch (Exception ex)
+        {
+            setErrorMessage("Під час збереження, або перевірки виникла помилка");
+            LOGGER.error("Error entry program", ex);
+            return null;
+        }
+    }
+
+    public String save()
+    {
+        setErrorMessage(null);
+        message = null;
+
+        try
+        {
+            getProgramService().saveUserProgram(program);
+
+            for (PropertyGroup group : program.getGroups())
+            {
+                if (group.getProperties() != null && !group.getProperties().isEmpty())
+                {
+                    for (PropertyForProgram property : group.getProperties())
+                    {
+                        if (!property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__LABEL))
+                        {
+                            if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+                            {
+                                getProgramService().savePropertyFormType(property);
+                            }
+                            else
+                            {
+                                for (PropertyValue val : property.getValue())
+                                {
+                                    getProgramService().savePropertyValue(val);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            if (uploadedPhoto != null)
+            {
+                if (program.getPhoto() == null)
+                {
+                    program.setPhoto(new ResourceForProgram());
+                    program.setPhoto(uploadedFile(uploadedPhoto, program.getPhoto(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_USER_PHOTO));
+                }
+                else
+                {
+                    if (uploadedPhoto.getSize() != program.getPhoto().getFileSize())
+                    {
+                        program.setPhoto(uploadedFile(uploadedPhoto, program.getPhoto(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_USER_PHOTO));
+                    }
+                }
+            }
+            if (uploadedPassport != null)
+            {
+                if (program.getPassport() == null)
+                {
+                    program.setPassport(new ResourceForProgram());
+                    program.setPassport(uploadedFile(uploadedPassport, program.getPassport(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_PASSPORT));
+                }
+                else
+                {
+                    if (uploadedPassport.getSize() != program.getPassport().getFileSize())
+                    {
+                        program.setPassport(uploadedFile(uploadedPassport, program.getPassport(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_PASSPORT));
+                    }
+                }
+            }
+            if (uploadedPassportSecondPage != null)
+            {
+                if (program.getPassportSecondPage() == null)
+                {
+                    program.setPassportSecondPage(new ResourceForProgram());
+                    program.setPassportSecondPage(uploadedFile(uploadedPassportSecondPage, program.getPassportSecondPage(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_PASSPORT_SECOND_PAGE));
+                }
+                else
+                {
+                    if (uploadedPassportSecondPage.getSize() != program.getPassportSecondPage().getFileSize())
+                    {
+                        program.setPassportSecondPage(uploadedFile(uploadedPassportSecondPage, program.getPassportSecondPage(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_PASSPORT_SECOND_PAGE));
+                    }
+                }
+            }
+            if (uploadedForeignPassport != null)
+            {
+                if (program.getFirstPageForeignPassport() == null)
+                {
+                    program.setFirstPageForeignPassport(new ResourceForProgram());
+                    program.setFirstPageForeignPassport(uploadedFile(uploadedForeignPassport, program.getFirstPageForeignPassport(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_FOREIGN_PASSPORT));
+                }
+                else
+                {
+                    if (uploadedForeignPassport.getSize() != program.getFirstPageForeignPassport().getFileSize())
+                    {
+                        program.setFirstPageForeignPassport(uploadedFile(uploadedForeignPassport, program.getFirstPageForeignPassport(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_FOREIGN_PASSPORT));
+                    }
+                }
+            }
+            if (uploadedMVS != null)
+            {
+                if (program.getMvs() == null)
+                {
+                    program.setMvs(new ResourceForProgram());
+                    program.setMvs(uploadedFile(uploadedMVS, program.getMvs(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_MVS));
+                }
+                else
+                {
+                    if (uploadedMVS.getSize() != program.getMvs().getFileSize())
+                    {
+                        program.setMvs(uploadedFile(uploadedMVS, program.getMvs(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_MVS));
+                    }
+                }
+            }
+            if (uploadedСertificateEmployment != null)
+            {
+                if (program.getCertificateEmployment() == null)
+                {
+                    program.setCertificateEmployment(new ResourceForProgram());
+                    program.setCertificateEmployment(uploadedFile(uploadedСertificateEmployment, program.getCertificateEmployment(), ApplicationManager.RESOURCE_PARAM__TYPE_СERTIFICATE_EMPLOYMENT));
+                }
+                else
+                {
+                    if (uploadedСertificateEmployment.getSize() != program.getCertificateEmployment().getFileSize())
+                    {
+                        program.setCertificateEmployment(uploadedFile(uploadedСertificateEmployment, program.getCertificateEmployment(), ApplicationManager.RESOURCE_PARAM__TYPE_СERTIFICATE_EMPLOYMENT));
+                    }
+                }
+            }
+
+            message = "Збереження пройшло успішно";
+            return null;
+        } catch (Exception ex)
+        {
+            setErrorMessage("Під час збереження виникла помилка");
+            LOGGER.error("Error entry program", ex);
+            return null;
+        }
+    }
+
+    @Override
+    protected void clear()
+    {
+        super.clear();
+        program = null;
+        message = null;
+    }
+
+    private void sendMail(Program progam)
+    {
+        try
+        {
+
+            // Send ordering info email for watchers
+            List<String> watchers = ApplicationManager.getConfig().<String>getList("site.enterNotificationReceiver.email", true);
+
+            // create watchers cc addresses
+            List<InternetAddress> cc = null;
+            if (watchers != null && !watchers.isEmpty())
+            {
+                cc = new ArrayList<InternetAddress>();
+
+                for (String wcc : watchers)
+                {
+                    if (StringUtils.isNotBlank(wcc))
+                    {
+                        cc.add(new InternetAddress(wcc.trim()));
+                    }
+                }
+            }
+
+            StringBuilder programPropertyTable = new StringBuilder();
+
+            for (PropertyGroup group : progam.getGroups())
+            {
+                if (group.getProperties() != null && !group.getProperties().isEmpty())
+                {
+                    for (PropertyForProgram property : group.getProperties())
+                    {
+                        programPropertyTable.append(createPropertyTable(property));
+                    }
+                }
+
+            }
+//            cc=null;
+            if (cc != null && !cc.isEmpty())
+            {
+                MailManager.getInstance().sendMail(
+                        MAIL_TEMPLATE__PROGRAM_ENTERED,
+                        new InternetAddress("a.gerasimenko@parkcode.com.ua", "artem"),
+                        cc,
+                        MapUtils.<String, Object>map(
+                        MAIL_PARAM__USER_FIO, progam.getUser().getSurname() + " " + progam.getUser().getName() + " " + progam.getUser().getPatronymic(),
+                        MAIL_PARAM__USER_EMAIL, progam.getUser().getEmail(),
+                        MAIL_PARAM__PROGRAM_NAME, progam.getName(),
+                        MAIL_PARAM__PROGRAM__TABLE_CONTENT, programPropertyTable.toString()));
+            }
+            else
+            {
+                MailManager.getInstance().sendMail(
+                        MAIL_TEMPLATE__PROGRAM_ENTERED,
+                        new InternetAddress("a.gerasimenko@parkcode.com.ua", "artem"),
+                        MapUtils.<String, Object>map(
+                        MAIL_PARAM__USER_FIO, progam.getUser().getSurname() + " " + progam.getUser().getName() + " " + progam.getUser().getPatronymic(),
+                        MAIL_PARAM__USER_EMAIL, progam.getUser().getEmail(),
+                        MAIL_PARAM__PROGRAM_NAME, progam.getName(),
+                        MAIL_PARAM__PROGRAM__TABLE_CONTENT, programPropertyTable.toString()));
+            }
+
+        } catch (Exception th)
+        {
+            LOGGER.error("Error on sending entered email.", th);
+        }
+    }
+
+
+    private String createPropertyTable(PropertyForProgram property)
+    {
+        StringBuilder programPropertyTable = new StringBuilder();
+
+        if (property.getPropertyType().equalsIgnoreCase("LABEL1")
+                || property.getPropertyType().equalsIgnoreCase("LABEL2"))
+        {
+            programPropertyTable.append("<tr>")
+                    .append("<td style=\"text-align: center;\" colspan=\"2\">")
+                    .append(property.getPropertyName())
+                    .append("</td>")
+                    .append("</tr>");
+        }
+        if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOX)
+                || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__CHECKBOXSINGLE))
+        {
+            programPropertyTable.append("<tr>")
+                    .append("<td style=\"text-align: left;\">")
+                    .append(property.getPropertyName())
+                    .append("</td>");
+            for (PropertyValue value : property.getValue())
+            {
+                programPropertyTable.append("<td style=\"text-align: center;\">")
+                        .append(value.isValueBoolean() ? "Так" : "Ні")
+                        .append("</td>");
+            }
+            programPropertyTable.append("</tr>");
+        }
+        if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__DATE))
+        {
+            programPropertyTable.append("<tr>")
+                    .append("<td style=\"text-align: left;\">")
+                    .append(property.getPropertyName())
+                    .append("</td>");
+            for (PropertyValue value : property.getValue())
+            {
+                programPropertyTable.append("<td style=\"text-align: center;\">")
+                        .append(DateTimeUtils.dateToString(value.getValueTimestamp()) != null ? DateTimeUtils.dateToString(value.getValueTimestamp()) : "")
+                        .append("</td>");
+            }
+            programPropertyTable.append("</tr>");
+        }
+        if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__SELECT_TEXT)
+            || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXT)
+            || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__TEXTAREA)
+            || property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__AUTOCOMPLETE))
+        {
+            programPropertyTable.append("<tr>")
+                    .append("<td style=\"text-align: left;\">")
+                    .append(property.getPropertyName())
+                    .append("</td>");
+            for (PropertyValue value : property.getValue())
+            {
+                programPropertyTable.append("<td style=\"text-align: center;\">")
+                        .append(value.getValueString() != null ? value.getValueString() : "")
+                        .append("</td>");
+            }
+            programPropertyTable.append("</tr>");
+        }
+
+        if (property.getPropertyType().equalsIgnoreCase(ApplicationManager.PROPERTY_VALUE_TUPE__FORM))
+        {
+            for (PropertyForm form : property.getForm())
+            {
+                programPropertyTable.append("<tr>")
+                        .append("<td style=\"text-align: left;\">")
+                        .append(property.getPropertyName())
+                        .append("</td>");
+                for (PropertyForProgram p : form.getProperties())
+                {
+                    programPropertyTable.append(createPropertyTable(p));
+                }
+            }
+
+        }
+
+        return programPropertyTable.toString();
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="ajax">
+    public String addValue(PropertyForProgram property)
+    {
+        PropertyManager.addValue(property);
+        return null;
+    }
+
+    public String deleteValue(PropertyForProgram property, PropertyValue val)
+    {
+        PropertyManager.deleteValue(property, val);
+        getProgramService().deletePropertyValue(val);
+        return null;
+    }
+
+    public String addForm(PropertyForProgram property)
+    {
+        PropertyManager.addForm(property);
+        return null;
+    }
+
+    public String deleteForm(PropertyForProgram property, PropertyForm form)
+    {
+        for (PropertyForProgram formProperty : form.getProperties())
+        {
+            for (PropertyValue value : formProperty.getValue())
+            {
+                getProgramService().deletePropertyValue(value);
+            }
+        }
+        PropertyManager.deleteForm(property, form);
+        getProgramService().deletePropertyForm(form);
+        return null;
+    }
+
+    public String changeRequired(PropertyForProgram property, boolean val)
+    {
+        property.setPropertyRequired(val);
+        return null;
+    }
+// </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="File loader">
+    private ResourceForProgram uploadedFile(UploadedFile uploadedFile, ResourceForProgram res, int type) throws IOException
+    {
+        if (uploadedFile != null)
+        {
+            // create and save resource
+            Resource resource = new ResourceForProgram();
+            resource.setOwnerUuid(program.getEntryUUID());
+
+            if (!isHasError())
+            {
+                // save file
+                String fileName = storeFile(getServletContext().getRealPath(resource.getResourcesOwneredDir()), uploadedFile, (res.getPath() != null ? res.getPath() : null));
+
+                resource.setUuid(null);
+                resource.setPath(fileName);
+                resource.setFileSize(uploadedFile.getSize());
+                resource.setMimeType(uploadedFile.getContentType());
+                resource.setOriginalName(uploadedFile.getName());
+                resource.setResourceType(type);
+
+                // save resources
+                getResourceService().deleteResources(res.getUuid());
+                getResourceService().insertResource(resource);
+
+                // remember banner
+                return (ResourceForProgram) resource;
+            }
+            else
+            {
+                throw new IllegalStateException(getErrorMessage());
+
+            }
+
+        }
+        return null;
+    }
+
+    private String storeFile(String baseDir, UploadedFile file, String oldPath)
+    {
+        if (file != null)
+        {
+            boolean backUpped = false;
+            String oldFileName = null;
+
+            if (org.apache.commons.lang.StringUtils.isNotBlank(oldPath))
+            {
+                oldFileName = IOUtils.concatPath(baseDir, oldPath);
+
+                if (new File(oldFileName).exists())
+                {
+                    backUpped = true;
+                    try
+                    {
+                        IOUtils.moveFile(oldFileName, oldFileName + ".backup");
+                    } catch (Throwable th)
+                    {
+                        LOGGER.error("Resource file backup error.", th);
+                        setErrorMessage(
+                                "Виникла помилка при резервному копіюванні старого файла<br /><br />"
+                                + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                                + " - звертайтесь до розробників.");
+
+                        return null;
+                    }
+                }
+            }
+
+            String fileName = file.getName();
+            fileName = IOUtils.extractFileName(fileName);
+            fileName = IOUtils.makeUniversalFileName(fileName);
+            fileName = IOUtils.makeUniqueFileName(baseDir, fileName);
+
+            try
+            {
+                new File(baseDir).mkdirs();
+                IOUtils.copy(file.getInputStream(), new FileOutputStream(new File(IOUtils.concatPath(baseDir, fileName))));
+            } catch (Throwable th)
+            {
+                LOGGER.error("Reesource file copy error.", th);
+                setErrorMessage(
+                        "Виникла помилка при завантаженні файла!<br />"
+                        + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                        + " - звертайтесь до розробників.");
+
+                if (backUpped && new File(oldFileName + ".backup").exists())
+                {
+                    try
+                    {
+                        IOUtils.moveFile(oldFileName + ".backup", oldFileName);
+                    } catch (Throwable th2)
+                    {
+                        LOGGER.error("Resource file backup restore error.", th2);
+                    }
+
+                    setErrorMessage(
+                            "Виникла помилка при завантаженні файла!<br />"
+                            + "Старий файл було відновлено. <br /><br />"
+                            + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                            + " - звертайтесь до розробників.");
+                }
+
+                return null;
+            } finally
+            {
+                if (backUpped)
+                {
+                    File backupFile = new File(oldFileName + ".backup");
+
+                    if (backupFile.exists())
+                    {
+                        try
+                        {
+                            backupFile.delete();
+                        } catch (Throwable ignore)
+                        {
+                            // just log
+                            LOGGER.error("Delete backup resource file error", ignore);
+                        }
+                    }
+                }
+            }
+
+            return fileName;
+        }
+
+        return null;
+    }
+
+// </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Service">
+
+    protected final ResourceService getResourceService()
+    {
+        if (resourceService == null)
+        {
+            resourceService = evaluateExpression("resourceService");
+        }
+
+        return resourceService;
+    }
+
+    protected final RecommendService getRecommendService()
+    {
+        if (recommendService == null)
+        {
+            recommendService = evaluateExpression("recommendService");
+        }
+        return recommendService;
+    }
+// </editor-fold>
+
+}

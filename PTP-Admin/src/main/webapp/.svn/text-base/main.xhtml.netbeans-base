@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageTitle" value="admin" />
+
+    <ui:define name="body">
+        <center>
+    <div style="padding: 12px; width: 80%" align="justify">
+        <strong>Добро пожаловать в систему редактирования контента.</strong>
+        <br /><br /><br />
+        При использовании данной системы, все сотрудники компании, имеющие доступ к системе (т.е.
+        знающие соответствующий логин и пароль для входа в систему), могут добавлять и редактировать
+        информационное наполнение сайта без помощи специалистов в области информационных технологий.
+        <br /><br/>
+        Эта система позволяет быстро и удобно редактировать такие разделы как новости, акции и распродажи,
+        загружать каталог товаров и управлять пользователями.
+        <br /><br />
+        Для редактирования контента (особенно при использовании встроенного в систему HTML-редактора),
+        рекомендуется использовать браузер <strong>Mozilla Firefox</strong> или <strong>Google Chrome</strong>, как наиболее совместимых
+        со стандартами и спецификациями используемых web-технологий, хотя поддерживаются и другие браузеры,
+        такие как Microsoft Internet Explorer и Opera.
+        <br /><br />
+        Все внесенные изменения сразу публикуются на публичной части сайта (доступной для всех посетителей).
+        <br /><br /><br />
+
+        <strong>
+            При возникновении неизвестных ошибок или выявлении неисправностей при работе с системой
+            редактирования контента, обратитесь к администратору или разработчику.
+        </strong>
+        <br /><br />
+        <div class="formContent">
+            <h:form>
+                <div class="formLine">
+                    <div class="textElem" style="width: 25%">
+                        <h:outputText value="Дата с которой построить список "/>
+                    </div>
+                    <div class="dateElem dateElemMainPage">
+                        <t:inputDate  id="minDate" value="#{recommend.minDate}"  popupCalendar="true"
+                                      required="true" requiredMessage="Поле обов’язкове">
+                        </t:inputDate><br/>
+                        <h:message styleClass="errorText" for="minDate" />
+                    </div>
+                </div>
+                <div class="formLine" >
+                    <h:commandButton style="position: relative; left: 27%; width: 181px;" styleClass="formButtonCSS3" action="#{recommend.createRecommendExcel()}" value="Список рекомендодателей" />
+                </div>
+            </h:form>
+        </div>
+
+    </div>
+    </center>
+    </ui:define>
+
+</ui:composition>
+
+</html>

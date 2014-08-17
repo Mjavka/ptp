@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="login" />
+        <ui:param name="pageTitle" value="Вхід" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <h:panelGroup rendered="#{!loginAction.loggedIn}">
+                    <ptp:formTitle  value="Вхід" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{loginAction.loggedIn}">
+                    <ptp:formTitle value="Ласкаво просимо" />
+                </h:panelGroup>
+
+                <ptp:formErrorMessage provider="#{loginAction}" />
+
+                <div class="formContent">
+                    <t:div rendered="#{!loginAction.loggedIn}">
+                        <h:form prependId="false">
+                            <div class="formLine">
+                                <ptp:formLabel value="Електронна пошта (логін)" />
+                                <div class="inputElem">
+                                    <h:inputText id="login" value="#{loginAction.login}" maxlength="128"
+                                                 required="true" requiredMessage="Поле обов’язкове">
+                                        <t:validateEmail />
+                                    </h:inputText><br/>
+                                    <h:message styleClass="errorText" for="login" />
+                                </div>
+                            </div>
+                            <div class="formLine">
+                                <ptp:formLabel value="Пароль" />
+                                <div class="inputElem">
+                                    <h:inputSecret id="password" value="#{loginAction.password}" maxlength="128"
+                                                   required="true" requiredMessage="Поле обов’язкове" /><br/>
+                                    <h:message styleClass="errorText" for="password" />
+                                </div>
+                            </div>
+
+                            <div class="formLine formLineChkbox">
+                                <ptp:formInput lableValue="Запам’ятати мене" rendered="#{true}">
+                                    <h:selectBooleanCheckbox value="#{loginAction.remember}" />
+                                </ptp:formInput>
+                            </div>
+
+
+                            <div class="linksBlock">
+                                <a href="#{request.contextPath}/remember.htm">Нагадати логін/пароль</a>
+                            </div>
+
+                            <div class="formBottomButtons">
+                                <h:commandButton value="Увійти" action="#{loginAction.doLogin()}" styleClass="formButton"/>
+                            </div>
+                        </h:form>
+                        <div style="float: left; margin-bottom: 10px; background-color: #e4e4e4; padding: 10px; margin-top: 40px; color: red; font-size: 14px; font-style: italic;">
+                            Цей ресурс не підтримує Internet Explorer 6-ї та 7-ї версій, а також потребує ввімкнення javascript
+                        </div>
+                    </t:div>
+                    <t:div rendered="#{loginAction.loggedIn}">
+
+                        <div style="position: relative; float: right; padding: 0 0 5px 0; text-align: right; font-size: 14px; width: 100%">Користувач:  #{loginAction.currentUser.email}</div>
+
+                        <div style="position: relative; float: right; padding: 0 0 5px 0; text-align: right; font-size: 14px;  width: 100%"><b>#{loginAction.currentUser.surname} #{loginAction.currentUser.name} #{loginAction.currentUser.patronymic}</b>,</div>
+
+                        <div style="position: relative; float: right; padding: 0 0 5px 0; text-align: right; font-size: 14px; width: 100%"><i>вітаємо Вас на сайті проекту<br/>
+                                «Навчальні програми професійного зростання»</i></div>
+                        <br/>
+                        <div style="font-size: 14px; padding: 5px 0 5px 0;"><p>Цей ресурс дозволяє Вам бути залученим до проекту міжнародної технічної допомоги «Навчальні програми професійного зростання» Агентства США з міжнародного розвитку (USAID). Ви можете ознайомитися з переліком програм, набір на які триває, і заповнити аплікаційну форму.</p></div>
+
+
+                        <ul style="list-style-type: none;">
+                            <li style="padding: 4px 0;"><a href="#{request.contextPath}/programList.htm">Список конкурсних програм проекту </a></li>
+                            <li style="padding: 4px 0;"><a href="#{request.contextPath}/entryProgramList.htm">Програми, на які Ви розпочали реєстрацію чи зареєструвалися </a></li>
+                        </ul>
+                    </t:div>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

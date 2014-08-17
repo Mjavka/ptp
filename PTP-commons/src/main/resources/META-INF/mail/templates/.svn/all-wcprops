@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/public/parkcode/!svn/ver/7815/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates
+END
+TemplateCancelForm.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/public/parkcode/!svn/ver/7670/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateCancelForm.mail.xml
+END
+TemplateUserEnteredProgram.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/public/parkcode/!svn/ver/7597/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateUserEnteredProgram.mail.xml
+END
+TemplateAcceptDataChange.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/public/parkcode/!svn/ver/7762/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateAcceptDataChange.mail.xml
+END
+TemplateRememberPassword.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/public/parkcode/!svn/ver/7597/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateRememberPassword.mail.xml
+END
+TemplateResendActivation.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/public/parkcode/!svn/ver/7631/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateResendActivation.mail.xml
+END
+TemplateAcceptForm.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateAcceptForm.mail.xml
+END
+TemplateAbortDataChange.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/public/parkcode/!svn/ver/7762/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateAbortDataChange.mail.xml
+END
+TemplateRecommendUser.mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/public/parkcode/!svn/ver/7815/trunk/root/web/ptp/PTP-commons/src/main/resources/META-INF/mail/templates/TemplateRecommendUser.mail.xml
+END

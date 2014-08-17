@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+
+    <!-- =================================================================== -->
+    <!-- metadata definition                                                 -->
+    <!-- =================================================================== -->
+
+    <sqldb:metadata id="User" tableName="USER_TABLE" tableAlias="usr">
+        <sqldb:field propertyName="uuid"             columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="email"            columnName="user_email" />
+        <sqldb:field propertyName="name"             columnName="user_name" />
+        <sqldb:field propertyName="surname"          columnName="user_surname" />
+        <sqldb:field propertyName="patronymic"       columnName="user_patronymic"/>
+        <sqldb:field propertyName="phone"            columnName="user_phone_mobile" />
+        <sqldb:field propertyName="newEmail"         columnName="new_user_email" />
+        <sqldb:field propertyName="newName"          columnName="new_user_name" />
+        <sqldb:field propertyName="newSurname"       columnName="new_user_surname" />
+        <sqldb:field propertyName="newPatronymic"    columnName="new_user_patronymic"/>
+        <sqldb:field propertyName="newPhone"         columnName="new_user_phone_mobile" />
+        <sqldb:field propertyName="organization"     columnName="user_organization_name"/>
+        <sqldb:field propertyName="position"         columnName="user_position"/>
+        <sqldb:field propertyName="birthday"         columnName="user_birthday" />
+        <sqldb:field propertyName="newBirthday"      columnName="new_user_birthday" />
+        <sqldb:field propertyName="registrationDate" columnName="registration_date" />
+        <sqldb:field propertyName="active"           columnName="is_active" />
+        <sqldb:field propertyName="activationDate"   columnName="activation_date"/>
+        <sqldb:field propertyName="activationCode"   columnName="activation_code" />
+        <sqldb:field propertyName="sex"              columnName="user_sex" />
+        <sqldb:field propertyName="newSex"           columnName="new_user_sex" />
+        <sqldb:field propertyName="newInfo"          columnName="new_user_info" />
+    </sqldb:metadata>
+
+    <sqldb:metadata id="UserFull" parent="User" mergeParentFields="true">
+        <sqldb:field propertyName="password"        columnName="user_password" /><!-- should be excluded from select queries -->
+    </sqldb:metadata>
+
+
+    <sqldb:metadata id="Recommendation" tableName="RECOMEND_TABLE" tableAlias="rcom">
+        <sqldb:field propertyName="uuid"                    columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="recomendUuid"            columnName="recomend_uuid" />
+        <sqldb:field propertyName="recomend"                columnName="recomend" />
+        <sqldb:field propertyName="howLongKnown"            columnName="how_long_known" />
+        <sqldb:field propertyName="liderPotential"          columnName="lider_potential" />
+        <sqldb:field propertyName="flexibility"             columnName="flexibility" />
+        <sqldb:field propertyName="motivation"              columnName="motivation" />
+        <sqldb:field propertyName="bestQuality"             columnName="best_quality" />
+        <sqldb:field propertyName="whyCorrespondsProgram"   columnName="why_corresponds_program" />
+        <sqldb:field propertyName="canApplyKnowledge"       columnName="can_apply_knowledge" />
+        <sqldb:field propertyName="achievementCandidate"    columnName="achievement_candidate" />
+        <sqldb:field propertyName="recomendName"            columnName="recomend_name" />
+        <sqldb:field propertyName="recomendSurname"         columnName="recomend_surname" />
+        <sqldb:field propertyName="recomendPatronymic"      columnName="recomend_patronymic" />
+        <sqldb:field propertyName="recomendWorkplase"       columnName="recomend_workplase" />
+        <sqldb:field propertyName="recomendWorkposition"    columnName="recomend_workposition" />
+        <sqldb:field propertyName="recomendEmail"           columnName="recomend_email" />
+        <sqldb:field propertyName="recomendPhone"           columnName="recomend_phone" />
+        <sqldb:field propertyName="professionalism"         columnName="professionalism"/>
+    </sqldb:metadata>
+
+
+
+
+    <sqldb:metadata id="ExpertInfo" tableName="EXPERT_INFO_TABLE" tableAlias="exp_inf">
+        <sqldb:field propertyName="expertInfoUuid"          columnName="object_uuid" primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="nameEn"                  columnName="name_en"/>
+        <sqldb:field propertyName="skype"                   columnName="skype"/>
+        <sqldb:field propertyName="organizationName"        columnName="organization_name"/>
+        <sqldb:field propertyName="position"                columnName="work_position"/>
+        <sqldb:field propertyName="organizationNameEN"      columnName="organization_name_en"/>
+        <sqldb:field propertyName="positionEN"              columnName="work_position_en"/>
+        <sqldb:field propertyName="organizationWebSite"     columnName="organization_web_site"/>
+        <sqldb:field propertyName="ownership"               columnName="ownership"/>
+        <sqldb:field propertyName="index"                   columnName="index"/>
+        <sqldb:field propertyName="region"                  columnName="region"/>
+        <sqldb:field propertyName="city"                    columnName="city"/>
+        <sqldb:field propertyName="street"                  columnName="street"/>
+        <sqldb:field propertyName="house"                   columnName="house"/>
+        <sqldb:field propertyName="pavilion"                columnName="pavilion"/>
+        <sqldb:field propertyName="office"                  columnName="office"/>
+        <sqldb:field propertyName="workPhone"               columnName="work_phone"/>
+        <sqldb:field propertyName="fax"                     columnName="fax"/>
+        <sqldb:field propertyName="workEmail"               columnName="work_email"/>
+        <sqldb:field propertyName="anotherScopeExpert"      columnName="another_scope_expert"/>
+        <sqldb:field propertyName="expertText"              columnName="expert_text"/>
+    </sqldb:metadata>
+
+</beans>

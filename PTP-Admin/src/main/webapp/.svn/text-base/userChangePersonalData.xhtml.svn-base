@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="userChangePersonalData" />
+        <ui:param name="pageTitle" value="Изменение даных" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Пользовователь #{changePersonalData.currentUser.surname} #{changePersonalData.currentUser.name} просит подтвердить изменение персональных данных" />
+
+                <admin:formErrorMessage provider="#{changePersonalData}" />
+
+                <t:div styleClass="formContent" style="width: 49%" rendered="#{changePersonalData.currentUser.newInfo}">
+                    <div class="formLine" style="font-size: 18pt; text-align: center;">C</div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.email.equals(changePersonalData.currentUser.newEmail)}">
+                        <admin:formLabel value="Логін (e-mail)" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="login" value="#{changePersonalData.currentUser.email}" />
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.name.equals(changePersonalData.currentUser.newName)}">
+                        <admin:formLabel value="Ім’я" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="name" value="#{changePersonalData.currentUser.name}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.surname.equals(changePersonalData.currentUser.newSurname)}">
+                        <admin:formLabel value="Прізвище" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="surname" value="#{changePersonalData.currentUser.surname}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.patronymic.equals(changePersonalData.currentUser.newPatronymic)}">
+                        <admin:formLabel value="По батькові" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="patronymic" value="#{changePersonalData.currentUser.patronymic}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.stringBirthdayDate.equals(changePersonalData.currentUser.stringNewBirthdayDate)}">
+                        <admin:formLabel value="Дата народження" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="birthday" value="#{changePersonalData.currentUser.stringBirthdayDate}" />
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.phone.equals(changePersonalData.currentUser.newPhone)}">
+                        <admin:formLabel value="Телефон" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="phone" value="#{changePersonalData.currentUser.phone}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.sex.equals(changePersonalData.currentUser.newSex)}">
+                        <admin:formLabel value="Пол" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="sex" value="#{changePersonalData.currentUser.sex}"/>
+                        </div>
+                    </t:div>
+                </t:div>
+
+                <t:div styleClass="formContent" style="width: 49%; float: right;" rendered="#{changePersonalData.currentUser.newInfo}">
+                    <div class="formLine" style="font-size: 18pt; text-align: center;"> НА </div>
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.email.equals(changePersonalData.currentUser.newEmail)}">
+                        <admin:formLabel value="Логін (e-mail)" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newLogin" value="#{changePersonalData.currentUser.newEmail}" />
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.name.equals(changePersonalData.currentUser.newName)}">
+                        <admin:formLabel value="Ім’я" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newName" value="#{changePersonalData.currentUser.newName}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.surname.equals(changePersonalData.currentUser.newSurname)}">
+                        <admin:formLabel value="Прізвище" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newSurname" value="#{changePersonalData.currentUser.newSurname}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.patronymic.equals(changePersonalData.currentUser.newPatronymic)}">
+                        <admin:formLabel value="По батькові" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newPatronymic" value="#{changePersonalData.currentUser.newPatronymic}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.stringBirthdayDate.equals(changePersonalData.currentUser.stringNewBirthdayDate)}">
+                        <admin:formLabel value="Дата народження" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newBirthday" value="#{changePersonalData.currentUser.stringNewBirthdayDate}" />
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.phone.equals(changePersonalData.currentUser.newPhone)}">
+                        <admin:formLabel value="Телефон" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newPhone" value="#{changePersonalData.currentUser.newPhone}"/>
+                        </div>
+                    </t:div>
+
+                    <t:div styleClass="formLine" rendered="#{!changePersonalData.currentUser.sex.equals(changePersonalData.currentUser.newSex)}">
+                        <admin:formLabel value="Пол" style="width: 40%"/>
+                        <div class="inputElem" style="width: 50%">
+                            <h:outputText id="newSex" value="#{changePersonalData.currentUser.newSex}"/>
+                        </div>
+                    </t:div>
+                </t:div>
+
+                <h:form prependId="false" rendered="#{changePersonalData.currentUser.newInfo}">
+                    <t:div styleClass="formContent" style="width: 100%; float: left;" rendered="#{changePersonalData.currentUser.newInfo}">
+                        <t:div styleClass="formLine" >
+                            <admin:formLabel value="Коментарий" style="width: 20%"/>
+                            <div class="inputElem" style="width: 80%">
+                                <h:inputTextarea id="comment" value="#{changePersonalData.comment}"/>
+                            </div>
+                        </t:div>
+                    </t:div>
+                    <div class="formLine">
+                        <div class="formBottomButtons">
+                            <h:commandButton value="Отменить" action="#{changePersonalData.abortChange()}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                            <h:commandButton value="Принять" action="#{changePersonalData.acceptChange()}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                        </div>
+                    </div>
+                </h:form>
+
+                <t:div styleClass="formContent" style="width: 100%;" rendered="#{!changePersonalData.currentUser.newInfo}">
+                    <t:div styleClass="formLine">
+                        <admin:formLabel value="Нет даных для изменения" style="width: 100%"/>
+                    </t:div>
+                </t:div>
+            </div>
+        </ui:define>
+    </ui:composition>
+
+</html>

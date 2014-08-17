@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+    <ui:component>
+        <t:div  rendered="#{property.propertyType == 'LABEL2'}" styleClass="formLine formLabel label2Conteiner" style=" z-index: #{1000 - status.index}">
+            <div class="titleElem">
+                <h:outputText value="#{property.propertyName}" />
+            </div>
+            <div class="commentElem">
+                <h:outputText value="#{property.propertyNotation}" />
+            </div>
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'TEXT' || property.propertyType == 'SELECT_TEXT' || property.propertyType == 'AUTOCOMPLETE'}" styleClass="formLine text_#{property.id}" style=" z-index: #{1000 - status.index}" >
+            <ptp:formLabel value="#{property.propertyName}" />
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <div class="inputElem">
+                    <h:outputLabel value="#{val.valueString}"/>
+                </div>
+            </ui:repeat>
+        </t:div>
+
+        <t:div  rendered="#{property.propertyType == 'CHECKBOX' || property.propertyType == 'CHECKBOXSINGLE'}" styleClass="formLine formLineRadiobox" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <ptp:formLabel value="#{property.propertyName}" />
+                <div  class="inputElem">
+                    <h:outputLabel value="#{val.valueBoolean ? 'ТАК' : 'НІ' }"/>
+                </div>
+            </ui:repeat>
+
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'TEXTAREA'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <ptp:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="inputElem">
+                    <h:inputTextarea value="#{val.valueString}" readonly="true" />
+                </div>
+            </ui:repeat>
+        </t:div>
+
+        <t:div rendered="#{property.propertyType == 'DATE'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <ptp:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="dateElem">
+                        <h:outputLabel value="#{val.valueTimestampString}"/>
+                </div>
+
+            </ui:repeat>
+        </t:div>
+
+
+    </ui:component>
+
+</html>
+

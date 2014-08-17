@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+
+    <!-- e-mail sending configuration -->
+    <mail>
+        <transport>smtp</transport>
+        <smtpAuth>true</smtpAuth>
+        <smtpHost>smtp.gmail.com</smtpHost>
+        <username>parkcode@gmail.com</username>
+        <password>secretsecret</password>
+
+        <useSSL>false</useSSL>
+        <useTLS>true</useTLS>
+        <!--smtpPort>25</smtpPort-->
+    </mail>
+
+
+    <site>
+
+        <database>
+            <!-- Direct database connection params -->
+            <driverClassName>org.postgresql.Driver</driverClassName>
+            <user>postgres</user>
+            <password>postgres</password>
+            <url>jdbc:postgresql://localhost/ptp</url>
+
+            <!-- JNDI name for lookup data source -->
+            <jndiName>java:comp/env/jdbc/PTPDataSource</jndiName>
+        </database>
+
+    </site>
+
+
+</configuration>

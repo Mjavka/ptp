@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="propertyManager" />
+        <ui:param name="pageTitle" value="Програма" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Property creator" />
+
+                <admin:formErrorMessage provider="#{propertyManagerAction}" />
+
+
+                <div class="formContent">
+                    <h:form prependId="false">
+
+                        <div class="formLine">
+                            <admin:formLabel value="Property name " />
+                            <div class="inputElem">
+                                <h:inputText id="propertyName" value="#{propertyManagerAction.propertyName}"/>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <admin:formLabel value="Data type " />
+                            <div class="inputElem">
+                                <h:selectOneMenu id="dataType" value="#{propertyManagerAction.dataType}">
+                                    <f:selectItem itemLabel="Text" itemValue="TEXT"/>
+                                    <f:selectItem itemLabel="Integer" itemValue="1"/>
+                                    <f:selectItem itemLabel="Date" itemValue="DATE"/>
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <admin:formLabel value="Property group " />
+                            <div class="inputElem">
+                                <h:selectOneMenu id="propertyGroup" value="#{propertyManagerAction.groupName}">
+                                    <f:selectItems value="#{propertyManagerAction.propertyGroupNamesList}" var="group" itemLabel="#{group}" itemValue="#{group}"/>
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <admin:formLabel value="is group " />
+                            <div class="inputElem">
+                                <h:selectBooleanCheckbox style="float: left" id="group" value="#{propertyManagerAction.group}"/>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <admin:formLabel value="Group priority" />
+                            <div class="inputElem">
+                                <h:inputText style="float: left" id="priority" value="#{propertyManagerAction.order}">
+                                    <f:convertNumber maxIntegerDigits="2"
+                                                     type="number"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+
+                        <div class="formLine">
+                            <div class="formBottomButtons">
+                                <h:commandButton value="Зберегти" action="#{propertyManagerAction.processRequest()}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

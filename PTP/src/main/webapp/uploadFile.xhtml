@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="uploadFile" />
+        <ui:param name="pageTitle" value="Догрузка документов" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <ptp:formTitle value="#{uploadFile.program.name}" />
+                <ptp:formErrorMessage provider="#{uploadFile}" rendered="#{uploadFile.hasError}" />
+                <h:form prependId="false" enctype="multipart/form-data" rendered="#{!uploadFile.hasError}">
+                    <div class="formContent">
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Фото(портретне)" required="true" />
+                            <t:div styleClass="inputElem userPhoto" rendered="#{uploadFile.program.photo == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedPhoto}" accept="*" storage="file" style="border: 0px solid white" />
+                            </t:div>
+                            <t:div styleClass="inputElem userPhoto" rendered="#{uploadFile.program.photo != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.photo.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedPhoto}" accept="*" storage="file" style="border: 0px solid white" />
+                            </t:div>
+                            <div class="commentElem">
+                                <h:outputText value="(розмір до 240 кб, має бути зроблено в фас протягом останніх 6 місяців)" />
+                            </div>
+                        </t:div>
+
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Копія першої сторінки паспорту громадянина україни" required="true" />
+                            <t:div styleClass="inputElem passport" rendered="#{uploadFile.program.passport == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem passport" rendered="#{uploadFile.program.passport != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.passport.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                        </t:div>
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Копія другої сторінки паспорту громадянина україни" required="true" />
+                            <t:div styleClass="inputElem passport" rendered="#{uploadFile.program.passportSecondPage == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedPassportSecondPage}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem passport" rendered="#{uploadFile.program.passportSecondPage != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.passportSecondPage.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedPassportSecondPage}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                        </t:div>
+
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Копія першої сторінки закордонного паспорту" />
+                            <t:div styleClass="inputElem foreignPassport" rendered="#{uploadFile.program.firstPageForeignPassport == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedForeignPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem foreignPassport" rendered="#{uploadFile.program.firstPageForeignPassport != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.firstPageForeignPassport.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedForeignPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                        </t:div>
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Резюме" required="true" />
+                            <t:div styleClass="inputElem MVS" rendered="#{uploadFile.program.mvs == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedMVS}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem MVS" rendered="#{uploadFile.program.mvs != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.mvs.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedMVS}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <div class="commentElem">
+                                <h:outputText value="(структурована інформація про освіту, місця роботи кандидата,починаючи з останнього та додаткова професійна інформація)" />
+                            </div>
+                        </t:div>
+                        <t:div styleClass="formLine">
+                            <ptp:formLabel value="Довідка з місця роботи" required="true" />
+                            <t:div styleClass="inputElem MVS" rendered="#{uploadFile.program.certificateEmployment == null}">
+                                <t:inputFileUpload value="#{uploadFile.uploadedСertificateEmployment}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <t:div styleClass="inputElem MVS" rendered="#{uploadFile.program.certificateEmployment != null}">
+                                <h:outputText value="Файл завантажено #{uploadFile.program.certificateEmployment.originalName}"/><br/>
+                                <t:inputFileUpload value="#{uploadFile.uploadedСertificateEmployment}" accept="*" storage="file" style="border: 0px solid white"/>
+                            </t:div>
+                            <div class="commentElem">
+                                <h:outputText value="(або Виписка з Єдиного державного реєстру юридичних осіб та фізичних осіб-підприємців)" />
+                            </div>
+                        </t:div>
+
+                        <div class="formBottomButtons">
+                            <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{uploadFile.save()}" value="Зберегти" onclick="open_pop_up('#pop-up');"/>
+                            <h:outputLink styleClass="formButton " style="float: right; margin-left: 5px;" value="http://admin.ceume.org.ua/programUserFormList.htm" >Повернутися</h:outputLink>
+                        </div>
+                        <!--<div style="position: relative; float: right; color: #ff0000; text-align: left; padding-top: 10px;">Реєстрація анкети можлива з 15 листопада</div>-->
+                        <div style="position: relative; float: right; color: #333; text-align: left; padding-top: 10px; width: 100%;">Зараз Ви можете зберегти анкету та внести доповнення до неї  пізніше.
+                            Якщо всі поля анкети заповнені повністю, Ви можете відправити її нам для реєстрації на програму.</div>
+                    </div>
+                </h:form>
+                <h:form class="formBottomButtons" rendered="#{uploadFile.hasError}">
+                    <h:outputLink styleClass="formButton " style="float: right; margin-left: 5px;" value="http://admin.ceume.org.ua/programUserFormList.htm" >Повернутися</h:outputLink>
+                </h:form>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

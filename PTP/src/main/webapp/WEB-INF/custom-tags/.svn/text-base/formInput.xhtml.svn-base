@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+<ui:component>
+    <t:div styleClass="formLine #{styleClass}" rendered="#{empty rendered || rendered}">
+        <ptp:formLabel value="#{lableValue}" style="#{labelStyle}" required="#{required}" />
+        <div class="#{!empty inputStyleClass ? inputStyleClass : 'inputElem'} #{disabled ? 'disabled' : ''}">
+            <ui:insert />
+        </div>
+        <h:message for="#{inputId}" styleClass="error" rendered="#{!empty inputId}" />
+    </t:div>
+</ui:component>
+
+</html>
+

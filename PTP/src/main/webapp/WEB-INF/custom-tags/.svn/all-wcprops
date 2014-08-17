@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/public/parkcode/!svn/ver/7955/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags
+END
+message.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/message.xhtml
+END
+formTitle.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/public/parkcode/!svn/ver/7766/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formTitle.xhtml
+END
+ptp.taglib.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/ptp.taglib.xml
+END
+formProperty.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/public/parkcode/!svn/ver/7955/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formProperty.xhtml
+END
+formOutProperty.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formOutProperty.xhtml
+END
+formBlockTitle.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formBlockTitle.xhtml
+END
+formSuccessMessage.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/public/parkcode/!svn/ver/7605/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formSuccessMessage.xhtml
+END
+formErrorMessage.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formErrorMessage.xhtml
+END
+requiredFieldsInfo.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/public/parkcode/!svn/ver/7601/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/requiredFieldsInfo.xhtml
+END
+formInput.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formInput.xhtml
+END
+formLabel.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/public/parkcode/!svn/ver/7580/trunk/root/web/ptp/PTP/src/main/webapp/WEB-INF/custom-tags/formLabel.xhtml
+END

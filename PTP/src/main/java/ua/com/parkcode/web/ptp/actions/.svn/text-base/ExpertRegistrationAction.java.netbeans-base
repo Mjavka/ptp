@@ -1,0 +1,537 @@
+package ua.com.parkcode.web.ptp.actions;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.parkcode.commons.utils.IOUtils;
+import ua.com.parkcode.commons.utils.StringUtils;
+
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.data.ExpertInfo;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.Resource;
+import ua.com.parkcode.web.ptp.data.ResourceForExpert;
+import ua.com.parkcode.web.ptp.data.User;
+import ua.com.parkcode.web.ptp.services.ProgramService;
+import ua.com.parkcode.web.ptp.services.ResourceService;
+import ua.com.parkcode.web.ptp.services.UserService;
+
+/**
+ * <b>Предназначение:</b><br/>
+ * <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ * <p></p>
+ *
+ * <br/>Создан 2013.06.27<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name = "expertRegistrationAction")
+@SessionScoped
+public class ExpertRegistrationAction extends AbstractTransactionalAction {
+
+    private static final long serialVersionUID = -2447974479565715997L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExpertRegistrationAction.class);
+
+    private User userAccount;
+
+    private List<Program> programs;
+
+    private transient UploadedFile uploadedRezume;
+
+    private  List<Program> allProgram;
+
+    private transient ResourceService resourceService;
+    private transient UserService userService;
+    private transient ProgramService programService;
+
+    List<SelectItem> resultList;
+
+    public class Scope{
+        private String value;
+
+        public Scope(String val)
+        {
+            value = val;
+        }
+
+        public String getValue()
+        {
+            return value;
+        }
+
+        public void setValue(String value)
+        {
+            this.value = value;
+        }
+
+    }
+
+    private transient List<Scope> scope;
+
+    public List<Scope> getScope()
+    {
+        return scope;
+    }
+
+    public void setScope(List<Scope> scope)
+    {
+        this.scope = scope;
+    }
+
+    public String init()
+    {
+       setErrorMessage(null);
+       scope = new ArrayList<Scope>();
+
+       userAccount = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+       resultList = new ArrayList<SelectItem>();
+       resultList.add(new SelectItem("Аграрна промисловість", "Аграрна промисловість", "Аграрна промисловість", false));
+       resultList.add(new SelectItem("Бібліотечна справа", "Бібліотечна справа", "Бібліотечна справа", false));
+       resultList.add(new SelectItem("Волонтерство", "Волонтерство", "Волонтерство", false));
+       resultList.add(new SelectItem("Гендерні питання", "Гендерні питання", "Гендерні питання", false));
+       resultList.add(new SelectItem("Громадські організації, благодійність", "Громадські організації, благодійність", "Громадські організації, благодійність", false));
+       resultList.add(new SelectItem("Демократизація суспільства", "Демократизація суспільства", "Демократизація суспільства", false));
+       resultList.add(new SelectItem("Державне управління", "Державне управління", "Державне управління", false));
+       resultList.add(new SelectItem("Економіка", "Економіка", "Економіка", false));
+       resultList.add(new SelectItem("Енергозбереження", "Енергозбереження", "Енергозбереження", false));
+       resultList.add(new SelectItem("ЗМІ", "ЗМІ", "ЗМІ", false));
+       resultList.add(new SelectItem("Інвестиційна привабливість", "Інвестиційна привабливість", "Інвестиційна привабливість", false));
+       resultList.add(new SelectItem("Комунальні служби", "Комунальні служби", "Комунальні служби", false));
+       resultList.add(new SelectItem("Культура", "Культура", "Культура", false));
+       resultList.add(new SelectItem("Місцеве самоврядування та розвиток", "Місцеве самоврядування та розвиток", "Місцеве самоврядування та розвиток", false));
+       resultList.add(new SelectItem("Мультинаціональність", "Мультинаціональність", "Мультинаціональність", false));
+       resultList.add(new SelectItem("Муніципальний розвиток", "Муніципальний розвиток", "Муніципальний розвиток", false));
+       resultList.add(new SelectItem("Освіта", "Освіта", "Освіта", false));
+       resultList.add(new SelectItem("Охорона здоров’я", "Охорона здоров’я", "Охорона здоров’я", false));
+       resultList.add(new SelectItem("Охорона природи", "Охорона природи", "Охорона природи", false));
+       resultList.add(new SelectItem("Переробка відходів", "Переробка відходів", "Переробка відходів", false));
+       resultList.add(new SelectItem("Правоохоронна сфера", "Правоохоронна сфера", "Правоохоронна сфера", false));
+       resultList.add(new SelectItem("Ринок праці", "Ринок праці", "Ринок праці", false));
+       resultList.add(new SelectItem("Робота з молоддю", "Робота з молоддю", "Робота з молоддю", false));
+       resultList.add(new SelectItem("Робота з неповносправними людьми", "Робота з неповносправними людьми", "Робота з неповносправними людьми", false));
+       resultList.add(new SelectItem("Рятувальні служби", "Рятувальні служби", "Рятувальні служби", false));
+       resultList.add(new SelectItem("Соціальні служби", "Соціальні служби", "Соціальні служби", false));
+       resultList.add(new SelectItem("Спорт", "Спорт", "Спорт", false));
+       resultList.add(new SelectItem("Судова система", "Судова система", "Судова система", false));
+       resultList.add(new SelectItem("Туризм", "Туризм", "Туризм", false));
+       resultList.add(new SelectItem("Харчова галузь", "Харчова галузь", "Харчова галузь", false));
+
+
+       if(userAccount.roleIs(ApplicationManager.USER_ROLE__REVIEWER))
+       {
+
+           List<String> scop = userAccount.getExpertInfo().getScopeExpert();
+           if(scop != null && !scop.isEmpty())
+           {
+               for(String s : scop)
+               {
+                   scope.add(new Scope(s));
+               }
+           }
+           if(scope.isEmpty())
+           {
+               scope.add(new Scope(""));
+           }
+       }
+       else
+       {
+           scope.add(new Scope(""));
+           userAccount.setExpertInfo(new ExpertInfo());
+       }
+       updateSelectedValue();
+       return "expertRegistration.htm?faces-redirect=true";
+    }
+
+
+    public void addValueScope()
+    {
+       scope.add(new Scope(""));
+    }
+
+    public void deleteValueScope()
+    {
+        scope.remove(scope.size()-1);
+    }
+
+    public void updateSelectedValue()
+    {
+        for (SelectItem item : resultList)
+        {
+            for (Scope scop : scope)
+            {
+                if (item.getValue().equals(scop.value))
+                {
+                    item.setDisabled(true);
+                    break;
+                }
+                else
+                {
+                    item.setDisabled(false);
+                }
+            }
+        }
+
+    }
+
+    public List<SelectItem> actualItem(Scope scop)
+    {
+        updateSelectedValue();
+        List<SelectItem> items = new ArrayList<SelectItem>(getResultList());
+        for(SelectItem item : items)
+        {
+            if(item.getValue().equals(scop.value))
+            {
+                item.setDisabled(false);
+            }
+        }
+        return items;
+    }
+
+    public String register()
+    {
+        setErrorMessage(null);
+        List<String> scop = new ArrayList<String>();
+        for(Scope sc: scope)
+        {
+            if(StringUtils.isNotBlank(sc.getValue()))
+            {
+                scop.add(sc.getValue());
+            }
+        }
+
+        userAccount.getExpertInfo().setScopeExpert(scop);
+
+        if (StringUtils.isBlank(userAccount.getExpertInfo().getNameEn()))
+        {
+            setErrorMessage("\"Прізвище та ім’я англійською мовою\" обов'язкове");
+            return null;
+        }
+
+        if (StringUtils.isBlank(userAccount.getExpertInfo().getOrganizationName()))
+        {
+            setErrorMessage("\"Назва організації/установи, в якій ви працюєте (українською)\" обов'язкове");
+            return null;
+        }
+
+        if (StringUtils.isBlank(userAccount.getExpertInfo().getPosition()))
+        {
+            setErrorMessage("\"Посада (українською)\" обов'язкове");
+            return null;
+        }
+
+        if (StringUtils.isBlank(userAccount.getExpertInfo().getOrganizationNameEN()))
+        {
+            setErrorMessage("\"Назва організації /установи (англійською)\" обов'язкове");
+            return null;
+        }
+        if (StringUtils.isBlank(userAccount.getExpertInfo().getPositionEN()))
+        {
+            setErrorMessage("\"Посада (англійською)\" обов'язкове");
+            return null;
+        }
+
+
+        for(Scope s : scope)
+        {
+            if(StringUtils.isBlank(s.value))
+            {
+            setErrorMessage("\"Сфера експертизи\" є не заповнені поля");
+            return null;
+            }
+        }
+
+
+
+
+        if (userAccount.getExpertInfo().getRezume() == null && uploadedRezume == null)
+        {
+            setErrorMessage("Потрібно додати резюме");
+            return null;
+        }
+
+      try{
+        if (uploadedRezume != null)
+            {
+                if (userAccount.getExpertInfo().getRezume() == null)
+                {
+                    userAccount.getExpertInfo().setRezume(new ResourceForExpert());
+                    userAccount.getExpertInfo().setRezume(uploadedFile(uploadedRezume, userAccount.getExpertInfo().getRezume(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_MVS));
+                }
+                else
+                {
+                    if (uploadedRezume.getSize() != userAccount.getExpertInfo().getRezume().getFileSize())
+                    {
+                        userAccount.getExpertInfo().setRezume(uploadedFile(uploadedRezume, userAccount.getExpertInfo().getRezume(), ApplicationManager.RESOURCE_PARAM__TYPE_PROGRAM_MVS));
+                    }
+                }
+            }
+
+
+//            getProgramService().saveExpertPrograms(userAccount, programs);
+          if (!userAccount.roleIs(ApplicationManager.USER_ROLE__REVIEWER))
+          {
+              userAccount.getRole().add(getUserService().getRoleByType(ApplicationManager.USER_ROLE__REVIEWER));
+          }
+            getUserService().saveSimpleUser(userAccount);
+        }
+        catch(Exception ex)
+        {
+            LOGGER.error("Error save expert", ex);
+        }
+
+        // Return "registered" outcome
+        return createFacesRedirect("login.htm");
+    }
+
+
+
+
+    // <editor-fold defaultstate="collapsed" desc="Getter & Setter">
+    public ExpertRegistrationAction()
+    {
+    }
+
+    public List<SelectItem> getResultList()
+    {
+        return resultList;
+    }
+
+    public void setResultList(List<SelectItem> resultList)
+    {
+        this.resultList = resultList;
+    }
+
+
+    public List<Program> getAllProgram()
+    {
+        return allProgram;
+    }
+
+    public void setAllProgram(List<Program> allProgram)
+    {
+        this.allProgram = allProgram;
+    }
+
+    public User getUserAccount()
+    {
+        return userAccount;
+    }
+
+    public void setUserAccount(User userAccount)
+    {
+        this.userAccount = userAccount;
+    }
+
+    public List<Program> getPrograms()
+    {
+        return programs;
+    }
+
+    public void setPrograms(List<Program> programs)
+    {
+        this.programs = programs;
+    }
+
+    public UploadedFile getUploadedRezume()
+    {
+        return uploadedRezume;
+    }
+
+    public void setUploadedRezume(UploadedFile uploadedRezume)
+    {
+        this.uploadedRezume = uploadedRezume;
+    }
+
+
+
+
+    // </editor-fold>
+
+
+    @Override
+    protected void clear()
+    {
+        super.clear();
+
+    }
+
+
+
+    protected final UserService getUserService()
+    {
+        if (userService == null)
+        {
+            userService = evaluateExpression("userService");
+        }
+        return userService;
+    }
+
+    protected final ProgramService getProgramService()
+    {
+        if (programService == null)
+        {
+            programService = evaluateExpression("programService");
+        }
+        return programService;
+    }
+
+    protected final ResourceService getResourceService()
+    {
+        if (resourceService == null)
+        {
+            resourceService = evaluateExpression("resourceService");
+        }
+
+        return resourceService;
+    }
+
+
+
+    // <editor-fold defaultstate="collapsed" desc="File loader">
+        private ResourceForExpert uploadedFile(UploadedFile uploadedFile, ResourceForExpert res, int type) throws IOException
+    {
+        if (uploadedFile != null)
+        {
+            // create and save resource
+            Resource resource = new ResourceForExpert();
+            resource.setOwnerUuid(userAccount.getExpertInfo().getExpertInfoUuid());
+
+            if (!isHasError())
+            {
+                // save file
+                String fileName = storeFile(getServletContext().getRealPath(resource.getResourcesOwneredDir()), uploadedFile, (res.getPath() != null ? res.getPath() : null));
+
+                resource.setUuid(null);
+                resource.setPath(fileName);
+                resource.setFileSize(uploadedFile.getSize());
+                resource.setMimeType(uploadedFile.getContentType());
+                resource.setOriginalName(uploadedFile.getName());
+                resource.setResourceType(type);
+
+                // save resources
+                getResourceService().deleteResources(res.getUuid());
+                getResourceService().insertResource(resource);
+
+                // remember banner
+                return (ResourceForExpert) resource;
+            }
+            else
+            {
+                throw new IllegalStateException(getErrorMessage());
+
+            }
+
+        }
+        return null;
+    }
+
+    private String storeFile(String baseDir, UploadedFile file, String oldPath)
+    {
+        if (file != null)
+        {
+            boolean backUpped = false;
+            String oldFileName = null;
+
+            if (org.apache.commons.lang.StringUtils.isNotBlank(oldPath))
+            {
+                oldFileName = IOUtils.concatPath(baseDir, oldPath);
+
+                if (new File(oldFileName).exists())
+                {
+                    backUpped = true;
+                    try
+                    {
+                        IOUtils.moveFile(oldFileName, oldFileName + ".backup");
+                    } catch (Throwable th)
+                    {
+                        LOGGER.error("Resource file backup error.", th);
+                        setErrorMessage(
+                                "Виникла помилка при резервному копіюванні старого файла<br /><br />"
+                                + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                                + " - звертайтесь до розробників.");
+
+                        return null;
+                    }
+                }
+            }
+
+            String fileName = file.getName();
+            fileName = IOUtils.extractFileName(fileName);
+            fileName = IOUtils.makeUniversalFileName(fileName);
+            fileName = IOUtils.makeUniqueFileName(baseDir, fileName);
+
+            try
+            {
+                new File(baseDir).mkdirs();
+                IOUtils.copy(file.getInputStream(), new FileOutputStream(new File(IOUtils.concatPath(baseDir, fileName))));
+            } catch (Throwable th)
+            {
+                LOGGER.error("Reesource file copy error.", th);
+                setErrorMessage(
+                        "Виникла помилка при завантаженні файла!<br />"
+                        + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                        + " - звертайтесь до розробників.");
+
+                if (backUpped && new File(oldFileName + ".backup").exists())
+                {
+                    try
+                    {
+                        IOUtils.moveFile(oldFileName + ".backup", oldFileName);
+                    } catch (Throwable th2)
+                    {
+                        LOGGER.error("Resource file backup restore error.", th2);
+                    }
+
+                    setErrorMessage(
+                            "Виникла помилка при завантаженні файла!<br />"
+                            + "Старий файл було відновлено. <br /><br />"
+                            + "Повторіть завантаження файла. Якщо помилки будуть повторюватися<br />"
+                            + " - звертайтесь до розробників.");
+                }
+
+                return null;
+            } finally
+            {
+                if (backUpped)
+                {
+                    File backupFile = new File(oldFileName + ".backup");
+
+                    if (backupFile.exists())
+                    {
+                        try
+                        {
+                            backupFile.delete();
+                        } catch (Throwable ignore)
+                        {
+                            // just log
+                            LOGGER.error("Delete backup resource file error", ignore);
+                        }
+                    }
+                }
+            }
+
+            return fileName;
+        }
+
+        return null;
+    }
+
+// </editor-fold>
+
+
+
+}

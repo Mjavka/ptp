@@ -1,0 +1,290 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ua.com.parkcode.web.ptp.services;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ua.com.parkcode.commons.sqldb.ExecuteQuery;
+import ua.com.parkcode.commons.sqldb.SelectForListQuery;
+import ua.com.parkcode.commons.sqldb.SelectForObjectQuery;
+import ua.com.parkcode.commons.utils.UUIDUtils;
+import ua.com.parkcode.commons.web.app.services.AbstractDBService;
+import ua.com.parkcode.web.ptp.data.ExpertInfo;
+import ua.com.parkcode.web.ptp.data.Role;
+import ua.com.parkcode.web.ptp.data.User;
+
+
+/**
+ * <b>Предназначение:</b><br/>
+ *   <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ *   <p></p>
+ *
+ * <br/>Создан 2013.07.01<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@Service("userService")
+public class UserService extends AbstractDBService{
+
+    private static final long serialVersionUID = 4511144990668651091L;
+
+    @Autowired
+    private SelectForObjectQuery<Long> selectCountSimpleUserByEmail;
+    @Autowired
+    private SelectForObjectQuery<Long> selectCountSimpleUserByEmailAndPassword;
+
+    @Autowired 
+    private SelectForListQuery<User> selectUsersByStatusInProgram;
+    
+    @Autowired
+    private SelectForObjectQuery<Role> selectRoleByType;
+    @Autowired
+    private SelectForListQuery<Role> selectAllRoles;
+
+    @Autowired
+    private SelectForObjectQuery<User> selectUserByUUID;
+    @Autowired
+    private SelectForObjectQuery<User> selectUserForWebLogin;
+
+    @Autowired
+    private SelectForObjectQuery<User> selectUserByWebCookieLogin;
+
+    @Autowired
+    private SelectForObjectQuery<User> selectUserForRememberPassword;
+
+
+    @Autowired
+    private SelectForListQuery<User> selectAllRegisteredUser;
+
+    @Autowired
+    private SelectForListQuery<User> selectAllRegisteredExpertUser;
+
+    @Autowired
+    private SelectForListQuery<User> selectAllRegisteredExpertUserOnProgram;
+
+    @Autowired
+    private SelectForListQuery<User> selectAllUserInProgram;
+
+    @Autowired
+    private ExecuteQuery insertExpertInfo;
+
+    @Autowired
+    private ExecuteQuery deleteExpertInfo;
+
+    @Autowired
+    private ExecuteQuery insertScopeExpert;
+
+    @Autowired
+    private ExecuteQuery deleteScopeExpert;
+
+    @Autowired
+    private ExecuteQuery insertSimpleUser;
+    @Autowired
+    private ExecuteQuery updateSimpleUser;
+    @Autowired
+    private ExecuteQuery updateSimpleUserWithPassword;
+
+    @Autowired
+    private ExecuteQuery activateUser;
+
+    @Autowired
+    private ExecuteQuery insertUserRole;
+
+    @Autowired
+    private ExecuteQuery deleteUserRole;
+
+    @Autowired
+    private ExecuteQuery deleteUserByUuid;
+
+
+
+
+    public UserService() {
+    }
+
+
+    public User selectUserByUUID(String userUUID)
+    {
+        return selectUserByUUID.selectForObject(makeSingleNamedParam("userUUID", userUUID));
+    }
+
+    public User selectUserForWebLogin(String login, String password)
+    {
+        return selectUserForWebLogin.selectForObject(makeNamedParams("email", login, "password", password));
+    }
+
+    public User selectUserByWebCookieLogin(String userUUID, String password)
+    {
+        return selectUserByWebCookieLogin.selectForObject(makeNamedParams("userUUID", userUUID, "password", password));
+    }
+
+    public User selectUserForRememberPassword(String login)
+    {
+        return selectUserForRememberPassword.selectForObject(makeSingleNamedParam("email", login));
+    }
+
+    public List<User> selectAllRegisteredUser()
+    {
+        return selectAllRegisteredUser.selectForList();
+    }
+
+    public List<User> selectAllRegisteredExpertUser()
+    {
+        return selectAllRegisteredExpertUser.selectForList();
+    }
+
+    public List<User> selectAllRegisteredExpertUserOnProgram(String programUUID)
+    {
+        return selectAllRegisteredExpertUserOnProgram.selectForList(makeSingleNamedParam("programUUID", programUUID));
+    }
+
+    public List<User> selectAllUserInProgram(String programUuid)
+    {
+        return selectAllUserInProgram.selectForList(makeSingleNamedParam("programUUID", programUuid));
+    }
+    
+    public List<User> selectUsersByStatusInProgram(String programUuid, Long status)
+    {
+        return selectUsersByStatusInProgram.selectForList(makeNamedParams("programUuid", programUuid, "status", status));
+    }
+
+    public Role getRoleByType(int type)
+    {
+        return selectRoleByType.selectForObject(makeSingleNamedParam("roleType", type));
+    }
+
+    public List<Role> getAllRoles()
+    {
+        return selectAllRoles.selectForList();
+    }
+
+    public boolean isUserEmailExists(String email)
+    {
+        return selectCountSimpleUserByEmail.selectForObject(makeSingleNamedParam("email", email)) > 0;
+    }
+
+    public boolean isUserEmailAndPasswordExists(String email, String password)
+    {
+        return selectCountSimpleUserByEmailAndPassword.selectForObject(makeNamedParams("email", email, "password", password)) > 0;
+    }
+
+    public User saveSimpleUser(User userAccount)
+    {
+        return saveSimpleUser(userAccount, null);
+    }
+
+    public User saveSimpleUser(User userAccount, String newPassword)
+    {
+        if (userAccount != null) {
+            if (userAccount.getUuid() == null) {
+                // Insert user
+                insertSimpleUser.execute(makeSingleParam(userAccount));
+            }
+            else
+            {
+                // Do update
+                if (newPassword != null)
+                {
+                    User forUpdate = userAccount.cloneObject();
+                    forUpdate.setPassword(newPassword);
+
+                    updateSimpleUserWithPassword.execute(makeSingleParam(forUpdate));
+                }
+                else
+                {
+                    updateSimpleUser.execute(makeSingleParam(userAccount));
+                }
+            }
+
+            if(userAccount.getRole().size()>0){
+                deleteUserRole(userAccount.getUuid());
+                for (int i = 0; i < userAccount.getRole().size(); i++) {
+                    String roleUUID = userAccount.getRole().get(i).getUuid();
+                    insertUserRole(userAccount.getUuid(), roleUUID);
+                }
+            }
+
+            if(userAccount.getExpertInfo() != null)
+            {
+                deleteScopeExpert.execute(makeSingleNamedParam("ownerUUID", userAccount.getExpertInfo().getExpertInfoUuid()));
+                deleteExpertInfo(userAccount.getExpertInfo());
+
+                insertExpertInfo(userAccount.getUuid(), userAccount.getExpertInfo());
+                if(userAccount.getExpertInfo().getScopeExpert()!= null && !userAccount.getExpertInfo().getScopeExpert().isEmpty())
+                {
+                    for(String scope : userAccount.getExpertInfo().getScopeExpert())
+                    {
+                        insertScopeExpert.execute(makeNamedParams("objectUUID", UUIDUtils.randomUUIDString(),
+                                                                  "ownerUUID", userAccount.getExpertInfo().getExpertInfoUuid(),
+                                                                  "scope", scope));
+                    }
+                }
+
+
+
+            }
+
+        }
+
+        // Return this object
+        return userAccount;
+    }
+
+
+
+    public void insertExpertInfo(String userUUID, ExpertInfo expertInfo)
+    {
+        insertExpertInfo.execute(makeNamedParams("objectUUID",          expertInfo.getExpertInfoUuid(),
+                                                 "userUUID",            userUUID,
+                                                 "nameEn",              expertInfo.getNameEn(),
+                                                 "skype",               expertInfo.getSkype(),
+                                                 "organizationName",    expertInfo.getOrganizationName(),
+                                                 "workPosition",        expertInfo.getPosition(),
+                                                 "organizationNameEn",  expertInfo.getOrganizationNameEN(),
+                                                 "workPositionEn",      expertInfo.getPositionEN(),
+                                                 "organizationWebSite", expertInfo.getOrganizationWebSite(),
+                                                 "ownership",           expertInfo.getOwnership(),
+                                                 "index",               expertInfo.getIndex(),
+                                                 "region",              expertInfo.getRegion(),
+                                                 "city",                expertInfo.getCity(),
+                                                 "street",              expertInfo.getStreet(),
+                                                 "house",               expertInfo.getHouse(),
+                                                 "pavilion",            expertInfo.getPavilion(),
+                                                 "office",              expertInfo.getOffice(),
+                                                 "workPhone",           expertInfo.getWorkPhone(),
+                                                 "fax",                 expertInfo.getFax(),
+                                                 "workEmail",           expertInfo.getWorkEmail(),
+                                                 "anotherScopeExpert",  expertInfo.getAnotherScopeExpert(),
+                                                 "expertText",          expertInfo.getExpertText()));
+    }
+
+
+    public void deleteExpertInfo(ExpertInfo expertInfo)
+    {
+        deleteExpertInfo.execute(makeSingleNamedParam("objectUUID", expertInfo.getExpertInfoUuid()));
+    }
+
+    public void insertUserRole(String userUUID, String roleUUID){
+        insertUserRole.execute(makeNamedParams("userUUID", userUUID, "roleUUID", roleUUID));
+    }
+
+    public void deleteUserRole(String userUUID){
+        deleteUserRole.execute(makeSingleNamedParam("userUUID", userUUID));
+    }
+
+
+    public void activateUser(User userAccount){
+        activateUser.execute(makeSingleParam(userAccount));
+    }
+
+    public void deleteUserByUuid(String userUUID){
+        deleteUserByUuid.execute(makeSingleNamedParam("userUUID", userUUID));
+    }
+
+}

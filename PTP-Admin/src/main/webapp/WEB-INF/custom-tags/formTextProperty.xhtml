@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+    <ui:component>
+        <t:div  rendered="#{property.propertyType == 'LABEL2'}" styleClass="formLine formLabel label2Conteiner" style=" z-index: #{1000 - status.index}">
+            <div class="titleElem">
+                <h:outputText value="#{property.propertyName}" />
+            </div>
+            <div class="commentElem">
+                <h:outputText escape="false" value="#{property.propertyNotation}" />
+            </div>
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'TEXT'}" styleClass="formLine text_#{property.id}" style=" z-index: #{1000 - status.index}" >
+            <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <div class="inputElem">
+                    <h:inputText value="#{val.valueString}"  styleClass="calendar_#{val.uuid}" rendered="#{property.editable}"/>
+                    <h:outputLabel value="#{val.valueString}" rendered="#{!property.editable}" />
+                </div>
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" rendered="#{property.editable}"/>
+                </div>
+                <div class="commentElem">
+                    <h:outputText styleClass="errorText" value="#{val.error}" />
+                </div>
+            </ui:repeat>
+            <h:outputText escape="false" value="#{property.javaScript}"/>
+        </t:div>
+        <t:div rendered="#{property.propertyType == 'SELECT_TEXT'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="inputElem">
+                    <h:selectOneMenu value="#{val.valueString}" disabled="true" styleClass="select_text_#{property.id}" >
+                        <f:selectItems value="#{property.variants}" var="variant" itemValue="#{variant.variantValue}"/>
+                    </h:selectOneMenu>
+
+                </div>
+
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+                <div class="commentElem">
+                    <h:outputText styleClass="errorText" value="#{val.error}" />
+                </div>
+
+            </ui:repeat>
+        </t:div>
+        <t:div rendered="#{property.propertyType == 'AUTOCOMPLETE'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="inputElem">
+                    <h:inputText value="#{val.valueString}" styleClass="input_#{property.objectUuid}" disabled="true"/>
+                </div>
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+                <div class="commentElem">
+                    <h:outputText styleClass="errorText" value="#{val.error}" />
+                </div>
+            </ui:repeat>
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'CHECKBOX'}" styleClass="formLine formLineRadiobox" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div  class="inputElem">
+                    <div class ="checkbox_#{property.id}">
+                        <h:selectOneRadio styleClass="radioBtnsBlock"
+                                          value ="#{val.valueBoolean}"
+                                          disabled="true">
+                            <f:selectItem itemValue="#{false}" itemLabel="Ні"/>
+                            <f:selectItem itemValue="#{true}" itemLabel="Так"/>
+                        </h:selectOneRadio>
+                    </div>
+                </div>
+
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+
+            </ui:repeat>
+
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'CHECKBOXSINGLE'}" styleClass="formLine formLineChkbox " style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div  class="inputElem">
+                    <div class ="checkbox_#{property.id}">
+                        <h:selectBooleanCheckbox value="#{val.valueBoolean}" />
+                    </div>
+
+                </div>
+
+
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+            </ui:repeat>
+
+        </t:div>
+        <t:div  rendered="#{property.propertyType == 'TEXTAREA'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="inputElem">
+                    <h:inputTextarea value="#{val.valueString}" disabled="#true"/>
+
+                </div>
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+                <div class="commentElem">
+                    <h:outputText styleClass="errorText" value="#{val.error}" />
+                </div>
+
+            </ui:repeat>
+        </t:div>
+
+        <t:div rendered="#{property.propertyType == 'DATE'}" styleClass="formLine" style=" z-index: #{1000 - status.index}">
+            <ui:repeat value="#{property.value}" var="val" varStatus="sValue">
+                <admin:formLabel value="#{property.propertyName}" required="#{property.propertyRequired}" />
+                <div class="dateElem">
+                    <t:div rendered="#{property.attributes != null &amp;&amp; property.attributes.dateType == 'birthday'}">
+                        <h:inputText value="#{val.valueTimestampString}"  styleClass="calendar_#{val.uuid}" rendered="#{property.editable}"/>
+                        <h:outputLabel value="#{val.valueTimestampString}" rendered="#{!property.editable}" />
+
+                        <script type="text/javascript">
+                            $j(function() {
+                                $j('.calendar_#{val.uuid}').datepick(
+                                        {yearRange: '-100y:' + new Date().getFullYear(), dateFormat: 'dd.mm.yyyy', showOnFocus: false, showTrigger: '.trigger_#{val.uuid}'}, $j.datepick.regional['uk']);
+                            });
+
+                        </script>
+                        <div style="display: none;">
+                            <img  src="images/calendarIcon.png" alt="Popup" class="trigger_#{val.uuid}"></img>
+                        </div>
+                    </t:div>
+                    <t:div rendered="#{property.attributes == null }">
+                        День <t:selectOneMenu styleClass="selectedDay_#{val.uuid}">
+                            <f:selectItem  itemLabel="1" itemValue="1" /><f:selectItem  itemLabel="2" itemValue="2" /><f:selectItem  itemLabel="3" itemValue="3" />
+                            <f:selectItem  itemLabel="4" itemValue="4" /><f:selectItem  itemLabel="5" itemValue="5" /><f:selectItem  itemLabel="6" itemValue="6" />
+                            <f:selectItem  itemLabel="7" itemValue="7" /><f:selectItem  itemLabel="8" itemValue="8" /><f:selectItem  itemLabel="9" itemValue="9" />
+                            <f:selectItem  itemLabel="10" itemValue="10" /><f:selectItem  itemLabel="11" itemValue="11" /><f:selectItem  itemLabel="12" itemValue="12" />
+                            <f:selectItem  itemLabel="13" itemValue="13" /><f:selectItem  itemLabel="14" itemValue="14" /><f:selectItem  itemLabel="15" itemValue="15" />
+                            <f:selectItem  itemLabel="16" itemValue="16" /><f:selectItem  itemLabel="17" itemValue="17" /><f:selectItem  itemLabel="18" itemValue="18" />
+                            <f:selectItem  itemLabel="19" itemValue="19" /><f:selectItem  itemLabel="20" itemValue="20" /><f:selectItem  itemLabel="21" itemValue="21" />
+                            <f:selectItem  itemLabel="22" itemValue="22" /><f:selectItem  itemLabel="23" itemValue="23" /><f:selectItem  itemLabel="24" itemValue="24" />
+                            <f:selectItem  itemLabel="25" itemValue="25" /><f:selectItem  itemLabel="26" itemValue="26" /><f:selectItem  itemLabel="27" itemValue="27" />
+                            <f:selectItem  itemLabel="28" itemValue="28" /><f:selectItem  itemLabel="29" itemValue="29" /><f:selectItem  itemLabel="30" itemValue="30" />
+                            <f:selectItem  itemLabel="31" itemValue="31" />
+                        </t:selectOneMenu>
+                        Місяць <t:selectOneMenu styleClass="selectedMonth_#{val.uuid}">
+                            <f:selectItem  itemLabel="Січень"   itemValue="1" />
+                            <f:selectItem  itemLabel="Лютий"    itemValue="2" />
+                            <f:selectItem  itemLabel="Березень" itemValue="3" />
+                            <f:selectItem  itemLabel="Квітень"  itemValue="4" />
+                            <f:selectItem  itemLabel="Травень"  itemValue="5" />
+                            <f:selectItem  itemLabel="Червень"  itemValue="6" />
+                            <f:selectItem  itemLabel="Липень"   itemValue="7" />
+                            <f:selectItem  itemLabel="Серпень"  itemValue="8" />
+                            <f:selectItem  itemLabel="Вересень" itemValue="9" />
+                            <f:selectItem  itemLabel="Жовтень"  itemValue="10" />
+                            <f:selectItem  itemLabel="Листопад" itemValue="11" />
+                            <f:selectItem  itemLabel="Грудень"  itemValue="12" />
+                        </t:selectOneMenu>
+                        Рік <t:selectOneMenu styleClass="selectedYear_#{val.uuid}" >
+                            <f:selectItems value="#{programAction.yearsDiapazon(-50, 50)}" var="year" itemLabel="#{year}" itemValue="#{year}" />
+                        </t:selectOneMenu>
+                        <h:inputText value="#{val.valueTimestampString}" styleClass="calendar_#{val.uuid}" disabled="true" style="display: none"/>
+
+                        <script type="text/javascript">
+                            function updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(dates) {
+                                $j('.selectedMonth_#{val.uuid}').val(dates.length ? dates[0].getMonth() + 1 : '');
+                                $j('.selectedDay_#{val.uuid}').val(dates.length ? dates[0].getDate() : '');
+                                $j('.selectedYear_#{val.uuid}').val(dates.length ? dates[0].getFullYear() : '');
+                                checkLinkedDays_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}();
+                            }
+
+
+                            $j(function() {
+                                $j('.selectedDay_#{val.uuid},.selectedMonth_#{val.uuid},.selectedYear_#{val.uuid}').change(checkLinkedDays_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index});
+                            });
+
+
+                            function checkLinkedDays_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}()
+                            {
+//                              Не использовать метод datepick.daysInMonth он неправильно вычесляет количество дней
+                                year = $j('.selectedYear_#{val.uuid}').val();
+                                month = $j('.selectedMonth_#{val.uuid}').val();
+                                var days = 33 - new Date(year, month - 1, 33).getDate();
+                                var daysInMonth = days;
+                                $j('.selectedDay_#{val.uuid} option:gt(27)').attr('disabled', false);
+                                $j('.selectedDay_#{val.uuid} option:gt(' + (daysInMonth - 1) + ')').attr('disabled', true);
+                                if ($j('.selectedDay_#{val.uuid}').val() > daysInMonth) {
+                                    $j('.selectedDay_#{val.uuid}').val(daysInMonth);
+                                }
+                            }
+                            $j(function() {
+                                $j('.calendar_#{val.uuid}').datepick({
+                                    yearRange: '-50y:+50', dateFormat: 'dd.mm.yyyy',
+                                    alignment: 'bottomRight', showOnFocus: false,
+                                    onSelect: updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index},
+                                    showTrigger: '.trigger_#{val.uuid}'}, $j.datepick.regional['uk']);
+                            });
+
+                            $j(document).ready(function() {
+                                var st = $j('.calendar_#{val.uuid}').val();
+                                if (st != "") {
+                                    var date = [new Date(st.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1'))];
+                                    updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(date);
+                                }
+                                else
+                                {
+                                    var date = [new Date()];
+                                    updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(date);
+                                }
+                            });
+                            $j('.selectedMonth_#{val.uuid},.selectedDay_#{val.uuid},.selectedYear_#{val.uuid}').change(function() {
+                                $j('.calendar_#{val.uuid}').datepick('setDate', new Date($j('.selectedYear_#{val.uuid}').val(), $j('.selectedMonth_#{val.uuid}').val() - 1, $j('.selectedDay_#{val.uuid}').val()));
+                            });
+                        </script>
+
+                    </t:div>
+                    <t:div rendered="#{property.attributes != null &amp;&amp; property.attributes.dateType == 'noDay' }">
+
+                        Місяць <t:selectOneMenu styleClass="selectedMonth_#{val.uuid}">
+                            <f:selectItem  itemLabel="Січень"   itemValue="1" />
+                            <f:selectItem  itemLabel="Лютий"    itemValue="2" />
+                            <f:selectItem  itemLabel="Березень" itemValue="3" />
+                            <f:selectItem  itemLabel="Квітень"  itemValue="4" />
+                            <f:selectItem  itemLabel="Травень"  itemValue="5" />
+                            <f:selectItem  itemLabel="Червень"  itemValue="6" />
+                            <f:selectItem  itemLabel="Липень"   itemValue="7" />
+                            <f:selectItem  itemLabel="Серпень"  itemValue="8" />
+                            <f:selectItem  itemLabel="Вересень" itemValue="9" />
+                            <f:selectItem  itemLabel="Жовтень"  itemValue="10" />
+                            <f:selectItem  itemLabel="Листопад" itemValue="11" />
+                            <f:selectItem  itemLabel="Грудень"  itemValue="12" />
+                        </t:selectOneMenu>
+                        Рік <t:selectOneMenu styleClass="selectedYear_#{val.uuid}" >
+                            <f:selectItems value="#{programAction.yearsDiapazon(-50, 50)}" var="year" itemLabel="#{year}" itemValue="#{year}" />
+                        </t:selectOneMenu>
+                        <h:inputText value="#{val.valueTimestampString}" styleClass="calendar_#{val.uuid}" disabled="true" style="display: none"/>
+
+                        <script type="text/javascript">
+                            function updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(dates) {
+                                $j('.selectedMonth_#{val.uuid}').val(dates.length ? dates[0].getMonth() + 1 : '');
+                                $j('.selectedYear_#{val.uuid}').val(dates.length ? dates[0].getFullYear() : '');
+                            }
+
+                            $j(function() {
+                                $j('.calendar_#{val.uuid}').datepick({
+                                    yearRange: '-50y:+50', dateFormat: 'dd.mm.yyyy',
+                                    alignment: 'bottomRight', showOnFocus: false,
+                                    onSelect: updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index},
+                                    showTrigger: '.trigger_#{val.uuid}'}, $j.datepick.regional['uk']);
+                            });
+
+                            $j(document).ready(function() {
+                                var st = $j('.calendar_#{val.uuid}').val();
+                                if (st != "") {
+                                    var date = [new Date(st.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1'))];
+                                    updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(date);
+                                }
+                                else
+                                {
+                                    var date = [new Date()];
+                                    updateSelected_#{property.id != null? property.id :''}#{gStatus != null ?gStatus.index : ''}#{fStatus != null ?fStatus.index : ''}#{status.index}#{sValue.index}(date);
+                                }
+                            });
+                            $j('.selectedMonth_#{val.uuid},.selectedYear_#{val.uuid}').change(function() {
+                                $j('.calendar_#{val.uuid}').datepick('setDate', new Date($j('.selectedYear_#{val.uuid}').val(), $j('.selectedMonth_#{val.uuid}').val() - 1, 1));
+                            });
+                        </script>
+
+                    </t:div>
+                </div>
+                <div class="commentElem">
+                    <h:outputText value="#{property.propertyNotation}" />
+                </div>
+                <div class="commentElem">
+                    <h:outputText styleClass="errorText" value="#{val.error}" />
+                </div>
+
+            </ui:repeat>
+        </t:div>
+
+
+    </ui:component>
+
+</html>
+

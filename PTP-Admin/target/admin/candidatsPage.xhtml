@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+
+        <ui:define name="body">
+            <h:form>
+                <div class="centeredContent">
+                    <div class="tittleblock"><b>#{CandidatsPage.program.name}</b></div> 
+                    <div id="navig_userpage">
+                        <ul>
+                            <li><h:commandLink style="color:#0198f3; " action="#{userProgramList.show(userProgramList.program)}">Користувачі</h:commandLink></li>
+                            <li><a style="color:#000; text-decoration: none;" href="">Кандидати</a></li>
+                            <li><h:commandLink style="color:#0198f3; " action="#{ExpertEvaluationsPage.show(ExpertEvaluationsPage.program)}">Оцінка експертів</h:commandLink></li>
+                            <li><h:commandLink style="color:#0198f3; " action="#{InterviewPage.show(InterviewPage.program)}">Співбесіда</h:commandLink></li>
+                            <li><h:commandLink style="color:#0198f3; " action="#{SemiFinalPage.show(SemiFinalPage.program)}">Півфіналісти</h:commandLink></li>
+                            <li><h:commandLink style="color:#0198f3; margin:0; " action="#{FinalistPage.init(userProgramList.programUuid)}">Фіналісти</h:commandLink></li>
+                        </ul>
+                    </div>
+                    <div class="blockfortable">
+                        <h:dataTable value="#{CandidatsPage.someInfoForProgram}" var="someInfo"
+                                     styleClass="tableone"
+                                     headerClass="tableHeader"
+                                     rowClasses="tableDefault,tableGray">
+
+                            <h:column class="tdtableCandidatsPage1">
+                                <!-- column header -->
+                                <f:facet name="header">№</f:facet>
+                                <!-- row record -->
+                                #{CandidatsPage.someInfoForProgram.indexOf(someInfo)+1}
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage2">
+                                <!-- column header -->
+                                <f:facet name="header"><b style="color: #0198f3; border-bottom: 1px dashed #0198f3;">Користувач</b></f:facet>
+                                <!-- row record -->
+                                #{someInfo.userSurname} #{someInfo.userName} #{someInfo.patronymic}
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage3">
+                                <!-- column header -->
+                                <f:facet name="header"><b>Персональні дані</b></f:facet>
+                                <!-- row record -->
+                                <div>
+                                    <ul style="list-style-type: none;">
+                                        <t:div rendered="#{someInfo.email != null and !someInfo.email.trim().isEmpty()}"><li><b>email: </b><a>#{someInfo.email}</a></li></t:div>
+                                        <t:div rendered="#{someInfo.userMobilePhone != null and !someInfo.userMobilePhone.trim().isEmpty()}"><li><b>Моб.тел: </b>#{someInfo.userMobilePhone}</li></t:div>
+                                        <t:div rendered="#{someInfo.workPlaceOrganization != null and !someInfo.workPlaceOrganization.trim().isEmpty()}"><li><b>Назва організації/установи: </b>#{someInfo.workPlaceOrganization}</li></t:div>
+                                        <t:div rendered="#{someInfo.workPlacePost != null and !someInfo.workPlacePost.trim().isEmpty()}"><li><b>Посада: </b>#{someInfo.workPlacePost}</li></t:div>
+                                        <t:div rendered="#{someInfo.workPlaseRegion != null and !someInfo.workPlaseRegion.trim().isEmpty()}"><li><b>Область: </b>#{someInfo.workPlaseRegion}</li></t:div>
+                                    </ul> 
+                                </div>
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage4">
+                                <!-- column header -->
+                                <f:facet name="header"><b>Файли</b></f:facet>
+                                <!-- row record -->
+                                <div class="usermaindocumentbox">
+                                    <div class="userdocumentboxleft">
+                                        <ul style="list-style-type: none; float:left; ">
+                                            <li style="padding-top: 5px;">Фото:</li>
+                                            <li style="padding-top: 10px;">Паспорта:</li>
+                                            <li style="padding-top: 10px;">Документи:</li>
+                                        </ul>   
+                                    </div>
+                                    <div class="userdocumentboxright">
+                                        <h:outputLink target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.photo}" styleClass="fotobox"  rendered="#{someInfo.photo != null and !someInfo.photo.trim().isEmpty()}"/>
+                                        <t:div styleClass="fotoboxgray" rendered="#{someInfo.photo == null || someInfo.photo.trim().isEmpty()}">
+                                        </t:div>
+                                        <h:outputLink title="C1" target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.passport}" rendered="#{someInfo.passport != null and !someInfo.passport.trim().isEmpty()}">
+                                            <div class ="userlistboxsmall">C1</div>
+                                        </h:outputLink>
+                                        <t:div styleClass="userlistboxsmallgray" rendered="#{someInfo.passport == null || someInfo.passport.trim().isEmpty()}">
+                                            C1
+                                        </t:div>
+                                        <h:outputLink title="C2" target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.passportSecondPage}" rendered="#{someInfo.passportSecondPage != null and !someInfo.passportSecondPage.trim().isEmpty()}">
+                                            <div class ="userlistboxsmall">C2</div>
+                                        </h:outputLink>
+                                        <t:div styleClass="userlistboxsmallgray" rendered="#{someInfo.passportSecondPage == null || someInfo.passportSecondPage.trim().isEmpty()}">
+                                            C2
+                                        </t:div>
+                                        <h:outputLink title="ЗГ" target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.firstPageForeignPassport}" rendered="#{someInfo.firstPageForeignPassport != null and !someInfo.firstPageForeignPassport.trim().isEmpty()}">
+                                            <div class ="userlistboxsmall">ЗГ</div>
+                                        </h:outputLink>
+                                        <t:div styleClass="userlistboxsmallgray" rendered="#{someInfo.firstPageForeignPassport == null || someInfo.firstPageForeignPassport.trim().isEmpty()}">
+                                            ЗГ
+                                        </t:div>
+                                        <h:outputLink title="РЕЗ" target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.mvs}" rendered="#{someInfo.mvs != null and !someInfo.mvs.trim().isEmpty()}">
+                                            <div class ="userlistboxbig">РЕЗ</div>
+                                        </h:outputLink>
+                                        <t:div styleClass="userlistboxbiggray" rendered="#{someInfo.mvs == null || someInfo.mvs.trim().isEmpty()}">
+                                            РЕЗ
+                                        </t:div>
+                                        <h:outputLink title="ДОВ" target="blank"  value="#{CandidatsPage.getSiteURL()}#{someInfo.certificateEmployment}" rendered="#{someInfo.certificateEmployment != null and !someInfo.certificateEmployment.trim().isEmpty()}">
+                                            <div class ="userlistboxbig">ДОВ</div>
+                                        </h:outputLink>
+                                        <t:div styleClass="userlistboxbiggray" rendered="#{someInfo.certificateEmployment == null || someInfo.certificateEmployment.trim().isEmpty()}">
+                                            ДОВ
+                                        </t:div>
+
+                                        <ui:repeat  value="#{someInfo.recommends}"
+                                                    rendered="#{someInfo.recommends !=null || !someInfo.recommends.isEmpty()}" var="recommendation">
+                                            <div class="userlistboxbig rec1">РЕК</div>
+                                            <div  style="display: none;"><admin:formRecommendation recom="#{recommendation}"/></div>
+                                        </ui:repeat>
+                                        <t:div rendered="#{someInfo.recommends == null || someInfo.recommends.isEmpty()}">
+                                            <div class="userlistboxbiggray">РЕК</div>
+                                            <div class="userlistboxbiggray">РЕК</div>
+                                        </t:div>
+                                    </div>
+                                </div>
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage5">
+                                <!-- column header -->
+                                <f:facet name="header"><b>Дія</b></f:facet>
+                                <!-- row record -->
+                                <ul style="list-style-type: none;">
+                                    <li><h:commandLink style="color:#0198f3; " action="#{formRedactorPage.init(someInfo.programUuid, someInfo.userUuid)}">Перегляд анкети</h:commandLink></li>
+                                </ul>
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage6">
+                                <!-- column header -->
+                                <f:facet name="header"><b>Згода</b></f:facet>
+                                <!-- row record -->
+                                <ul style="list-style-type: none;">
+                                    <input type="checkbox" class="styled"/>
+                                </ul>
+                            </h:column>
+
+                            <h:column class="tdtableCandidatsPage7">
+                                <!-- column header -->
+                                <f:facet name="header"><input type="checkbox" id="allcheck" class="styled"/></f:facet>
+                                <!-- row record -->
+                                <ul style="list-style-type: none;">
+                                    <input type="checkbox" class="styled styled2"/>
+                                </ul>
+                            </h:column>
+                        </h:dataTable>
+
+                        <div class="blockbuttons">
+                            <input class="buttonuserlist" type="button" value="Призначити експерта" onclick="location.href = 'google.com.ua'"></input>
+                            <input class="buttonuserlist" type="button" value="Допустити до оцінювання" style="float:right;" onclick="location.href = 'google.com.ua'"></input>
+                            <input class="buttonuserlist" type="button" value="Відмовити" style="float:right; margin-right: 35px;" onclick="location.href = 'google.com.ua'"></input>
+                        </div>
+                    </div>
+
+                </div>
+            </h:form>
+            <script type="text/javascript">
+
+                jQuery(".rec1").click(function() {
+                    jQuery(this).next().modal({
+                        show: {
+                            effect: "blind",
+                            duration: 300
+                        },
+                        hide: {
+                            effect: "explode",
+                            duration: 300
+                        }
+                    });
+
+                });
+
+            </script>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+    <head>
+        <title>Вход в систему</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Language" content="ru" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta name="robots" content="noindex,nofollow" />
+        <meta name="allow-search" content="no" />
+        <meta http-equiv="Author" content="Park Code (support@parkcode.com.ua)" />
+
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/styles/styles.css" />
+    </head>
+
+    <body>
+        <div class="centeredContent">
+            <h:form id="loginForm" prependId="false">
+                <div style="padding-top: 20px; font-size: large; text-align: center" >
+                    <b><t:outputText value="Для продолжения работы Вам необходимо пройти процедуру аутентификации" /></b>
+                </div>
+                <br/>
+                <br/>
+
+                <t:div style="text-align: center;" rendered="#{loginAction.errorMessage!=null}">
+                    <t:outputText value="#{loginAction.errorMessage}" escape="false" style="color: red"/>
+                </t:div>
+                <br/>
+                <br/>
+                <div class="formContent" style="left: 15%; width: 80%">
+                    <div class="formLine">
+                        <admin:formLabel value="Електронна пошта (логін)" />
+                        <div class="inputElem">
+                            <h:inputText id="login" value="#{loginAction.login}" maxlength="128"
+                                         required="true" requiredMessage="Поле обов’язкове">
+                                <t:validateEmail />
+                            </h:inputText><br/>
+                            <h:message styleClass="errorText" for="login" />
+                        </div>
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Пароль" />
+                        <div class="inputElem">
+                            <h:inputSecret id="password" value="#{loginAction.password}" maxlength="128"
+                                           required="true" requiredMessage="Поле обов’язкове" /><br/>
+                            <h:message styleClass="errorText" for="password" />
+                        </div>
+                    </div>
+                    <div class="formBottomButtons">
+                        <h:commandButton action="#{loginAction.doLogin}" value="Войти в систему" styleClass="formButton"/>
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+                    <!--
+                        document.getElementById('loginForm_loginField').focus();
+                    // -->
+                </script>
+
+                <br/>
+            </h:form>
+        </div>
+    </body>
+
+</html>

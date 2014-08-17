@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+
+    <!-- =================================================================== -->
+    <!-- metadata definition                                                 -->
+    <!-- =================================================================== -->
+
+    <sqldb:metadata id="PropertyGroup" tableName="PROPERTY_GROUP_TABLE" tableAlias="prt_g">
+        <sqldb:field propertyName="groupUuid"               columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="name"                    columnName="group_name"/>
+        <sqldb:field propertyName="order"                   columnName="property_group_order"/>
+        <sqldb:field propertyName="active"                  columnName="active"/>
+        <sqldb:field propertyName="nameEn"                  columnName="group_name_en"/>
+        <sqldb:field propertyName="general"                 columnName="general_group"/>
+    </sqldb:metadata>
+
+    <sqldb:metadata id="Property" tableName="PROPERTY_TABLE" tableAlias="prt">
+        <sqldb:field propertyName="objectUuid"              columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="propertyName"            columnName="property_name"/>
+        <sqldb:field propertyName="propertyType"            columnName="property_type"/>
+        <sqldb:field propertyName="propertyRequired"        columnName="property_required"/>
+        <sqldb:field propertyName="editable"                columnName="is_editable"/>
+        <sqldb:field propertyName="propertyDefaultValue"    columnName="property_default_value"/>
+        <sqldb:field propertyName="propertyNotation"        columnName="property_notation"/>
+        <sqldb:field propertyName="order"                   columnName="property_order"/>
+        <sqldb:field propertyName="id"                      columnName="property_id"/>
+        <sqldb:field propertyName="javaScript"              columnName="java_script"/>
+        <sqldb:field propertyName="groupUuid"               columnName="group_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+    </sqldb:metadata>
+
+    <sqldb:metadata id="SimpleProperty" tableName="PROPERTY_TABLE" tableAlias="s_prt">
+        <sqldb:field propertyName="objectUuid"              columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="propertyName"            columnName="property_name"/>
+        <sqldb:field propertyName="propertyType"            columnName="property_type"/>
+        <sqldb:field propertyName="propertyRequired"        columnName="property_required"/>
+        <sqldb:field propertyName="propertyDefaultValue"    columnName="property_default_value"/>
+        <sqldb:field propertyName="groupUuid"               columnName="group_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+    </sqldb:metadata>
+    
+    <sqldb:metadata id="PropertyValue" tableName="PROPERTY_VALUE" tableAlias="prt_v">
+        <sqldb:field propertyName="uuid"                    columnName="object_uuid"    primaryKey="true"                       columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="propertyUuid"            columnName="property_uuid"  columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="ownerUuid"               columnName="owner_uuid"     columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="formUUID"                columnName="form_uuid"     columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="ownerClass"              columnName="owner_class"/>
+        <sqldb:field propertyName="valueString"             columnName="value_string"/>
+        <sqldb:field propertyName="valueNumber"             columnName="value_number"/>
+        <sqldb:field propertyName="valueTimestamp"          columnName="value_timestamp"/>
+        <sqldb:field propertyName="valueBoolean"            columnName="value_boolean"/>
+        <sqldb:field propertyName="valueBytes"              columnName="value_bytes"/>
+    </sqldb:metadata>
+
+
+    <sqldb:metadata id="PropertyVariant" tableName="PROPERTY_SELECT_VARIANT_TABLE" tableAlias="prt_s_v">
+        <sqldb:field propertyName="variantUuid"                    columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="variantValue"                   columnName="variant_value"  />
+        <sqldb:field propertyName="order"                          columnName="object_order"/>
+    </sqldb:metadata>
+
+    <sqldb:metadata id="PropertyForm" tableName="FORM_TABLE" tableAlias="prt_f">
+        <sqldb:field propertyName="formUUID"                       columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="ownerUUID"                       columnName="owner_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+    </sqldb:metadata>
+
+
+     <sqldb:metadata id="PropertyAttributes" tableName="PROPERTY_ATTRIBUTES" tableAlias="prt_atr">
+        <sqldb:field propertyName="attributesUuid"              columnName="object_uuid"    primaryKey="true" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID" />
+        <sqldb:field propertyName="maxLengthActive"             columnName="max_length_active"/>
+        <sqldb:field propertyName="maxLength"                   columnName="max_length"/>
+        <sqldb:field propertyName="minLengthActive"             columnName="min_length_active"/>
+        <sqldb:field propertyName="minLength"                   columnName="min_length"/>
+        <sqldb:field propertyName="fixLengthActive"             columnName="fix_length_active"/>
+        <sqldb:field propertyName="fixLength"                   columnName="fix_length"/>
+        <sqldb:field propertyName="dataFormat"                  columnName="data_format"/>
+        <sqldb:field propertyName="dateType"                    columnName="date_type"/>
+        <sqldb:field propertyName="multiFields"                 columnName="is_multi_fields"/>
+        <sqldb:field propertyName="fieldsCount"                 columnName="max_fields_count"/>
+
+    </sqldb:metadata>
+</beans>

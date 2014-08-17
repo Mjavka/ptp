@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/public/parkcode/!svn/ver/7750/trunk/root/web/ptp/PTP-commons/src/main/java/ua/com/parkcode/web/ptp/actions
+END
+AbstractTransactionalAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/public/parkcode/!svn/ver/7750/trunk/root/web/ptp/PTP-commons/src/main/java/ua/com/parkcode/web/ptp/actions/AbstractTransactionalAction.java
+END
+AbstractProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/public/parkcode/!svn/ver/7750/trunk/root/web/ptp/PTP-commons/src/main/java/ua/com/parkcode/web/ptp/actions/AbstractProgramAction.java
+END
+AbstractLoginAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP-commons/src/main/java/ua/com/parkcode/web/ptp/actions/AbstractLoginAction.java
+END

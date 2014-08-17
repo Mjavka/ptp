@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="programList" />
+        <ui:param name="pageTitle" value="Список программ" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Список зарегистрироаных программ" />
+                
+                <admin:formErrorMessage provider="#{programList}" />
+
+                <div class="formContent">
+
+                    <h:form prependId="false">
+                        <div class="formBottomButtons">
+                            <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{programAction.newProgram()}"  value="Нова программа"/>
+                             <h:commandLink action="#{propertyManagerAction.initEntryList()}" onclick="open_pop_up('#pop-up');">Документи</h:commandLink>
+     
+                        </div>
+                        <h:dataTable value="#{programList.allRegisteredProgram}" var="program"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+
+                            <h:column >
+                                <!-- column header -->
+                                <f:facet name="header">Название</f:facet>
+                                <!-- row record -->
+                                #{program.name}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Страна</f:facet>
+                                    #{program.country}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Регион</f:facet>
+                                    #{program.region}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Период регистрации</f:facet>
+                                #{program.programRegisteredBeginDate}<br/> #{program.programRegisteredEndDate}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Период програмы</f:facet>
+                                #{program.programBeginDate}<br/> #{program.programEndDate}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Актуальность</f:facet>
+                                    #{program.programEndDate.time > programList.currentDate()?'Актуальная':'Не актуальная'}
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Действия</f:facet>
+                                <h:commandLink rendered="#{(loginAction.currentUser.roleIs(2)||loginAction.currentUser.roleIs(3))}" action="#{userProgramList.selectAllUserInProgram(program)}">Подписчики</h:commandLink><br/>
+                                <h:commandLink rendered="#{(loginAction.currentUser.roleIs(2)||loginAction.currentUser.roleIs(3))}" action="#{programAction.editProgram(program)}">Редактировать</h:commandLink><br/>
+                                <h:commandLink rendered="#{loginAction.currentUser.roleIs(3)}" action="#{programList.deleteProgram(program)}" onclick="return confirm('Вы уверены, что хотите удалить пограму?')">Удалить</h:commandLink>
+                            </h:column>
+
+                        </h:dataTable>
+                    </h:form>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

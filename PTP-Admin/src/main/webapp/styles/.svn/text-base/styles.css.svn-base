@@ -1,0 +1,1082 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    outline: none;
+}
+
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+    text-align: left;
+    /*   letter-spacing: -0.5px;*/
+}
+
+table {
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: top;
+}
+
+
+img {
+    border: 0;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+p {
+    padding-top: 5px;
+    text-indent: 0;
+}
+
+a, a:active, a:visited {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    color: #0a7096;
+    text-decoration: underline;
+}
+
+a:hover{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    color: #0a7096;
+    text-decoration: underline;
+}
+
+.clear-left{
+    clear: left;
+}
+
+.clear-right{
+    clear: right;
+}
+
+.clearfloat{
+    clear: both;
+}
+
+.errorText{
+    color: red;
+}
+
+
+/*=== =form =====================================================================*/
+
+.orderLeftInput{
+    width: 160px;
+    height: 24px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    color: #999999;
+    font-size: 13px;
+    text-decoration: none;
+
+    border: 1px solid #999;
+}
+
+.orderLeftText{
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    color: #999999;
+    font-size: 13px;
+    text-decoration: none;
+
+}
+.allButton{
+    padding: 8px 13px;
+    background: url(../images/allBtnBg.png) bottom left repeat-x;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.loginButton{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: url(../images/allBtnBg.png) bottom left repeat-x;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    color: white;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 0;
+}
+
+
+.order-table{
+    border-collapse:collapse;
+    width: 100%;
+}
+
+.order-table-header{
+    text-align:center;
+    background:none repeat scroll 0 0 #E5E5E5;
+    border-bottom:1px solid #BBBBBB;
+    padding:16px;
+}
+
+.order-table-odd-row{
+    text-align:center;
+    background:none repeat scroll 0 0 #FFFFFFF;
+    border-top:1px solid #BBBBBB;
+}
+
+.order-table-even-row{
+    text-align:center;
+    background:none repeat scroll 0 0 #F9F9F9;
+    border-top:1px solid #BBBBBB;
+}
+
+
+
+
+
+.formTitle{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    font-size: 18px;
+    color: #333;
+    line-height: 30px;
+
+    border-bottom: 1px solid #333;
+}
+
+.generalError{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    color: red;
+
+    padding: 6px 0;
+}
+
+.formContent{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    padding: 30px 0;
+}
+
+
+.formContent .formLine{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    padding-bottom: 20px;
+}
+
+.formContent .label1Conteiner{
+    padding-top: 30px;
+}
+
+.formContent .label2Conteiner{
+    padding-top: 20px;
+}
+
+
+
+.formContent .formLine .propertyForm {
+    position: relative;
+    float: left;
+    width: 100%;
+    background-color: #efefef;
+    padding: 20px 0 0 28px;
+    margin: 0 0 20px -28px;
+}
+
+
+.formContent .label1Conteiner .titleElem{
+    position: relative;
+    top: 3px;
+    left: -40px;
+
+    float: left;
+    width: 100%;
+
+    font-size: 20px;
+    color: #333;
+}
+
+.formContent .label2Conteiner .titleElem{
+    position: relative;
+    top: 3px;
+    left: -20px;
+
+    float: left;
+    width: 100%;
+
+    font-size: 16px;
+    color: #333;
+}
+
+
+.formContent .textElem{
+    position: relative;
+    top: 1px;
+
+    float: left;
+    width: 22%;
+
+    color: #333;
+    line-height: 19px;
+    font-size: 12px;
+}
+
+.formContent .formLine .error{
+    display: block;
+    position: relative;
+    float: right;
+    width: 75%;
+
+    color: red;
+
+    padding: 3px 0 6px 0;
+}
+
+.formContent .inputElem{
+    position: relative;
+    float: right;
+    width: 75%;
+}
+
+.formContent .commentElem{
+    position: relative;
+    float: right;
+    width: 75%;
+
+    font-size: 10px;
+    color: #999;
+}
+
+.formContent .formLabel .commentElem{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    padding-top: 7px;
+    font-size: 12px;
+    color: #333;
+}
+
+.formContent .inputElem input{
+    width: 75%;
+    height: 18px;
+
+    background-color: white;
+    border: 1px solid #333;
+
+    font-size: 12px;
+    color: black;
+    line-height: 16px;
+
+    padding: 0 7px;
+}
+
+.formContent .formLineChkbox .inputElem{
+    position: relative;
+    float: right;
+    width: 70%;
+}
+
+.formContent .formLineChkbox .inputElem input{
+    width: 18px;
+}
+
+.formContent .formLineFile input{
+    width: auto;
+    height: auto;
+    border: 0;
+}
+
+
+.formContent .programsLine .textElem{
+    width: 75%;
+}
+
+.formContent .programsLine .inputElem{
+    width: 22%;
+}
+
+
+.formContent .inputElem textarea{
+    width: 75%;
+    height: 80px;
+
+    padding: 0 7px;
+
+    background-color: white;
+    border: 1px solid #333;
+
+    font-size: 12px;
+    color: black;
+    line-height: 20px;
+}
+
+.formContent  .chkElem{
+    position: relative;
+    float: right;
+    width: 75%;
+}
+
+
+.formContent .chkbox{
+    display: block;
+    position: relative;
+    float: left;
+
+    width: 32px;
+    height: 28px;
+
+    background: url('../images/chkbox.png') top left no-repeat;
+
+    cursor: pointer;
+}
+
+.formContent .chkboxChecked{
+    background: url('../images/chkboxChecked.png') top left no-repeat;
+}
+
+.formContent .selectFormLine{
+    padding: 30px 0 20px 0;
+}
+
+.formContent .selectElem{
+    position: relative;
+    float: right;
+    width: 75%;
+    cursor: pointer;
+}
+
+.formContent select{
+    width: 75%;
+    height: 28px;
+    cursor: pointer;
+}
+
+.formContent option{}
+
+.formContent .formLineRadiobox .inputElem input {
+    width: 18px;
+}
+
+.formContent .dateElem{
+    position: relative;
+    float: right;
+    width: 75%;
+}
+
+.formContent .dateElem input{
+    position: relative;
+    top: -4px;
+
+    width: 14px;
+    height: 16px;
+
+    background: url('../images/calendarIcon.png') top left no-repeat;
+
+    font-size: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+
+.formContent .dateElemMainPage input{
+    position: relative;
+    top: 0;
+
+    width: 30px;
+    height: 16px;
+
+    background: none;
+
+    font-size: 12px;
+    color: black;
+    line-height: 16px;
+
+    padding: 0 7px;
+
+    background-color: white;
+    border: 1px solid #333;
+
+    margin-right: 4px;
+}
+
+.formContent .dateElemMainPage{
+    width: 73%;}
+
+.formContent .dateElemMainPage input[type="button"] {
+    position: relative;
+    top: 0;
+
+    width: 30px;
+    height: 18px;
+
+    background: none;
+
+    font-size: 12px;
+    color: black;
+    line-height: 16px;
+
+    padding: 0 7px;
+
+    background-color: #ccc;
+    border: 1px solid #333;
+
+    margin-right: 4px;
+}
+
+.formContent .dateElem input.calendar{
+    position: relative;
+    top: 0;
+
+    height: auto;
+    width: auto;
+
+
+    background: none;
+    border: 1px solid #333;
+
+    font-size: 12px;
+    color: black;
+    line-height: 17px;
+
+    margin-right: 4px;
+
+    cursor: inherit;
+}
+
+.formContent select{
+    width: auto;
+    height: auto;
+
+    background-color: white;
+    border: 1px solid #333;
+
+    font-size: 12px;
+    color: black;
+    line-height: 16px;
+
+    margin-right: 4px;
+}
+
+.formBottomButtons{
+    position: relative;
+    float: right;
+    width: 75%;
+
+    padding-top: 20px;
+}
+
+.formBottomButtonsCentered{
+    position: relative;
+    float: right;
+    width: 100%;
+
+    padding-top: 20px;
+}
+
+.formBottomButtonsCentered .formButton{
+    margin: 0 auto;
+}
+
+
+.formContent .formLine .disabled input,
+.formContent .formLine .disabled textarea{
+    background-color: #cccccc;
+}
+
+.formContent .formLine .required{
+    font-weight: bold;
+}
+
+.requiredFields {
+    position: relative;
+    float: right;
+    width: 75%;
+
+    font-size: 12px;
+    color: #999999;
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+.capchaBlock{
+    position: relative;
+    float: right;
+    width: 75%;
+}
+
+.capchaBlock .capchaImage{
+    position: relative;
+    float: left;
+}
+
+.capchaBlock .capchaArrow{
+    position: relative;
+    float: left;
+
+    width: 30px;
+    height: 60px;
+
+    background: url('../images/capchaArrow.png') top left no-repeat;
+
+    margin: 0 10px;
+}
+
+.capchaBlock .inputElem{
+    position: relative;
+    float: left;
+    width: 200px;
+    top: 19px;
+}
+
+.capchaBlock .capchaLink{
+    position: absolute;
+    left: 280px;
+    top: 45px;
+}
+
+.capchaBlock .capchaLink a{}
+
+
+a.formButton, .formButton, .formContent .inputElem input.formButton{
+    display: block;
+
+    width: 134px;
+    height: 28px;
+
+    text-align: center;
+    line-height: 28px;
+
+    color: #666666;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+
+    background: url('../images/formBtn.png') top left no-repeat;
+    border: none;
+}
+
+
+
+a.formButton:hover, .formButtonHover, .formContent .inputElem input.formButtonHover{
+    display: block;
+
+    width: 134px;
+    height: 28px;
+
+    text-align: center;
+    line-height: 28px;
+
+    color: #666666;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+
+    background: url('../images/formBtn.png') top left no-repeat;
+    border: none;
+}
+
+a.formButton:active, a.formButton:visited{
+    color: #666666;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.formButtonCSS3{
+    background: #fdfdfd; /* Old browsers */
+    background: -moz-linear-gradient(top, #fdfdfd 0%, #d7d7d7 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fdfdfd), color-stop(100%,#d7d7d7)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #fdfdfd 0%,#d7d7d7 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #fdfdfd 0%,#d7d7d7 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #fdfdfd 0%,#d7d7d7 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #fdfdfd 0%,#d7d7d7 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#d7d7d7',GradientType=0 ); /* IE6-9 */
+
+    display: block;
+
+    width: 134px;
+    height: 28px;
+
+    text-align: center;
+    line-height: 28px;
+
+    color: #666666;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+
+    border: 1px solid #929292;
+}
+
+
+
+.formButtonDisabled{
+    color: #ccc;
+    cursor: default;
+}
+
+
+.radioBtnsBlock {
+    position: relative;
+    float: left;
+}
+
+.radioBtnsBlock td {
+    padding-right: 10px;
+}
+
+
+.site{
+    position: relative;
+    width: 980px;
+
+    margin: 0 auto;
+}
+
+.site-header{
+    position: relative;
+    width: 980px;
+    z-index: 2;
+}
+
+.site-header .header-top{
+    position: relative;
+    width: 960px;
+    height: 90px;
+    left: 10px;
+
+    border-bottom: 1px solid black;
+}
+
+.site-header .logo{
+    position: absolute;
+    width: 238px;
+    height: 70px;
+
+    top: 10px;
+    left: 15px;
+
+    background: url('../images/usaid_logo.png') top left no-repeat;
+}
+
+.site-header .ceume-logo{
+    position: absolute;
+    width: 195px;
+    height: 75px;
+
+    top: 5px;
+    left: 15px;
+
+    background: url('../images/ceume_logo.png') top left no-repeat;
+}
+
+.site-header .logoText{
+    position: absolute;
+    top: 32px;
+    left: 265px;
+    width: 388px;
+    font-size: 16px;
+    color: #013878;
+    font-weight: bold;
+}
+
+.site-header .langs{
+    position: absolute;
+    right: 175px;
+    bottom: 12px;
+
+    width: 60px;
+
+    color: #036896;
+}
+
+.site-header .langs span{
+    color: black;
+    padding: 0 7px;
+}
+
+.site-header .langs a{
+    color: #858585;
+    padding: 0 7px;
+}
+
+.site-header .searchBLock{
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+
+    width: 163px;
+    height: 37px;
+
+    background-color: #006a94;
+}
+
+.site-header .searchField{
+    position: relative;
+    float: left;
+
+    top: 9px;
+    left: 9px;
+
+    width: 118px;
+    height: 20px;
+}
+
+.site-header .searchBtn{
+    position: relative;
+    float: left;
+
+    top: 12px;
+    left: 18px;
+
+    width: 15px;
+    height: 14px;
+
+    cursor: pointer;
+
+    background: url('../images/search.png') top left no-repeat;
+}
+
+.header-right-link{
+    position: absolute;
+    right: 10px;
+    top: 95px;
+    width: 162px;
+    height: 32px;
+    z-index: 2;
+    border-left: 1px solid black;
+}
+
+.header-right-link a{
+    display:block;
+    padding: 0 5px 0 16px;
+    background: #fff;
+    text-decoration:none;
+    line-height: 32px;
+
+    cursor: pointer;
+    text-transform: uppercase;
+
+}
+
+.header-enter-exit-link{
+    position: absolute;
+    right: 173px;
+    top: 95px;
+    height: 32px;
+    z-index: 2;
+}
+
+.header-enter-exit-link input{
+    display:block;
+    padding: 0 5px;
+    background: #fff;
+    text-decoration:none;
+    line-height: 32px;
+    color: #0a7096;
+
+    cursor: pointer;
+    text-transform: uppercase;
+
+}
+
+.header-right-link a:hover,
+.header-enter-exit-link input:hover{
+    background:#eee;
+}
+
+.header-right-link a.active,
+.header-enter-exit-link input.active,
+.header-right-link a.active:hover,
+.header-enter-exit-link input.active:hover{
+    background: #000;
+    color: #fff;
+    cursor: normal;
+}
+
+
+
+
+
+
+.site-header .main-navigation{
+    position: relative;
+    left: 10px;
+    width: 697px;
+    height: 32px;
+    margin-left: 263px;
+    border-top: 4px solid black;
+
+    text-transform: uppercase;
+}
+
+.site-header .nav-menu ul{
+    float: left;
+    width: 461px;
+    list-style: none;
+    font-weight: bold;
+}
+
+.site-header .nav-menu ul li{
+    float:left;
+    margin-right: 0px;
+    position:relative;
+    display:block;
+}
+
+
+.site-header .nav-menu ul li a{
+    display:block;
+    padding: 0 5px;
+    background: #fff;
+    text-decoration:none;
+    line-height: 32px;
+
+}
+
+.site-header .nav-menu .current_page_item a{
+    background: #000;
+    color: #fff;
+}
+
+.site-header .nav-menu ul li a:hover{
+    background:#eee;
+}
+
+.site-header .nav-menu .current_page_item a:hover{
+    background: #000;
+    color: #fff;
+}
+
+/*--- ВЫПАДАЮЩИЕ ПУНКТЫ ---*/
+.site-header .nav-menu ul ul{
+    list-style:none;
+    position:absolute;
+    left:-9999px; /* Скрываем за экраном, когда не нужно (данный метод лучше, чем display:none;) */
+    opacity:0; /* Устнавливаем начальное состояние прозрачности */
+    -webkit-transition:0.25s linear opacity; /* В Webkit выпадающие пункты будут проявляться */
+}
+.site-header .nav-menu ul ul li{
+    padding-top:1px; /* Вводим отступ между li чтобы создать иллюзию разделенных пунктов меню */
+    float:none;
+}
+
+.site-header .nav-menu ul ul li a,
+.site-header .nav-menu .current_page_item ul a{
+    display:block;
+    width: 100px;
+    background:#eee;
+    color: #0a7096;
+    line-height: 1.2;
+    padding: 8px;
+}
+
+.site-header .nav-menu ul li:hover ul{ /* Выводим выпадающий пункт при наведении курсора */
+    left:0; /* Приносим его обратно на экран, когда нужно */
+    opacity:1; /* Делаем непрозрачным */
+}
+
+.site-header .nav-menu ul li:hover ul li a:hover{ /* Устанавливаем стили для выпадающих пунктов, когда курсор наводится на конкретный пункт */
+    background:#ddd;
+    color: #0a7096;
+    -moz-transform:scale(1.05);
+    -webkit-transform:scale(1.05);
+}
+
+.wrapper{
+    position: relative;
+    width: 960px;
+    left: 10px;
+
+    padding-top: 20px;
+}
+
+
+
+.centeredContent{
+    position: relative;
+    width: 800px;
+    left: 50%;
+    margin-left: -400px;
+}
+
+
+.title{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    font-size: 20px;
+    color: #333;
+    line-height: 30px;
+
+    border-bottom: 1px solid #333;
+
+    margin-bottom: 15px;
+}
+
+.messageBlock{
+    position: relative;
+    float: left;
+    left: 50%;
+    margin-left: -200px;
+    width: 400px;
+}
+
+.topBg{
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 40px;
+}
+
+.massageContent{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    color: #333;
+    font-size: 16px;
+}
+
+.bottomBg{
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 40px;
+}
+
+#overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: #000;
+    opacity: 0.7;
+    z-index: 9000;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+#pop-up {
+    width: 250px;
+    height: 50px;
+    border: 1px solid #e8e8e8;
+    background: #fdfdfd;
+    display: none;
+    z-index: 9001;
+}
+
+
+.recommend {
+    width: 822px;
+    height: 1120px;
+    border: 1px solid #e8e8e8;
+    background: #fdfdfd;
+    display: none;
+    z-index: 9001;
+}
+
+.nyroModalDom .formLine{
+    position: relative;
+    float: left;
+    width: 100%;
+
+    padding-bottom: 20px;
+}
+
+.nyroModalDom .textElem{
+    position: relative;
+    top: 1px;
+
+    float: left;
+    width: 22%;
+
+    color: #333;
+    line-height: 19px;
+    font-size: 12px;
+}
+
+.nyroModalDom .textElem{
+    position: relative;
+    top: 1px;
+
+    float: left;
+    width: 22%;
+
+    color: #333;
+    line-height: 19px;
+    font-size: 12px;
+    padding: 0 1%;
+}
+
+.nyroModalDom .label1Conteiner .titleElem{
+    position: relative;
+    top: 3px;
+    left: -40px;
+
+    float: left;
+    width: 100%;
+
+    font-size: 20px;
+    color: #333;
+}
+
+.nyroModalDom .label2Conteiner .titleElem{
+    position: relative;
+    top: 3px;
+    left: 0px;
+
+    float: left;
+    width: 100%;
+
+    font-size: 19px;
+    color: #333;
+}

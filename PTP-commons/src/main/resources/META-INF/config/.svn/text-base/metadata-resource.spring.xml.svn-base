@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+
+    <!-- =================================================================== -->
+    <!-- metadata definition                                                 -->
+    <!-- =================================================================== -->
+    <sqldb:metadata id="ResourceMinimal" tableName="RESOURCE_TABLE" tableAlias="res">
+        <sqldb:field propertyName="ownerUuid" columnName="owner_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="uuid"      columnName="object_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="path"      columnName="resource_path" />
+    </sqldb:metadata>
+
+    <sqldb:metadata id="Resource" tableName="RESOURCE_TABLE" tableAlias="res">
+        <sqldb:field propertyName="ownerUuid"     columnName="owner_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="uuid"          columnName="object_uuid" columnValueFunction="lower(@::VARCHAR)" paramValueFunction="@::UUID"/>
+        <sqldb:field propertyName="path"          columnName="resource_path" />
+        <sqldb:field propertyName="originalName"  columnName="original_name"/>
+        <sqldb:field propertyName="mimeType"      columnName="mime_type" />
+        <sqldb:field propertyName="fileSize"      columnName="file_size" />
+        <sqldb:field propertyName="width"         columnName="image_width" />
+        <sqldb:field propertyName="height"        columnName="image_height" />
+        <sqldb:field propertyName="resourceType"  columnName="resource_type" />
+    </sqldb:metadata>
+
+
+</beans>

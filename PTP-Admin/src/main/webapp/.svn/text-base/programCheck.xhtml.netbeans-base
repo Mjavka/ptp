@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin"
+      xmlns:t="http://myfaces.apache.org/tomahawk">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="program" />
+        <ui:param name="pageTitle" value="Анкета" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <admin:formTitle value="Анкета #{userFormAction.program.user.surname} #{userFormAction.program.user.name} на програму #{userFormAction.program.name}" />
+
+                <admin:formErrorMessage provider="#{userFormAction}" />
+
+                <div class="formContent">
+                    <h:form prependId="false">
+                        <ui:repeat value="#{userFormAction.program.groups}" var="group" varStatus="groupStatus">
+                            <t:div styleClass="formLine formLabel label1Conteiner">
+                                <div class="titleElem">
+                                    <h:outputText value="#{group.name}" />
+                                </div>
+                            </t:div>
+                            <ui:repeat  value="#{group.properties}" var="property" varStatus="status">
+
+                                <admin:formProperty property="#{property}" status="#{status}" fStatus ="#{null}"/>
+
+                                <t:div  rendered="#{property.propertyType == 'FORM'}" styleClass="formLine property_#{property.id!=null? property.id : property.objectUuid}" style=" z-index: #{1000 - status.index}" >
+                                    <div class="formLine formLabel label2Conteiner">
+                                        <div class="titleElem">
+                                            <h:outputText value="#{property.propertyName}" />
+                                        </div>
+                                        <div class="commentElem">
+                                            <h:outputText value="#{property.propertyNotation}" />
+                                        </div>
+                                    </div>
+                                    <ui:repeat value="#{property.form}" var="form" varStatus="formStatus">
+                                        <div id="form_#{form.formUUID}" class="propertyForm">
+                                            <ui:repeat value="#{form.properties}" var="formProperty" varStatus="formStatusProperty">
+                                                <admin:formProperty property="#{formProperty}" status = "#{formStatusProperty}" fStatus = "#{formStatus}" gStatus = "#{groupStatus}"/>
+                                            </ui:repeat>
+                                        </div>
+
+                                    </ui:repeat>
+                                </t:div>
+
+                            </ui:repeat>
+                        </ui:repeat>
+
+                        <div class="formLine">
+                            <div class="textElem" style="font-size: medium; color: crimson;">
+                                <h:outputText value="Коментар менеджера:" escape="false" />
+                            </div>
+                            <div class="inputElem">
+                                <h:inputTextarea value="#{userFormAction.comment}" />
+                            </div>
+                            <div class="commentElem">
+                                <h:outputText value="Коментарий менеджера который пойдет в письмо пользователю при возврате анкеты на дозаполнение" />
+                            </div>
+                        </div>
+
+                        <div class="formBottomButtons">
+                            <ui:remove>
+                                <h:commandButton styleClass="formButton " style="float: right; margin-left: 5px;" action="#{userFormAction.accept()}"  value="Принять" />
+                                <h:commandButton styleClass="formButton " style="float: right; margin-left: 5px;" action="#{userFormAction.cancel()}"  value="Вернуть" />
+                            </ui:remove>
+                            <h:outputLink styleClass="formButton" style="float: right; margin-left: 5px;" value="javascript:history.back()" >Назад</h:outputLink>
+                            <h:commandButton styleClass="formButton " style="float: right; margin-left: 5px;" action="#{userFormAction.save()}"  value="Сохранить" />
+                            <h:commandButton styleClass="formButton " rendered="#{loginAction.currentUser.roleIs(3)}" style="float: right; margin-left: 5px;" action="#{userFormAction.abortAccept()}"  value="Вернуть" />
+                        </div>
+
+
+                    </h:form>
+
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

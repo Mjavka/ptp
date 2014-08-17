@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="ExpertQuestionnaire" />
+        <ui:param name="pageTitle" value="Оцінювання" />
+
+        <ui:define name="body">
+            <t:div rendered="#{!loginAction.loggedIn}">
+                <admin:formTitle value="Помилка, ви не авторизувалися" />
+            </t:div>
+            <t:div rendered="#{!loginAction.currentUser.roleIs(ExpertQuestionnaire.EXPERT_ID)}">
+                <admin:formTitle value="Помилка, ви не експерт" />
+            </t:div>
+            <t:div rendered="#{loginAction.loggedIn and loginAction.currentUser.roleIs(ExpertQuestionnaire.EXPERT_ID)}">
+                <div class="tittleblock">#{ExpertQuestionnaire.program.name}<b></b></div>
+
+                <admin:formErrorMessage provider="#{ExpertQuestionnaire}" />
+                <admin:formSuccessMessage message="#{ExpertQuestionnaire.message}"/>
+
+                <h:form prependId="false" enctype="multipart/form-data">
+
+                    <h:form>
+                        <div class="centeredContent">
+                            <div class="tittleblock"><b>#{ExpertQuestionnaire.program.name}</b></div> 
+                            <ui:repeat  value="#{ExpertQuestionnaire.currentGroup.properties}" var="property" varStatus="status">
+
+                                <admin:formProperty property="#{property}" status="#{status}" fStatus ="#{null}"/>
+
+                                <t:div  rendered="#{property.propertyType == 'FORM'}" styleClass="formLine property_#{property.id!=null? property.id : property.objectUuid}" style=" z-index: #{1000 - status.index}" >
+                                    <div class="formLine formLabel label2Conteiner">
+                                        <div class="titleElem">
+                                            <h:outputText value="#{property.propertyName}" />
+                                        </div>
+                                        <div class="commentElem">
+                                            <h:outputText value="#{property.propertyNotation}" />
+                                        </div>
+                                    </div>
+                                    <ui:repeat value="#{property.form}" var="form" varStatus="formStatus">
+                                        <div id="form_#{form.formUUID}" class="propertyForm">
+                                            <ui:repeat value="#{form.properties}" var="formProperty" varStatus="formStatusProperty">
+                                                <admin:formProperty property="#{formProperty}" status="#{formStatusProperty}" fStatus ="#{formStatus}" gStatus = "#{formRedactorPage.userProgram.anket.groups.indexOf(formRedactorPage.currentGroup)}"/>
+                                            </ui:repeat>
+                                        </div>
+                                        <t:div styleClass="plusMinusContainer" style="float: left; width: 100%;">
+                                            <h:commandLink styleClass="plusBtn" action="#{formRedactorPage.addForm(property)}" rendered="#{property.attributes.multiFields &amp;&amp; (formStatus.last &amp;&amp; property.attributes.fieldsCount > formStatus.index+1)}" >
+                                                <f:ajax render="@form" execute="@form"/>
+                                            </h:commandLink>
+                                            <h:commandLink styleClass="minusBtn" action="#{formRedactorPage.deleteForm(property, form)}" rendered="#{formStatus.index != 0 &amp;&amp; formStatus.last}" >
+                                                <f:ajax render="@form" execute="@form"/>
+                                            </h:commandLink>
+                                        </t:div>
+                                    </ui:repeat>
+                                </t:div>
+                            </ui:repeat>
+                        </div>
+
+                        <script type="text/javascript">
+                            jQuery(document).ready(function() {
+
+
+                                jQuery('.source-arrow-expert').toggle(
+                                        function() {
+
+                                            jQuery('.view-source-expert').animate({bottom: 0});
+
+                                            jQuery('.source-arrow-expert').addClass("blockOpenedExpert");
+
+
+
+                                        },
+                                        function() {
+                                            $dsd = jQuery('.view-source-expert').innerHeight();
+
+                                            jQuery('.view-source-expert').animate({bottom: -$dsd});
+
+
+
+                                            jQuery('.source-arrow-expert').removeClass("blockOpenedExpert");
+
+
+                                        }
+
+                                );
+                                jQuery('.iconcommentbig').toggle(
+                                        function() {
+
+                                            jQuery('.textInHideExpertQuestion').slideDown(300);
+
+
+                                        },
+                                        function() {
+
+
+                                            jQuery('.textInHideExpertQuestion').slideUp(300);
+
+
+                                        }
+
+                                );
+                            });
+                        </script>     
+
+                    </h:form>
+                </h:form>
+            </t:div>
+
+        </ui:define>
+
+        <ui:define name="underFooter">
+            <t:div rendered="#{loginAction.loggedIn and loginAction.currentUser.roleIs(ExpertQuestionnaire.EXPERT_ID)}">
+
+                <div class="view-source-expert">
+
+                    <div class="view-source-expert-hide"> 
+
+                        <div class="source-arrow-expert"></div>
+                        <div>
+                            <div class="sourceInHide">
+                                <div><b>1.Чи відповідає даний кандидат необхідним критеріям?</b></div>
+                                <select>
+                                    <option>Пункт 1</option>
+                                    <option>Пункт 2</option>
+                                </select>
+                            </div>
+                            <div class="sourceInHide">
+                                <div><b>2.Чи відповідає даний кандидат необхідним критеріям?</b></div>
+                                <select>
+                                    <option>Пункт 1</option>
+                                    <option>Пункт 2</option>
+                                </select>
+
+                            </div>
+                            <div class="sourceInHide">
+                                <div><b>3.Чи відповідає даний кандидат необхідним критеріям?</b></div>
+                                <select>
+                                    <option>Пункт 1</option>
+                                    <option>Пункт 2</option>
+                                </select>
+
+                            </div>
+                            <div class="sourceInHide">
+                                <div><b>4.Чи відповідає даний кандидат необхідним критеріям?</b></div>
+                                <select>
+                                    <option>Пункт 1</option>
+                                    <option>Пункт 2</option>
+                                </select>
+
+                            </div>
+                            <div class="sourceInHide">
+                                <div><b>5.Чи відповідає даний кандидат необхідним критеріям?</b></div>
+                                <select>
+                                    <option>Пункт 1</option>
+                                    <option>Пункт 2</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div style="width: 100px; position: absolute; right: 30px;top: 30px;">
+                            <div style="margin-bottom: 15px;">
+                                <input class="buttonuserlist" type="button" value="Відмінити" onclick="location.href = 'google.com.ua'"></input>
+                            </div>
+                            <div >
+                                <input class="buttonuserlist" style="width: 101px;" type="button" value="Оцінити" onclick="location.href = 'google.com.ua'"></input>
+                            </div>
+                            <div class="iconcommentbig" style="padding-left: 40px;color: #0198f3;margin-top: 5px;"><div style="border-bottom: 1px dashed;">Коментар</div></div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="styleTextInHide"> <textarea class="textInHideExpertQuestion" type="ccomment"></textarea></div>
+                </div>
+
+
+            </t:div>
+        </ui:define>
+
+
+    </ui:composition>
+
+</html>

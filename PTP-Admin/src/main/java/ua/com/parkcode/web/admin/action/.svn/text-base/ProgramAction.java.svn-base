@@ -1,0 +1,179 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ua.com.parkcode.web.admin.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.parkcode.commons.utils.CollectionUtils;
+import ua.com.parkcode.commons.utils.UUIDUtils;
+import ua.com.parkcode.web.ptp.actions.AbstractProgramAction;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.PropertyGroup;
+import ua.com.parkcode.web.ptp.data.User;
+import ua.com.parkcode.web.ptp.services.UserService;
+
+/**
+ * <b>Предназначение:</b><br/>
+ * <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ * <p></p>
+ *
+ * <br/>Создан 2013.08.14<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name = "programAction")
+@SessionScoped
+public class ProgramAction extends AbstractProgramAction {
+
+    private static final long serialVersionUID = -3720092403191753591L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProgramAction.class);
+
+    private Program program;
+    private String message;
+
+    private transient UserService userService;
+    List<User> experts;
+
+
+    public String newProgram()
+    {
+        clear();
+        setMessage(null);
+        program = new Program();
+        program.setUuid(UUIDUtils.randomUUIDString());
+        program.setGroups(getProgramService().selectAllGeneralPropertyGroup());
+        return "programEdit.htm?faces-redirect=true";
+    }
+
+    public String editProgram(Program program)
+    {
+        clear();
+        setMessage(null);
+        this.program = program;
+        this.program.setGroups(getProgramService().selectAllPropertyGroupByProgram(program.getUuid()));
+
+        return "programEdit.htm?faces-redirect=true";
+    }
+
+
+    public String save()
+    {
+        clear();
+        setMessage(null);
+        try
+        {
+            getProgramService().saveProgram(program);
+            if(experts != null && !experts.isEmpty())
+            {
+                List<User> selectExpert = new ArrayList<User>();
+                for(User expert: experts)
+                {
+                    if(expert.isSelect())
+                    {
+                        selectExpert.add(expert);
+                    }
+                }
+
+                getProgramService().saveExpertPrograms(selectExpert, program);
+
+
+            }
+
+            setMessage("Сохранение прошло успешно");
+            return null;
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("Error save", e);
+            setErrorMessage("Ошибка сохранения програмы");
+            return null;
+        }
+    }
+
+
+    // <editor-fold defaultstate="collapsed" desc="Getter & Setter">
+    public Program getProgram()
+    {
+        return program;
+    }
+
+    public void setProgram(Program program)
+    {
+        this.program = program;
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public void setMessage(String message)
+    {
+        this.message = message;
+    }
+// </editor-fold>
+
+     protected final UserService getUserService()
+    {
+        if (userService == null){
+            userService = evaluateExpression("userService");
+        }
+        return userService;
+    }
+
+    public List<User> getAllExpert()
+    {
+        try
+        {
+            List<User> programExpert = getUserService().selectAllRegisteredExpertUserOnProgram(program.getUuid());
+            experts = getUserService().selectAllRegisteredExpertUser();
+
+            if(programExpert != null && !programExpert.isEmpty())
+            {
+                if( experts!=null && !experts.isEmpty())
+                {
+                    for(User expert: experts)
+                    {
+                        for(User pgmExpert: programExpert)
+                        {
+                            if(expert.getUuid().equalsIgnoreCase(pgmExpert.getUuid()))
+                            {
+                                expert.setSelect(true);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error expert select", ex);
+            setErrorMessage("Ошибка построения списка експертов");
+            return null;
+        }
+        return experts;
+    }
+
+
+    private boolean isContainNoGeneralGroup()
+    {
+        for(PropertyGroup g : program.getGroups())
+        {
+            if(!g.isGeneral()){
+                return true;
+            }
+        }
+        return false;
+    }
+}

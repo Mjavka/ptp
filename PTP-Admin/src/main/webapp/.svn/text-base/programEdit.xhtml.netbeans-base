@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="programEdit" />
+    <ui:param name="pageTitle" value="Программа" />
+
+
+        <ui:define name="body">
+        <div class="centeredContent">
+            <admin:formTitle value="Редактор программы" />
+
+            <admin:formErrorMessage provider="#{programAction}" />
+
+            <admin:formSuccessMessage message="#{programAction.message}"/>
+
+            <div class="formContent">
+                <h:form prependId="false">
+
+                    <div class="formLine">
+                        <admin:formLabel value="Назва программы" />
+                        <div class="inputElem">
+                            <h:inputTextarea id="name" value="#{programAction.program.name}"
+                                         required="true" requiredMessage="Поле обов’язкове">
+                            </h:inputTextarea><br/>
+                            <h:message styleClass="errorText" for="name" />
+                        </div>
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Назва программы (en)" />
+                        <div class="inputElem">
+                            <h:inputTextarea id="nameEn" value="#{programAction.program.nameEn}"
+                                         required="true" requiredMessage="Поле обов’язкове">
+                            </h:inputTextarea><br/>
+                            <h:message styleClass="errorText" for="nameEn" />
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Коментар" />
+                        <div class="inputElem">
+                            <h:inputTextarea id="comment" value="#{programAction.program.comment}">
+                            </h:inputTextarea>
+                        </div>
+                    </div>
+
+                    <div class="formLine">
+                        <admin:formLabel value="Страна" />
+                        <div class="inputElem">
+                            <h:inputText id="country" value="#{programAction.program.country}"
+                                         required="true" requiredMessage="Поле обов’язкове">
+                            </h:inputText><br/>
+                            <h:message styleClass="errorText" for="country" />
+                        </div>
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Регион" />
+                        <div class="inputElem">
+                            <h:inputText id="region" value="#{programAction.program.region}"
+                                         required="true" requiredMessage="Поле обов’язкове">
+                            </h:inputText><br/>
+                            <h:message styleClass="errorText" for="region" />
+                        </div>
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Дата начала регистрации" />
+                        <div class="dateElem">
+                            <t:inputDate id="programRegisteredBeginDate" value="#{programAction.program.programRegisteredBeginDate}"
+                                         styleClass="calendar" type="date" popupCalendar="true"
+                                         required="true" requiredMessage="Поле обов’язкове"/>
+                        </div>
+                        <t:message styleClass="errorText" for="programRegisteredBeginDate" />
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Дата окончания регистрации" />
+                        <div class="dateElem">
+                            <t:inputDate id="programRegisteredEndDate" value="#{programAction.program.programRegisteredEndDate}"
+                                         styleClass="calendar" type="date" popupCalendar="true"
+                                         required="true" requiredMessage="Поле обов’язкове"/>
+                        </div>
+                        <t:message styleClass="errorText" for="programRegisteredEndDate" />
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Дата начала программы" />
+                        <div class="dateElem">
+                            <t:inputDate id="programBeginDate" value="#{programAction.program.programBeginDate}"
+                                         styleClass="calendar" type="date" popupCalendar="true"
+                                         required="true" requiredMessage="Поле обов’язкове"/>
+                        </div>
+                        <t:message styleClass="errorText" for="programBeginDate" />
+                    </div>
+                    <div class="formLine">
+                        <admin:formLabel value="Дата окончания программы" />
+                        <div class="dateElem">
+                            <t:inputDate id="programEndDate" value="#{programAction.program.programEndDate}"
+                                         styleClass="calendar" type="date" popupCalendar="true"
+                                         required="true" requiredMessage="Поле обов’язкове"/>
+                        </div>
+                        <t:message styleClass="errorText" for="programEndDate" />
+                    </div>
+
+                    <admin:requiredFieldsInfo />
+
+
+
+                    <div class="formLine">
+                        <admin:formLabel value="Експерты" />
+                    </div>
+                    <div class="formLine">
+                        <h:dataTable value="#{programAction.allExpert}" var="expert"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+                            <h:column >
+                                <f:facet name="header">Фамилия</f:facet>
+                                #{expert.surname}
+                            </h:column>
+                            <h:column >
+                                <f:facet name="header">Имя</f:facet>
+                                #{expert.name}
+                            </h:column>
+                            <h:column >
+                                <f:facet name="header">Отчество</f:facet>
+                                #{expert.patronymic}
+                            </h:column>
+                            <h:column >
+                                <f:facet name="header">Сфери експертизы</f:facet>
+                                <ui:repeat value="#{expert.expertInfo.scopeExpert}" var="scop">
+                                    <h:outputText value="#{scop}" style="position: relative; float: left; width: 100%"/>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column >
+                                <h:selectBooleanCheckbox value="#{expert.select}"/>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+
+                    <div class="formLine">
+                        <div class="formBottomButtons">
+                            <h:outputLink styleClass="formButton" style="float: right; margin-left: 5px;" value="javascript:history.back()" >Отменить</h:outputLink>
+                            <h:commandButton value="Сохранить" action="#{programAction.save()}" styleClass="formButton" style="float: right; margin-left: 5px;"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

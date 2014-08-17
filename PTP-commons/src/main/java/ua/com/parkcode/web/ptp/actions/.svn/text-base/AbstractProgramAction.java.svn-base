@@ -1,0 +1,51 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ua.com.parkcode.web.ptp.actions;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import ua.com.parkcode.commons.web.faces.actions.AbstractAction;
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.services.ProgramService;
+
+/**
+ * <b>Предназначение:</b><br/>
+ * <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ * <p></p>
+ *
+ * <br/>Создан 2013.07.05<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+public abstract class AbstractProgramAction extends AbstractAction {
+
+    private static final long serialVersionUID = -3720092403191753591L;
+    private transient ProgramService programService;
+
+    public boolean isLogined()
+    {
+        if (getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    protected final ProgramService getProgramService()
+    {
+        if (programService == null) {
+            programService = evaluateExpression("programService");
+        }
+        return programService;
+    }
+
+    public List<String> yearsDiapazon(int from, int to)
+    {
+        return ApplicationManager.yearsDiapazon(from, to);
+    }
+}

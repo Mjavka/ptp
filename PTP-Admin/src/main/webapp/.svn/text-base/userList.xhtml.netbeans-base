@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="userList" />
+    <ui:param name="pageTitle" value="Список пользователей" />
+
+
+        <ui:define name="body">
+        <div class="centeredContent">
+            <admin:formTitle value="Список зарегистрироаных пользователей" />
+
+            <admin:formErrorMessage provider="#{userList}" />
+
+            <div class="formContent">
+
+                <h:form prependId="false">
+                    <div class="formBottomButtons">
+                        <h:commandLink styleClass="formButton" style="float: right; margin-left: 5px;" action="#{userEditAction.newUser()}" rendered="#{loginAction.currentUser.roleIs(3)}">
+                            Новий пользователь
+                        </h:commandLink>
+                    </div>
+                    <h:dataTable value="#{userList.allRegisteredUser}" var="user"
+    			styleClass="order-table"
+    			headerClass="order-table-header"
+    			rowClasses="order-table-odd-row,order-table-even-row">
+
+                        <h:column>
+    				<!-- column header -->
+    				<f:facet name="header">№</f:facet>
+    				<!-- row record -->
+    				#{userList.allRegisteredUser.indexOf(user)+1}
+    			</h:column>
+    			<h:column>
+    				<!-- column header -->
+    				<f:facet name="header">Имя</f:facet>
+    				<!-- row record -->
+    				#{user.name}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">Фамилия</f:facet>
+    				#{user.surname}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">E-mail</f:facet>
+    				#{user.email}
+    			</h:column>
+
+    			<h:column>
+    				<f:facet name="header">Дата рождения</f:facet>
+    				#{user.birthday}
+    			</h:column>
+                        <h:column rendered="#{loginAction.currentUser.roleIs(3)}">
+    				<f:facet name="header">Роли</f:facet>
+                                <ui:repeat value="#{user.role}" var="role">
+                                    <h:outputLabel value="#{role.roleTypeString()}"/><br/>
+                                </ui:repeat>
+    			</h:column>
+                        <h:column>
+    				<f:facet name="header">Активация</f:facet>
+    				#{user.activationDate != null?'Активирован':'Не активирован'}
+    			</h:column>
+                        <h:column>
+    				<f:facet name="header">Действия</f:facet>
+
+                                <h:commandLink rendered="#{loginAction.currentUser.roleIs(3)}" action="#{userEditAction.doEditUser(user)}" style="position: relative; float: left; width: 100%;">Редактировать</h:commandLink>
+
+                                <h:commandLink rendered="#{loginAction.currentUser.roleIs(3)}" action="#{userList.deleteUser(user)}" style="position: relative; float: left; width: 100%;" onclick="return confirm('Вы уверены, что хотите удалить пользователя?')">Удалить</h:commandLink>
+
+                                <h:outputLink rendered="#{user.newInfo}" value="#{request.contextPath}/userChangePersonalData.htm?u=#{user.uuid}&faces-redirect;" style="position: relative; float: left; width: 100%;">Изменение даных</h:outputLink>
+
+                        </h:column>
+
+    		</h:dataTable>
+            </h:form>
+            </div>
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

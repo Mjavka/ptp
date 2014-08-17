@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="profileRequestSucces" />
+    <ui:param name="pageTitle" value="Сохранение данных" />
+
+
+    <ui:define name="body">
+        <ui:decorate template="/WEB-INF/templates/message.xhtml">
+            <ui:define name="message">
+                <h:outputLabel rendered="#{profileEditAction.success}" value="Запит на зміну особистих даних відправлено на перевірку, про результат ви будете повідомлені задопомогою email" /><br/>
+                <h:outputLabel rendered="#{profileEditAction.changePassword}" value="Пароль змінено"/>
+            </ui:define>
+        </ui:decorate>
+
+            <div class="formBottomButtons formBottomButtonsCentered">
+                <a class="formButton" href="#{request.contextPath}/">На головну</a>
+            </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

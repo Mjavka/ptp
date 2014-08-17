@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="recommendForm" />
+        <ui:param name="pageTitle" value="Рекомендаційна форма" />
+
+        <ui:define name="body">
+            <div class="centeredContent">
+
+                <t:div rendered="#{recommendetAction.recommendation == null}">
+                    <ptp:formErrorMessage provider="#{recommendetAction}" />
+                </t:div>
+                <t:div rendered="#{recommendetAction.recommendation != null}">
+                    <t:div rendered="#{recommendetAction.recommendation.isRecomend()}">
+                        <ptp:formErrorMessage provider="#{recommendetAction}" />
+                    </t:div>
+                    <t:div rendered="#{!recommendetAction.recommendation.isRecomend()}">
+
+                        <ptp:formTitle value="Рекомендация #{recommendetAction.user.surname} #{recommendetAction.user.name} #{recommendetAction.user.patronymic} на програму #{recommendetAction.program.name}" />
+
+                        <ptp:formErrorMessage provider="#{recommendetAction}" />
+
+                        <div class="formContent">
+
+                            <h:form prependId="false" enctype="multipart/form-data">
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="У якій якості та як довго ви знаєте кандидата"  />
+                                    <div class="inputElem">
+                                        <h:inputTextarea value="#{recommendetAction.recommendation.howLongKnown}" />
+                                    </div>
+                                </t:div>
+
+                                <t:div styleClass="formLine formLabel label2Conteiner" >
+                                    <div class="titleElem">
+                                        <h:outputText value="Надайте, будь ласка, оцінку кандидатові за критеріями:" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Лідерський потенціал"  />
+                                    <div class="inputElem">
+                                        <h:selectOneMenu value="#{recommendetAction.recommendation.liderPotential}" >
+                                            <f:selectItem itemValue="" itemLabel=""/>
+                                            <f:selectItem itemValue="Дуже добре" itemLabel="Дуже добре"/>
+                                            <f:selectItem itemValue="Добре" itemLabel="Добре"/>
+                                            <f:selectItem itemValue="Посередньо" itemLabel="Посередньо"/>
+                                            <f:selectItem itemValue="Слабо" itemLabel="Слабо"/>
+                                            <f:selectItem itemValue="Не маю можливості оцінити" itemLabel="Не маю можливості оцінити"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Професійність"  />
+                                    <div class="inputElem">
+                                        <h:selectOneMenu value="#{recommendetAction.recommendation.professionalism}" >
+                                            <f:selectItem itemValue="" itemLabel=""/>
+                                            <f:selectItem itemValue="Дуже добре" itemLabel="Дуже добре"/>
+                                            <f:selectItem itemValue="Добре" itemLabel="Добре"/>
+                                            <f:selectItem itemValue="Посередньо" itemLabel="Посередньо"/>
+                                            <f:selectItem itemValue="Слабо" itemLabel="Слабо"/>
+                                            <f:selectItem itemValue="Не маю можливості оцінити" itemLabel="Не маю можливості оцінити"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Гнучкість"  />
+                                    <div class="inputElem">
+                                        <h:selectOneMenu value="#{recommendetAction.recommendation.flexibility}" >
+                                            <f:selectItem itemValue="" itemLabel=""/>
+                                            <f:selectItem itemValue="Дуже добре" itemLabel="Дуже добре"/>
+                                            <f:selectItem itemValue="Добре" itemLabel="Добре"/>
+                                            <f:selectItem itemValue="Посередньо" itemLabel="Посередньо"/>
+                                            <f:selectItem itemValue="Слабо" itemLabel="Слабо"/>
+                                            <f:selectItem itemValue="Не маю можливості оцінити" itemLabel="Не маю можливості оцінити"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Мотивація"  />
+                                    <div class="inputElem">
+                                        <h:selectOneMenu value="#{recommendetAction.recommendation.motivation}" >
+                                            <f:selectItem itemValue="" itemLabel=""/>
+                                            <f:selectItem itemValue="Дуже добре" itemLabel="Дуже добре"/>
+                                            <f:selectItem itemValue="Добре" itemLabel="Добре"/>
+                                            <f:selectItem itemValue="Посередньо" itemLabel="Посередньо"/>
+                                            <f:selectItem itemValue="Слабо" itemLabel="Слабо"/>
+                                            <f:selectItem itemValue="Не маю можливості оцінити" itemLabel="Не маю можливості оцінити"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                </t:div>
+
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="На вашу думку, які найкращі якості притаманні кандидату?"  />
+                                    <div class="inputElem">
+                                        <h:inputTextarea value="#{recommendetAction.recommendation.bestQuality}" />
+                                    </div>
+                                </t:div>
+
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Будь ласка, опишіть, чому ви вважаєте, що кандидат підготовлений до даної програми та відповідає тематиці стажування з огляду на його діяльність. Наведіть, будь ласка, конкретні приклади на підтвердження своїх тверджень."  />
+                                    <div class="inputElem">
+                                        <h:inputTextarea value="#{recommendetAction.recommendation.whyCorrespondsProgram}" />
+                                    </div>
+                                </t:div>
+
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Як, на вашу думку, кандидат зможе застосувати досвід та знання, набуті під час стажування, в своїй організації, рідному місті/області чи у відповідній галузі?"  />
+                                    <div class="inputElem">
+                                        <h:inputTextarea value="#{recommendetAction.recommendation.canApplyKnowledge}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Будь ласка, наведіть конкретний приклад успішно реалізованого раніше проекту чи інших досягнень кандидата   в професійній сфері, що відповідає тематиці очікуваного стажування."  />
+                                    <div class="inputElem">
+                                        <h:inputTextarea value="#{recommendetAction.recommendation.achievementCandidate}" />
+                                    </div>
+                                </t:div>
+
+                                <t:div styleClass="formLine formLabel label2Conteiner" >
+                                    <div class="titleElem">
+                                        <h:outputText value="Перевірте чи вірно вказані ваші дані, якщо ні відкорегуйте:" />
+                                    </div>
+                                </t:div>
+
+
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Прізвище"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendSurname}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Ім'я"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendName}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="По батькові"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendPatronymic}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Телефон"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendPhone}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Місце роботи"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendWorkplase}" />
+                                    </div>
+                                </t:div>
+                                <t:div  styleClass="formLine">
+                                    <ptp:formLabel value="Посада"  />
+                                    <div class="inputElem">
+                                        <h:inputText value="#{recommendetAction.recommendation.recomendWorkposition}" />
+                                    </div>
+                                </t:div>
+
+
+                                <div class="formBottomButtons">
+                                    <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{recommendetAction.doRrecommend()}" value="Відправити рекомендацію" />
+                                    <h:outputLink styleClass="formButton" style="float: right; margin-left: 5px;" value="javascript:history.back()" >Відмінити</h:outputLink>
+                                </div>
+                            </h:form>
+                        </div>
+                    </t:div>
+                </t:div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

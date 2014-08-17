@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+    <!-- =================================================================== -->
+    <!-- Define resource service bean                                        -->
+    <!-- =================================================================== -->
+    <bean id="resourceService" lazy-init="true" class="ua.com.parkcode.web.ptp.services.ResourceService" />
+
+
+
+
+
+    <!-- =================================================================== -->
+    <!-- Service queries definition                                          -->
+    <!-- =================================================================== -->
+
+
+    <!-- Select resources minimal info by resource owner UUID -->
+    <sqldb:selectList id="selectMinimalResourceByOwnerUuid"
+                      parent="query"
+                      queryMetadata="ResourceMinimal">
+        <sqldb:queryTemplate>
+            WHERE res.owner_uuid = :ownerUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+
+    <sqldb:selectList id="selectFullResourceByOwnerUuid"
+                      parent="query"
+                      queryMetadata="Resource">
+        <sqldb:queryTemplate>
+            WHERE res.owner_uuid = :ownerUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+
+
+    <sqldb:selectList id="selectMinimalResourceByUuid"
+                      parent="query"
+                      queryMetadata="ResourceMinimal">
+        <sqldb:queryTemplate>
+            WHERE res.object_uuid = :uuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+
+    <sqldb:selectList id="selectFullResourceByUuid"
+                      parent="query"
+                      queryMetadata="Resource">
+        <sqldb:queryTemplate>
+            WHERE res.object_uuid = :uuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+
+
+    <sqldb:executeInsert id="insertResource" parent="query" queryMetadata="Resource">
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="uuid">
+                <sqldb:selectUUID />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeInsert>
+
+
+    <sqldb:executeDelete id="deleteResourcesForOwnerUuid" parent="query" queryMetadata="Resource">
+        <sqldb:queryTemplate>
+            WHERE res.owner_uuid = :ownerUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:executeDelete>
+
+    <sqldb:executeDelete id="deleteResources" parent="query" queryMetadata="Resource">
+        <sqldb:queryTemplate>
+            WHERE res.object_uuid = :objectUuid::UUID
+        </sqldb:queryTemplate>
+    </sqldb:executeDelete>
+
+</beans>

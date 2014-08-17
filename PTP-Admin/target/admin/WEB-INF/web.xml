@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+
+    <!-- Application definition -->
+    <display-name>PTP-Admin</display-name>
+
+<context-param>
+        <!--
+            Define the state method to be used. There are two different options
+            defined by the specification: "client" and "server" state.
+
+            When "client" state is configured, all state information required to
+            create the tree is embedded within the data rendered to the client.
+            Note that because data received from a remote client must always be
+            treated as "tainted", care must be taken when using such data. Some
+            StateManager implementations may use encryption to ensure that
+            clients cannot modify the data, and that the data received on
+            postback is therefore trustworthy.
+
+            When "server" state is configured, the data is saved somewhere
+            "on the back end", and (at most) a token is embedded in the data
+            rendered to the user.
+        -->
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+    <context-param>
+        <!--
+            Only applicable if state saving method is "server" (= default).
+            Defines the amount (default = 20) of the latest views are stored in session.
+        -->
+        <param-name>org.apache.myfaces.NUMBER_OF_VIEWS_IN_SESSION</param-name>
+        <param-value>100</param-value>
+    </context-param>
+    <context-param>
+        <!--
+            Specifies the number of views that are stored in the session when
+            Server-Side State Saving is used. If set to true while client-side
+            state saving is being used, reduces the number of bytes sent to
+            the client by compressing the state before it is encoded and written
+            as a hidden field.
+            The default for this parameter is 15.
+        -->
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+        <param-value>100</param-value>
+    </context-param>
+    <context-param>
+        <!--
+            Specifies the number of logical views that are stored in the session
+            when Server-Side State Saving is used.
+            The default for this parameter is 15
+        -->
+        <param-name>com.sun.faces.numberOfLogicalViews</param-name>
+        <param-value>100</param-value>
+    </context-param>
+
+
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+        <param-value>0</param-value>
+    </context-param>
+    <context-param>
+        <param-name>facelets.REFRESH_PERIOD</param-name>
+        <param-value>0</param-value>
+    </context-param>
+
+
+    <context-param>
+        <param-name>org.apache.myfaces.VALIDATE_XML</param-name>
+        <param-value>false</param-value><!-- DO NOT set this to TRUE on production -->
+        <!--param-value>true</param-value-->
+    </context-param>
+    <context-param>
+        <param-name>org.apache.myfaces.VALIDATE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+
+    <context-param>
+        <param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>facelets.LIBRARIES</param-name>
+        <param-value>
+            /WEB-INF/custom-tags/admin.taglib.xml
+        </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value><!-- Set this to 'Production' on production -->
+        <!--param-value>Development</param-value-->
+    </context-param>
+
+
+
+    <context-param>
+        <param-name>org.apache.myfaces.USE_MULTIPLE_JS_FILES_FOR_JSF_UNCOMPRESSED_JS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+
+
+    <context-param>
+        <param-name>org.apache.myfaces.ERROR_HANDLING</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.apache.myfaces.ERROR_HANDLER</param-name>
+        <param-value>ua.com.parkcode.commons.web.app.DefaultJSFErrorHandler</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:META-INF/config/**/*.spring.xml
+        </param-value>
+    </context-param>
+
+
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+
+
+    <!-- Filter declaration -->
+
+    <filter>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    <!--
+        if you need to the conf file path can be changed
+        it is specified as a path relative to the root of your context
+        (default /WEB-INF/urlrewrite.xml)
+    -->
+    <init-param>
+            <param-name>confPath</param-name>
+            <param-value>/WEB-INF/urlrewrite.xml</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>Encoding Filter</filter-name>
+        <filter-class>ua.com.parkcode.commons.web.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+
+
+    <filter>
+        <filter-name>MyFacesExtensionsFilter</filter-name>
+        <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+        <init-param>
+            <param-name>uploadMaxFileSize</param-name>
+            <param-value>20m</param-value>
+            <!--description>Set the size limit for uploaded files.
+            Format: 10 - 10 bytes
+                    10k - 10 KB
+                    10m - 10 MB
+                    1g - 1 GB
+            </description-->
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>Access Filter</filter-name>
+        <filter-class>ua.com.parkcode.commons.web.AccessFilter</filter-class>
+        <!-- Access filter settings:                                                       -->
+        <!--    <checker_class_name>:=<filter_uri_part>[:<filter_uri_part>];<redirect_uri> -->
+        <init-param>
+            <param-name>Admin application login access filter</param-name>
+            <param-value>ua.com.parkcode.web.admin.filters.AdminLoginAccessChecker:=.htm:.xhtml:.jsp;/login.htm</param-value>
+        </init-param>
+    </filter>
+
+
+
+    <filter-mapping>
+        <filter-name>MyFacesExtensionsFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <!-- extension mapping for serving page-independent resources (javascript, stylesheets, images, etc.)  -->
+    <filter-mapping>
+        <filter-name>MyFacesExtensionsFilter</filter-name>
+        <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/news/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Access Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+
+    <!-- Servlets declaration -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <!-- Servlets mapping -->
+
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+
+
+
+    <session-config>
+        <session-timeout>300</session-timeout>
+
+        <!-- Hack for Tomcat 7 -->
+        <tracking-mode>COOKIE</tracking-mode>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.html</location>
+    </error-page>
+
+
+
+    <security-constraint>
+        <display-name>Restrict XHTML Documents</display-name>
+        <web-resource-collection>
+            <web-resource-name>XHTML</web-resource-name>
+            <url-pattern>*.xhtml</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Only Let 'developer's access XHTML pages</description>
+            <role-name>developer</role-name>
+        </auth-constraint>
+    </security-constraint>
+</web-app>

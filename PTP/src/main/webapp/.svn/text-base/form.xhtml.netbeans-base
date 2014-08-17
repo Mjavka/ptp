@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageTitle" value="Form Page" />
+
+
+    <ui:define name="body">
+        <div style="position: relative; float: left; width: 800px; left: 50%; margin-left: -400px;">
+        <h:form prependId="false">
+            <div style="position: relative; float: left; width: 800px; font-size: 20px;">Типичная форма</div>
+
+            <div class="formContent">
+                <ptp:formInput inputId="fullName" lableValue="ФИО" required="#{true}">
+                    <h:inputText id="fullName" value="max" maxlength="255"
+                                 required="#{true}" requiredMessage="Поле обязательное">
+                        <f:validateLength minimum="3" maximum="255" />
+                    </h:inputText>
+                </ptp:formInput>
+                <ptp:formInput lableValue="Активен" rendered="#{true}">
+                    <h:inputHidden id="chkboxActiveValue" value="#{true}" />
+                    <div id="activeCheckbox" class="chkbox"
+                         onclick="var fld=$j('#chkboxActiveValue'); if(!fld.val() || fld.val()=='false'){fld.val('true'); $j(this).addClass('chkboxChecked');}else{fld.val('false'); $j(this).removeClass('chkboxChecked');}"></div>
+                    <script type="text/javascript">
+                        var fld = $j('#chkboxActiveValue');
+                        if (!fld.val() || fld.val()=='false') {
+                            $j('#activeCheckbox').removeClass('chkboxChecked');
+                        } else {
+                            $j('#activeCheckbox').addClass('chkboxChecked');
+                        }
+                    </script>
+                </ptp:formInput>
+            </div>
+
+
+            <ptp:formBlockTitle title="Контактная информация:" />
+            <div class="formContent">
+                <ptp:formInput inputId="phone" lableValue="Номер телефона">
+                    <h:inputText id="phone" value="066 322-10-80" maxlength="30" />
+                </ptp:formInput>
+            </div>
+
+            <ptp:formBlockTitle title="Еще один блок:" />
+            <div class="formContent" style="padding: 0;">
+                <ptp:formInput lableValue="Персонаж" styleClass="selectFormLine" inputStyleClass="selectElem">
+                        <select>
+                            <option value="Чебурашка">Чебурашка</option>
+                            <option value="Крокодил Гена">Крокодил Гена</option>
+                            <option value="Шапокляк">Шапокляк</option>
+                            <option value="Крыса Лариса">Крыса Лариса</option>
+                        </select>
+                </ptp:formInput>
+                <ptp:formInput inputId="deviceLogin" lableValue="Логин" required="#{true}" disabled="#{true}">
+                    <h:inputText id="deviceLogin" value="max" maxlength="255"
+                                 disabled="#{true}"
+                                 required="#{true}" requiredMessage="Поле обязательное">
+                        <f:validateLength minimum="3" maximum="255" />
+                    </h:inputText>
+                </ptp:formInput>
+                <ptp:formInput inputId="devicePassword" lableValue="Пароль" required="#{true}"
+                              rendered="#{true}" labelStyle="top: -3px">
+                    <h:inputSecret id="devicePassword" value="zzzzzzz" maxlength="255"
+                                  required="#{true}" requiredMessage="Поле обязательное">
+                        <f:validateLength minimum="4" maximum="255" />
+                    </h:inputSecret>
+                </ptp:formInput>
+                <ptp:formInput inputId="confirmDevicePassword" lableValue="Повторите пароль" required="#{true}"
+                              rendered="#{true}" labelStyle="top: -3px">
+                    <h:inputSecret id="confirmDevicePassword" value="zzzzzzz" maxlength="255"
+                                  required="#{true}" requiredMessage="Поле обязательное">
+                        <f:validateLength minimum="4" maximum="255" />
+                    </h:inputSecret>
+                </ptp:formInput>
+            </div>
+
+
+            <ptp:formBlockTitle title="Дополнительная информация:" />
+            <div class="formContent">
+                <ptp:formInput inputId="infoBlock" lableValue="Дополнительная информация">
+                    <h:inputTextarea id="userInfo" value="Когда нужно посмотреть, как будет выглядеть блог с новым дизайном, предварительно нужно его наполнить текстом. Ни что так не показывает все огрехи дизайна, как заполненные, большие посты. Однако было замечено, что при заполнении сайта осмысленным текстом тот мешает сосредоточиться на выявлении недостатков, отвлекая внимание на себя. Поэтому была придумана рыба - текст, заполняющий пустые пространства блога." />
+                </ptp:formInput>
+            </div>
+
+            <ptp:requiredFieldsInfo />
+
+            <div class="formBottomButtons">
+                <h:commandButton
+                                 styleClass="formButton" style="float: right; margin-left: 5px;"
+                                 value="Сохранить" />
+                <h:commandButton  immediate="#{true}"
+                                 styleClass="formButton" style="float: right; margin-left: 5px;"
+                                 value="Отменить" />
+            </div>
+        </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MailTemplate type="html">
+    <subject>Користувач записався на програму</subject>
+    <pageContent>
+<![CDATA[
+Користувач<br/>
+<br/>
+<br/>
+ФИО:    $$_USER_FIO_$$<br/>
+email:  $$_USER_EMAIL_$$<br/>
+<br/>
+<br/>
+Записався на программу $$_PROGRAM_NAME_$$<br/><br/>
+<br/>
+<table border="1" style="width: 100%">
+    <tr>
+        <td style="text-align: center; width: 50%; background-color: lightgray;">найменування</td>
+        <td style="text-align: center; width: 50%; background-color: lightgray;">значення</td>
+    </tr>
+    $$_PROGRAM__TABLE_CONTENT_$$
+</table>
+
+]]>
+    </pageContent>
+</MailTemplate>

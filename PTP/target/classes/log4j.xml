@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration
+          PUBLIC "-//Log4j org.apache.log4j//DTD Configuration 1.2//EN" "log4j.dtd">
+
+
+<!-- ===================================================================== -->
+<!--                        Log4j Configuration                            -->
+<!-- ===================================================================== -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <!--+
+                | ConversionCharacters:
+                |  c - category
+                |  C - class (performance!)
+                |  d - date
+                |  F - file name (performance!)
+                |  l - caller location (performance!)
+                |  L - caller line number (performance!)
+                |  m - message
+                |  M - method name (performance!)
+                |  n - new line
+                |  p - priority
+                |  r - ms
+                |  t - thread
+                |  x - NDC context
+                |  X - MDC
+                |  % - single percent
+                +-->
+            <param name="ConversionPattern" value="%d %-5p [%c] - %m%n"/>
+        </layout>
+    </appender>
+
+
+    <appender name="rollingFile" class="ua.com.parkcode.commons.logging.DailyRollingFileAppender">
+        <param name="append" value="true" />
+        <param name="encoding" value="UTF-8" />
+        <param name="file" value="/tmp/site.log"/>
+        <param name="DatePattern" value="_yyyy-MM-dd" />
+        <param name="MaxNumberOfDays" value="31" />
+        <param name="CompressBackups" value="true" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p (%c:%L) - %m%n"/>
+        </layout>
+    </appender>
+
+
+
+    <category name="org.springframework.jdbc.core">
+        <priority value="DEBUG"/>
+    </category>
+    <category name="ua.com.parkcode.commons.sqldb">
+        <priority value="DEBUG"/>
+    </category>
+
+    <root>
+        <priority value="INFO"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="rollingFile"/>
+    </root>
+
+
+</log4j:configuration>

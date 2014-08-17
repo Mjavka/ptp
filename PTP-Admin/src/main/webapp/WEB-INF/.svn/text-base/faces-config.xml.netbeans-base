@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+              version="2.0">
+
+
+  <application>
+        <variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>
+
+        <locale-config>
+            <default-locale>ru</default-locale>
+
+            <supported-locale>ru</supported-locale>
+            <supported-locale>uk</supported-locale>
+            <supported-locale>en</supported-locale>
+        </locale-config>
+
+        <resource-bundle>
+            <base-name>messages</base-name>
+            <var>messages</var>
+        </resource-bundle>
+    </application>
+
+
+    <managed-bean>
+        <managed-bean-name>i18n</managed-bean-name>
+        <managed-bean-class>ua.com.parkcode.commons.web.app.i18n.I18nManager</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+</faces-config>

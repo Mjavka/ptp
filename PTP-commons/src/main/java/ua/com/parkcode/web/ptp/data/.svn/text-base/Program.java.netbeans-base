@@ -1,0 +1,645 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ua.com.parkcode.web.ptp.data;
+
+import java.util.Date;
+import java.util.List;
+import ua.com.parkcode.commons.utils.DateTimeUtils;
+
+
+/**
+ * <b>Предназначение:</b><br/>
+ *   <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ *   <p></p>
+ *
+ * <br/>Создан 2013.07.04<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+public class Program extends AbstractProgram{
+
+    private static final long serialVersionUID = 1L;
+
+    private String entryUUID;
+
+    private User user;
+
+    private List<PropertyGroup> groups;
+
+    private List<Recommendation> recommends;
+
+
+    private boolean review      = false;
+    private boolean accept      = false;
+    private boolean estimated   = false;
+
+    private ResourceForProgram photo;
+    private ResourceForProgram passport;
+    private ResourceForProgram passportSecondPage;
+    private ResourceForProgram firstPageForeignPassport;
+    private ResourceForProgram mvs;
+    private ResourceForProgram certificateEmployment;
+
+    private List<Evaluation> evaluations;
+
+    private int totalEvaluation;
+
+
+    private String userNameEn;
+    private String userSurnameEn;
+
+    private String countryBirth;
+    private String regionBirth;
+    private String areaBirth;
+    private String localityBirth;
+
+    private String idNumber;
+    private String internationalPassportCode;
+    private Date internationalPassportDate;
+
+    private String workPlaceOrganization;
+    private String workPlacePost;
+    private String workPlaceOrganizationEn;
+    private String workPlacePostEn;
+    private String workPlaseRegion;
+    private String workPlaseOwnership;
+    private String workPlaceIndex;
+    private String workPlacePlace;
+    private String workPlaceStreet;
+    private String workPlaceBuilding;
+    private String workPlaceOffice;
+
+    private String workPlaceThemOrganization;
+    private String workPlaceThemPost;
+
+    private String workPlasePhone;
+    private String workPlaseEmail;
+
+    private String userMobilePhone;
+
+    private String passportUaSerialNum;
+    private String passportUaIssued;
+    private Date passpoertUaDate;
+
+    private String homeIndex;
+    private String homeRegion;
+    private String homeArrea;
+    private String homePlace;
+    private String homeStreet;
+    private String homeBuilding;
+    private String homeApartment;
+
+
+
+
+
+    // <editor-fold defaultstate="collapsed" desc="Getter & Setter">
+
+    public String getWorkPlaceIndex()
+    {
+        return workPlaceIndex;
+    }
+
+    public void setWorkPlaceIndex(String workPlaceIndex)
+    {
+        this.workPlaceIndex = workPlaceIndex;
+    }
+
+    public String getWorkPlacePlace()
+    {
+        return workPlacePlace;
+    }
+
+    public void setWorkPlacePlace(String workPlacePlace)
+    {
+        this.workPlacePlace = workPlacePlace;
+    }
+
+    public String getWorkPlaceStreet()
+    {
+        return workPlaceStreet;
+    }
+
+    public void setWorkPlaceStreet(String workPlaceStreet)
+    {
+        this.workPlaceStreet = workPlaceStreet;
+    }
+
+    public String getWorkPlaceBuilding()
+    {
+        return workPlaceBuilding;
+    }
+
+    public void setWorkPlaceBuilding(String workPlaceBuilding)
+    {
+        this.workPlaceBuilding = workPlaceBuilding;
+    }
+
+    public String getWorkPlaceOffice()
+    {
+        return workPlaceOffice;
+    }
+
+    public void setWorkPlaceOffice(String workPlaceOffice)
+    {
+        this.workPlaceOffice = workPlaceOffice;
+    }
+
+    public String getWorkPlaseEmail()
+    {
+        return workPlaseEmail;
+    }
+
+    public void setWorkPlaseEmail(String workPlaseEmail)
+    {
+        this.workPlaseEmail = workPlaseEmail;
+    }
+
+    public String getPassportUaSerialNum()
+    {
+        return passportUaSerialNum;
+    }
+
+    public void setPassportUaSerialNum(String passportUaSerialNum)
+    {
+        this.passportUaSerialNum = passportUaSerialNum;
+    }
+
+    public String getPassportUaIssued()
+    {
+        return passportUaIssued;
+    }
+
+    public void setPassportUaIssued(String passportUaIssued)
+    {
+        this.passportUaIssued = passportUaIssued;
+    }
+
+    public Date getPasspoertUaDate()
+    {
+        return passpoertUaDate;
+    }
+
+    public void setPasspoertUaDate(Date passpoertUaDate)
+    {
+        this.passpoertUaDate = passpoertUaDate;
+    }
+
+    public String getHomeIndex()
+    {
+        return homeIndex;
+    }
+
+    public void setHomeIndex(String homeIndex)
+    {
+        this.homeIndex = homeIndex;
+    }
+
+    public String getHomeRegion()
+    {
+        return homeRegion;
+    }
+
+    public void setHomeRegion(String homeRegion)
+    {
+        this.homeRegion = homeRegion;
+    }
+
+    public String getHomeArrea()
+    {
+        return homeArrea;
+    }
+
+    public void setHomeArrea(String homeArrea)
+    {
+        this.homeArrea = homeArrea;
+    }
+
+    public String getHomePlace()
+    {
+        return homePlace;
+    }
+
+    public void setHomePlace(String homePlace)
+    {
+        this.homePlace = homePlace;
+    }
+
+    public String getHomeStreet()
+    {
+        return homeStreet;
+    }
+
+    public void setHomeStreet(String homeStreet)
+    {
+        this.homeStreet = homeStreet;
+    }
+
+    public String getHomeBuilding()
+    {
+        return homeBuilding;
+    }
+
+    public void setHomeBuilding(String homeBuilding)
+    {
+        this.homeBuilding = homeBuilding;
+    }
+
+    public String getHomeApartment()
+    {
+        return homeApartment;
+    }
+
+    public void setHomeApartment(String homeApartment)
+    {
+        this.homeApartment = homeApartment;
+    }
+
+
+
+    public String getWorkPlaseOwnership()
+    {
+        return workPlaseOwnership;
+    }
+
+    public void setWorkPlaseOwnership(String workPlaseOwnership)
+    {
+        this.workPlaseOwnership = workPlaseOwnership;
+    }
+
+    public String getWorkPlaseRegion()
+    {
+        return workPlaseRegion;
+    }
+
+    public void setWorkPlaseRegion(String workPlaseRegion)
+    {
+        this.workPlaseRegion = workPlaseRegion;
+    }
+
+    public String getWorkPlasePhone()
+    {
+        return workPlasePhone;
+    }
+
+    public void setWorkPlasePhone(String workPlasePhone)
+    {
+        this.workPlasePhone = workPlasePhone;
+    }
+
+    public String getAreaBirth()
+    {
+        return areaBirth;
+    }
+
+    public void setAreaBirth(String areaBirth)
+    {
+        this.areaBirth = areaBirth;
+    }
+
+    public String getRegionBirth()
+    {
+        return regionBirth;
+    }
+
+    public void setRegionBirth(String regionBirth)
+    {
+        this.regionBirth = regionBirth;
+    }
+
+    public String getLocalityBirth()
+    {
+        return localityBirth;
+    }
+
+    public void setLocalityBirth(String localityBirth)
+    {
+        this.localityBirth = localityBirth;
+    }
+
+    public String getUserNameEn()
+    {
+        return userNameEn;
+    }
+
+    public void setUserNameEn(String userNameEn)
+    {
+        this.userNameEn = userNameEn;
+    }
+
+    public String getUserSurnameEn()
+    {
+        return userSurnameEn;
+    }
+
+    public void setUserSurnameEn(String userSurnameEn)
+    {
+        this.userSurnameEn = userSurnameEn;
+    }
+
+    public String getCountryBirth()
+    {
+        return countryBirth;
+    }
+
+    public void setCountryBirth(String countryBirth)
+    {
+        this.countryBirth = countryBirth;
+    }
+
+    public String getIdNumber()
+    {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber)
+    {
+        this.idNumber = idNumber;
+    }
+
+    public String getInternationalPassportCode()
+    {
+        return internationalPassportCode;
+    }
+
+    public void setInternationalPassportCode(String internationalPassportCode)
+    {
+        this.internationalPassportCode = internationalPassportCode;
+    }
+
+    public Date getInternationalPassportDate()
+    {
+        return internationalPassportDate;
+    }
+
+    public void setInternationalPassportDate(Date internationalPassportDate)
+    {
+        this.internationalPassportDate = internationalPassportDate;
+    }
+
+    public String getWorkPlaceOrganization()
+    {
+        return workPlaceOrganization;
+    }
+
+    public void setWorkPlaceOrganization(String workPlaceOrganization)
+    {
+        this.workPlaceOrganization = workPlaceOrganization;
+    }
+
+    public String getWorkPlacePost()
+    {
+        return workPlacePost;
+    }
+
+    public void setWorkPlacePost(String workPlacePost)
+    {
+        this.workPlacePost = workPlacePost;
+    }
+
+    public String getWorkPlaceOrganizationEn()
+    {
+        return workPlaceOrganizationEn;
+    }
+
+    public void setWorkPlaceOrganizationEn(String workPlaceOrganizationEn)
+    {
+        this.workPlaceOrganizationEn = workPlaceOrganizationEn;
+    }
+
+    public String getWorkPlacePostEn()
+    {
+        return workPlacePostEn;
+    }
+
+    public void setWorkPlacePostEn(String workPlacePostEn)
+    {
+        this.workPlacePostEn = workPlacePostEn;
+    }
+
+    public String getWorkPlaceThemOrganization()
+    {
+        return workPlaceThemOrganization;
+    }
+
+    public void setWorkPlaceThemOrganization(String workPlaceThemOrganization)
+    {
+        this.workPlaceThemOrganization = workPlaceThemOrganization;
+    }
+
+    public String getWorkPlaceThemPost()
+    {
+        return workPlaceThemPost;
+    }
+
+    public void setWorkPlaceThemPost(String workPlaceThemPost)
+    {
+        this.workPlaceThemPost = workPlaceThemPost;
+    }
+
+
+
+    public String getUserMobilePhone()
+    {
+        return userMobilePhone;
+    }
+
+    public void setUserMobilePhone(String userMobilePhone)
+    {
+        this.userMobilePhone = userMobilePhone;
+    }
+
+    public List<Evaluation> getEvaluations()
+    {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<Evaluation> evaluations)
+    {
+        this.evaluations = evaluations;
+    }
+
+    public List<Recommendation> getRecommends()
+    {
+        return recommends;
+    }
+
+    public void setRecommends(List<Recommendation> recommends)
+    {
+        this.recommends = recommends;
+    }
+
+    public ResourceForProgram getPassportSecondPage()
+    {
+        return passportSecondPage;
+    }
+
+    public void setPassportSecondPage(ResourceForProgram passportSecondPage)
+    {
+        this.passportSecondPage = passportSecondPage;
+    }
+
+    public ResourceForProgram getCertificateEmployment()
+    {
+        return certificateEmployment;
+    }
+
+    public void setCertificateEmployment(ResourceForProgram certificateEmployment)
+    {
+        this.certificateEmployment = certificateEmployment;
+    }
+
+    public ResourceForProgram getMvs()
+    {
+        return mvs;
+    }
+
+    public void setMvs(ResourceForProgram mvs)
+    {
+        this.mvs = mvs;
+    }
+
+    public ResourceForProgram getPhoto()
+    {
+        return photo;
+    }
+
+    public void setPhoto(ResourceForProgram photo)
+    {
+        this.photo = photo;
+    }
+
+    public ResourceForProgram getPassport()
+    {
+        return passport;
+    }
+
+    public void setPassport(ResourceForProgram passport)
+    {
+        this.passport = passport;
+    }
+
+    public ResourceForProgram getFirstPageForeignPassport()
+    {
+        return firstPageForeignPassport;
+    }
+
+    public void setFirstPageForeignPassport(ResourceForProgram firstPageForeignPassport)
+    {
+        this.firstPageForeignPassport = firstPageForeignPassport;
+    }
+
+    public boolean isEstimated()
+    {
+        return estimated;
+    }
+
+    public void setEstimated(boolean estimated)
+    {
+        this.estimated = estimated;
+    }
+
+    public int getTotalEvaluation()
+    {
+        return totalEvaluation;
+    }
+
+    public void setTotalEvaluation(int totalEvaluation)
+    {
+        this.totalEvaluation = totalEvaluation;
+    }
+
+    public boolean isReview()
+    {
+        return review;
+    }
+
+    public void setReview(boolean review)
+    {
+        this.review = review;
+    }
+
+    public boolean isAccept()
+    {
+        return accept;
+    }
+
+    public void setAccept(boolean accept)
+    {
+        this.accept = accept;
+    }
+
+    public List<PropertyGroup> getGroups()
+    {
+        return groups;
+    }
+
+    public void setGroups(List<PropertyGroup> groups)
+    {
+        this.groups = groups;
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+
+    public String getEntryUUID()
+    {
+        return entryUUID;
+    }
+
+    public void setEntryUUID(String entryUUID)
+    {
+        this.entryUUID = entryUUID;
+    }
+
+    public int sumOfEvaluation()
+    {
+        int sum = 0;
+        if(evaluations != null && !evaluations.isEmpty())
+        {
+            for(Evaluation eval : evaluations)
+            {
+                sum = sum + eval.getExpertAssessment1()+eval.getExpertAssessment2()+eval.getExpertAssessment3()+eval.getExpertAssessment4()+eval.getExpertAssessment5();
+            }
+        }
+        return sum;
+    }
+
+
+    public String getStringProgramBeginDate(){
+        return DateTimeUtils.dateToString(getProgramBeginDate(), "dd.MM.yyyy");
+    }
+
+    public String getStringProgramEndDate(){
+        return DateTimeUtils.dateToString(getProgramEndDate(), "dd.MM.yyyy");
+    }
+
+     public String getStringProgramRegisteredBeginDate(){
+        return DateTimeUtils.dateToString(getProgramRegisteredBeginDate(), "dd.MM.yyyy");
+    }
+
+    public String getStringProgramRegisteredEndDate(){
+        return DateTimeUtils.dateToString(getProgramRegisteredEndDate(), "dd.MM.yyyy");
+    }
+
+    public String stringOfDate(Date date)
+    {
+        return DateTimeUtils.dateToString(date, "dd.MM.yyyy");
+    }
+// </editor-fold>
+
+
+
+}

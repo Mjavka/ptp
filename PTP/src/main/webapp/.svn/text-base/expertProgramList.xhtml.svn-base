@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+
+    <ui:param name="pageId"    value="expertProgramList" />
+    <ui:param name="pageTitle" value="Список програм експерта" />
+
+
+    <ui:define name="body">
+        <div class="centeredContent">
+            <ptp:formTitle value="Список доступних програм експерта" />
+
+            <ptp:formErrorMessage provider="#{showExpertProgramAction}" />
+
+            <div class="formContent">
+                <h:form prependId="false" rendered="#{showExpertProgramAction.programs.size()!=0}">
+                    <ui:repeat value="#{showExpertProgramAction.programs}" var="program">
+                        <div class="formLine programsLine">
+                                <h:commandLink action="#{showUserForExpertProgramAction.selectProgram(program)}" >
+                                #{program.name} (#{program.region})
+                                </h:commandLink>
+                        </div>
+                    </ui:repeat>
+                </h:form>
+            </div>
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>
+
+</html>

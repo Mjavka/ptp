@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="program" />
+        <ui:param name="pageTitle" value="Програма" />
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <t:div rendered="#{!loginAction.loggedIn}">
+                    <ptp:formTitle value="Помилка ви не авторизувалися" />
+                </t:div>
+                <t:div rendered="#{loginAction.loggedIn}">
+                    <ptp:formTitle value="#{programAction.program.name}" />
+
+                    <ptp:formErrorMessage provider="#{programAction}" />
+                    <ptp:formSuccessMessage message="#{programAction.message}"/>
+                    <h:form prependId="false" enctype="multipart/form-data">
+                        <div>
+                            <div style="position: relative; top: 3px; left: -40px; float: left; width: 100%; font-size: 20px; color: #333; padding: 0 0 10px 0">Список розділів анкети</div>
+                            <ui:repeat value="#{programAction.program.groups}" var="group">
+                                <ui:remove>
+                                    <a href="#{request.contextPath}/programEntry.htm?gu=#{group.groupUuid}" style="font-size: 14px;">#{group.name}</a>
+                                </ui:remove>
+                                <h:outputLink value="#{request.contextPath}/programEntry.htm?gu=#{group.groupUuid}" >#{group.name}
+                                <f:ajax execute="@form" event="click"/></h:outputLink>
+
+                                <h:outputLabel  value=" В розділі є незаповнені поля" style="color: red; font-style: italic" rendered="#{group.error}"/>
+                                <br/>
+                            </ui:repeat>
+
+                        </div>
+                        <div style="position: relative; top: 3px; left: -40px; float: left; width: 100%; padding: 10px 0 0 0; font-size: 14px; ">
+                            <p>Вітаємо Вас на сайті!</p>
+                            <br/>
+                            <p>Ви можете здійснити он-лайн реєстрацію для участі у конкурсі на програму проекту міжнародної технічної допомоги «Навчальні програми професійного зростання» Агентства США з міжнародного розвитку (USAID).</p>
+                            <br/>
+                            <p>Звертаємо Вашу увагу, що Ви можете заповнювати анкету частинами, використовуючи кнопку «Зберегти».</p>
+                            <br/>
+                            <p>Радимо Вам одразу перейти до розділу «VI. Завантаження документів» для ознайомлення з переліком документів, які необхідно буде завантажити. Підготуйте їх у першу чергу.</p>
+                            <br/>
+                            <p>Поля, позначені зірочкою (*) – обов’язкові для заповнення.</p>
+                            <br/>
+                            <p>Коли анкета буде повністю заповнена й Ви завантажите усі необхідні документи, натисніть на кнопку «Зареєструвати анкету» для реєстрації її в системі.</p>
+                            <br/>
+                            <p>Після подання он-лайн анкети, на Вашу електронну адресу надійде лист-підтвердження з пакетом документів (заповненою Вами анкетою, згодою на збір і обробку персональних даних, формою засвідчення учасника), які Ви маєте підписати особисто й надіслати один паперовий примірник комплект поштою чи передати  до офісу проекту.</p>
+                            <br/>
+                            <p>Повною реєстрацією на програму є успішне заповнення он-лайн анкети та подання примірника паперових документів до офісу проекту.</p>
+                        </div>
+                        <div class="formContent">
+
+
+                            <t:div styleClass="formLine formLabel label1Conteiner">
+                                <div class="titleElem">
+                                    <h:outputText value="#{programAction.group.name}" />
+                                </div>
+                            </t:div>
+
+                            <ui:repeat  value="#{programAction.group.properties}" var="property" varStatus="status">
+
+                                <ptp:formProperty property="#{property}" status="#{status}" fStatus ="#{null}"/>
+
+                                <t:div  rendered="#{property.propertyType == 'FORM'}" styleClass="formLine property_#{property.id!=null? property.id : property.objectUuid}" style=" z-index: #{1000 - status.index}" >
+                                    <div class="formLine formLabel label2Conteiner">
+                                        <div class="titleElem">
+                                            <h:outputText value="#{property.propertyName}" />
+                                        </div>
+                                        <div class="commentElem">
+                                            <h:outputText value="#{property.propertyNotation}" />
+                                        </div>
+                                    </div>
+                                    <ui:repeat value="#{property.form}" var="form" varStatus="formStatus">
+                                        <div id="form_#{form.formUUID}" class="propertyForm">
+                                            <ui:repeat value="#{form.properties}" var="formProperty" varStatus="formStatusProperty">
+                                                <ptp:formProperty property="#{formProperty}" status="#{formStatusProperty}" fStatus ="#{formStatus}" gStatus = "#{programAction.program.groups.indexOf(programAction.group)}"/>
+                                            </ui:repeat>
+                                        </div>
+                                        <t:div styleClass="plusMinusContainer" style="float: left; width: 100%;">
+                                            <h:commandLink styleClass="plusBtn" action="#{programAction.addForm(property)}" rendered="#{property.attributes.multiFields &amp;&amp; (formStatus.last &amp;&amp; property.attributes.fieldsCount > formStatus.index+1)}" >
+                                                <f:ajax render="@form" execute="@form"/>
+                                            </h:commandLink>
+                                            <h:commandLink styleClass="minusBtn" action="#{programAction.deleteForm(property, form)}" rendered="#{formStatus.index != 0 &amp;&amp; formStatus.last}" >
+                                                <f:ajax render="@form" execute="@form"/>
+                                            </h:commandLink>
+                                        </t:div>
+                                    </ui:repeat>
+                                </t:div>
+                            </ui:repeat>
+
+
+                            <t:div  rendered="#{programAction.program.groups.indexOf(programAction.group) == programAction.program.groups.size()-1 ? true : false}">
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Фото(портретне)" required="true" />
+                                    <t:div styleClass="inputElem userPhoto" rendered="#{programAction.program.photo == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedPhoto}" accept="*" storage="file" style="border: 0px solid white" />
+                                    </t:div>
+                                    <t:div styleClass="inputElem userPhoto" rendered="#{programAction.program.photo != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.photo.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedPhoto}" accept="*" storage="file" style="border: 0px solid white" />
+                                    </t:div>
+                                    <div class="commentElem">
+                                        <h:outputText value="(розмір до 240 кб, має бути зроблено в фас протягом останніх 6 місяців)" />
+                                    </div>
+                                </t:div>
+
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Копія першої сторінки паспорту громадянина україни" required="true" />
+                                    <t:div styleClass="inputElem passport" rendered="#{programAction.program.passport == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <t:div styleClass="inputElem passport" rendered="#{programAction.program.passport != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.passport.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                </t:div>
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Копія другої сторінки паспорту громадянина україни" required="true" />
+                                    <t:div styleClass="inputElem passport" rendered="#{programAction.program.passportSecondPage == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedPassportSecondPage}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <t:div styleClass="inputElem passport" rendered="#{programAction.program.passportSecondPage != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.passportSecondPage.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedPassportSecondPage}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                </t:div>
+
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Копія першої сторінки закордонного паспорту" />
+                                    <t:div styleClass="inputElem foreignPassport" rendered="#{programAction.program.firstPageForeignPassport == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedForeignPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <t:div styleClass="inputElem foreignPassport" rendered="#{programAction.program.firstPageForeignPassport != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.firstPageForeignPassport.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedForeignPassport}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                </t:div>
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Резюме" required="true" />
+                                    <t:div styleClass="inputElem MVS" rendered="#{programAction.program.mvs == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedMVS}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <t:div styleClass="inputElem MVS" rendered="#{programAction.program.mvs != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.mvs.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedMVS}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <div class="commentElem">
+                                        <h:outputText value="(структурована інформація про освіту, місця роботи кандидата,починаючи з останнього та додаткова професійна інформація)" />
+                                    </div>
+                                </t:div>
+                                <t:div styleClass="formLine">
+                                    <ptp:formLabel value="Довідка з місця роботи" required="true" />
+                                    <t:div styleClass="inputElem MVS" rendered="#{programAction.program.certificateEmployment == null}">
+                                        <t:inputFileUpload value="#{programAction.uploadedСertificateEmployment}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <t:div styleClass="inputElem MVS" rendered="#{programAction.program.certificateEmployment != null}">
+                                        <h:outputText value="Файл завантажено #{programAction.program.certificateEmployment.originalName}"/><br/>
+                                        <t:inputFileUpload value="#{programAction.uploadedСertificateEmployment}" accept="*" storage="file" style="border: 0px solid white"/>
+                                    </t:div>
+                                    <div class="commentElem">
+                                        <h:outputText value="(або Виписка з Єдиного державного реєстру юридичних осіб та фізичних осіб-підприємців)" />
+                                    </div>
+                                </t:div>
+                            </t:div>
+                            <div class="formBottomButtons">
+                                <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{programAction.save()}" value="Зберегти" onclick="open_pop_up('#pop-up');"/>
+                            </div>
+                            <div class="formBottomButtons">
+                                <h:commandButton styleClass="formButton #{programAction.program.groups.indexOf(programAction.group) &lt; programAction.program.groups.size()-1 ? '' : 'formButtonDisabled'}" style="float: right; margin-left: 5px;" action="#{programAction.nextGroup()}"  disabled="#{programAction.program.groups.indexOf(programAction.group) &lt; programAction.program.groups.size()-1 ? false : true}" value="Наступна"/>
+                                <h:commandButton styleClass="formButton #{programAction.program.groups.indexOf(programAction.group) > 0 ? '' : 'formButtonDisabled'}" style="float: right; margin-left: 5px;" action="#{programAction.prevGroup()}"  disabled="#{programAction.program.groups.indexOf(programAction.group) > 0 ? false : true}" value="Попередня"/>
+                            </div>
+                            <div class="formBottomButtons">
+                                <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{programAction.doEntry()}"  value="Зареєструвати анкету" onclick="open_pop_up('#pop-up');"/>
+                                <h:outputLink styleClass="formButton " style="float: right; margin-left: 5px;" value="javascript:history.back()" >Відмінити</h:outputLink>
+                            </div>
+                            <!--<div style="position: relative; float: right; color: #ff0000; text-align: left; padding-top: 10px;">Реєстрація анкети можлива з 15 листопада</div>-->
+                            <div style="position: relative; float: right; color: #333; text-align: left; padding-top: 10px; width: 100%;">Зараз Ви можете зберегти анкету та внести доповнення до неї  пізніше.
+                                Якщо всі поля анкети заповнені повністю, Ви можете відправити її нам для реєстрації на програму.</div>
+
+                        </div>
+                    </h:form>
+                </t:div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

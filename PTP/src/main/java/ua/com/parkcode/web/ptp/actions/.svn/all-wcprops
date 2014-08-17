@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/public/parkcode/!svn/ver/7845/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions
+END
+ProfileEditAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/public/parkcode/!svn/ver/7806/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ProfileEditAction.java
+END
+ShowUserForExpertProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/public/parkcode/!svn/ver/7845/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ShowUserForExpertProgramAction.java
+END
+ProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/public/parkcode/!svn/ver/7830/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ProgramAction.java
+END
+ShowUserProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ShowUserProgramAction.java
+END
+LoginAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/public/parkcode/!svn/ver/7750/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/LoginAction.java
+END
+RegistrationAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/public/parkcode/!svn/ver/7782/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/RegistrationAction.java
+END
+RememberAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/public/parkcode/!svn/ver/7648/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/RememberAction.java
+END
+ShowExpertProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ShowExpertProgramAction.java
+END
+UserActivationAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/public/parkcode/!svn/ver/7598/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/UserActivationAction.java
+END
+ExpertRegistrationAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ExpertRegistrationAction.java
+END
+ShowActualProgramAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/public/parkcode/!svn/ver/7809/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/ShowActualProgramAction.java
+END
+RecommendetAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/public/parkcode/!svn/ver/7815/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/RecommendetAction.java
+END
+UploadFileAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/public/parkcode/!svn/ver/7795/trunk/root/web/ptp/PTP/src/main/java/ua/com/parkcode/web/ptp/actions/UploadFileAction.java
+END

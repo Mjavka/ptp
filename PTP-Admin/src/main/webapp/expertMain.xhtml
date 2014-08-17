@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:admin="http://parkcode.com.ua/facelets/admin">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <div style=" position: relative;  width: 100%; color: #0198f3; font-size: 16px; line-height: 1.5; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #333; margin-bottom: 12px;"><b>СТОРІНКА МЕНЕДЖЕРА</b></div>
+                <div class="progblockmanedger">
+                    <h:form prependId="false"> 
+                        <ui:repeat value="#{expertMain.expertPrograms}" var="program">
+                            <div class="blockPanelView">
+                                <div class="view-source-manedger">
+                                    <div class="opener openerArrow" href="#"><div class="source-arrow-manedger"></div><b>#{program.name}</b><p style="color:#868686;">Регіон:<b style="color:#0198f3">м.Київ,Київська та Харківська області</b></p></div>
+                                    <div class="view-source-manedger-hide" style="display: none;">
+                                        <div>
+                                            <div style="color:#999">Країна стажування:<b style="color:#0198f3">#{program.country}</b></div>
+                                            <div style="color:#999">Термін подання:<b style="color:#0198f3">до #{program.programRegisteredEndDate}</b></div>
+                                            <div style="color:#999">Дати програми:<b style="color:#0198f3">#{program.programBeginDate} - #{program.programEndDate}</b></div>
+                                            <div style="color:#999">Координатор програми:<b style="color:#7c7c7c">#{expertMain.getCoordinator(program.coordinatorUuid).name}</b></div>
+                                            <div style="color:#999">Контактний телефон:<b style="color:#7c7c7c">#{expertMain.getCoordinator(program.coordinatorUuid).phone}</b></div>
+                                            <div style="color:#999">Email:<a class="style1" style="color:#0198f3; text-decoration: underline;" href="mailto:#{expertMain.getCoordinator(program.coordinatorUuid).email}">#{expertMain.getCoordinator(program.coordinatorUuid).email}</a></div>
+                                        </div>
+                                        <div style="margin-top: 10px">
+                                            <div class="icon3">
+                                                <h:commandLink action="#{actualProgramAction.selectedProgram(program)}" style="color:#0198f3"> 
+                                                    <u>Детальніше про програму</u>
+                                                </h:commandLink>
+                                            </div> 
+                                            <div class="iconmanedger1">
+                                                <h:commandLink action="#{userProgramList.show(program)}"  style="color:#0198f3" >
+                                                    <u>На сторінку програми</u>
+                                                </h:commandLink>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div> 
+                        </ui:repeat>
+                    </h:form>
+
+
+
+                    <script type="text/javascript">
+                        jQuery(document).ready(function() {
+
+                            jQuery('.openerArrow').toggle(
+                                    function() {
+                                        jQuery(this).next().slideDown(300);
+                                        jQuery(this).children('.source-arrow-manedger').addClass("blockOpened");
+                                    },
+                                    function() {
+                                        jQuery(this).next().slideUp(300);
+                                        jQuery(this).children('.source-arrow-manedger').removeClass("blockOpened");
+                                    }
+                            );
+                        });
+                    </script>
+
+
+
+                    <p style="color:#0198f3; text-align:center; padding-bottom: 20px;font-size: 16px"><b>ВАЖЛИВІ ПОДІЇ</b></p>
+                    <h:dataTable value="#{expertMain.mainEvents}" var="event"
+                                 styleClass="tableone"
+                                 border="0"
+                                 headerClass="tableHeader"
+                                 rowClasses="tableDefault,tableGray">
+
+                        <h:column>
+                            <div style="width: 115px;">
+                                <!-- column header -->
+                                <f:facet name="header">Дата</f:facet>
+                                <!-- row record -->
+                                #{event.eventStartDate}
+                            </div>
+                        </h:column>
+                        <h:column>
+                            <div style="width: 135px;">
+                                <!-- column header -->
+                                <f:facet name="header">Користувач</f:facet>
+                                <!-- row record -->
+                                blank
+                            </div>
+                        </h:column>
+                        <h:column>
+                            <div style="width: 175px;">
+                                <!-- column header -->
+                                <f:facet name="header">Назва програми</f:facet>
+                                <!-- row record -->
+                                Інші події
+                            </div>
+                        </h:column>
+                        <h:column>
+                            <div style="width: 338px;">
+                                <!-- column header -->
+                                <f:facet name="header">Назва події</f:facet>
+                                <!-- row record -->
+                                #{event.eventName}
+                            </div>
+                        </h:column>
+                        <h:column>
+                            <div style="width: 169px;">
+                                <!-- column header -->
+                                <f:facet name="header">Подія</f:facet>
+                                <!-- row record -->
+                                #{event.eventDescription}
+                                <div class="icon5"><a style="color:#0198f3; text-decoration: none;border-bottom: 1px dashed;" href="www.google.com.ua">Редагувати</a></div>
+                            </div>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

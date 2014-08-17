@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="expertUserFormEvaluation" />
+        <ui:param name="pageTitle" value="Оцінка програми" />
+
+
+        <ui:define name="body">
+            <div class="centeredContent">
+                <ptp:formTitle value="Оцінка кандидата #{showUserForExpertProgramAction.program.user.surname} #{showUserForExpertProgramAction.program.user.name} на програму #{showUserForExpertProgramAction.program.name}" />
+
+                <ptp:formErrorMessage provider="#{showUserForExpertProgramAction}" />
+
+                <div class="formContent">
+                    <h:form prependId="false">
+                        <table class="contentTable">
+                            <tr class="trHead">
+                                <td><b>Параметр</b> (опис параметра): </td>
+                                <td style="padding-right: 10px;"><b>Бали:</b></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    - Участь у процесі прийняття рішень, рівень відповідальності<br/>
+                                    - Назва компанії/вид діяльності<br/>
+                                    - Посада в організації<br/>
+                                    - Кількість підлеглих<br/>
+                                    - Є претендент співвласником чи ні<br/>
+                                    - Робочі обов’язки
+                                </td>
+                                <td><h:selectOneMenu value="#{showUserForExpertProgramAction.evaluate.expertAssessment1}" >
+                                        <f:selectItem itemValue="0"/>
+                                        <f:selectItem itemValue="1"/>
+                                        <f:selectItem itemValue="2"/>
+                                        <f:selectItem itemValue="3"/>
+                                        <f:selectItem itemValue="4"/>
+                                        <f:selectItem itemValue="5"/>
+                                        <f:ajax event="change" render="@form" listener="#{showUserForExpertProgramAction.recountEvaluation()}" />
+                                    </h:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    - Професійність<br/>
+                                    - Працює претендент безпосередньо у руслі визначеної теми<br/>
+                                    - Яку частку часу претендент працює у руслі визначеної теми<br/>
+                                    - Професійний досвід<br/>
+                                    - Професійні досягнення<br/>
+                                    - Які є труднощі в роботі та шляхи їх подолання
+                                </td>
+                                <td><h:selectOneMenu value="#{showUserForExpertProgramAction.evaluate.expertAssessment2}" >
+                                        <f:selectItem itemValue="0"/>
+                                        <f:selectItem itemValue="1"/>
+                                        <f:selectItem itemValue="2"/>
+                                        <f:selectItem itemValue="3"/>
+                                        <f:selectItem itemValue="4"/>
+                                        <f:selectItem itemValue="5"/>
+                                        <f:ajax event="change" render="@form" listener="#{showUserForExpertProgramAction.recountEvaluation()}" />
+                                    </h:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    - Потенціал для майбутнього розвитку<br/>
+                                    - Професійні цілі на майбутнє<br/>
+                                    - Збирається претендент далі працювати у своїй сфері<br/>
+                                    - Що претендент вже зробив для досягнення поставлених цілей
+                                </td>
+                                <td><h:selectOneMenu value="#{showUserForExpertProgramAction.evaluate.expertAssessment3}" >
+                                        <f:selectItem itemValue="0"/>
+                                        <f:selectItem itemValue="1"/>
+                                        <f:selectItem itemValue="2"/>
+                                        <f:selectItem itemValue="3"/>
+                                        <f:selectItem itemValue="4"/>
+                                        <f:selectItem itemValue="5"/>
+                                        <f:ajax event="change" render="@form" listener="#{showUserForExpertProgramAction.recountEvaluation()}" />
+                                    </h:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Які організації під час стажування хоче відвідати претендент
+                                </td>
+                                <td><h:selectOneMenu value="#{showUserForExpertProgramAction.evaluate.expertAssessment4}" >
+                                        <f:selectItem itemValue="0"/>
+                                        <f:selectItem itemValue="1"/>
+                                        <f:selectItem itemValue="2"/>
+                                        <f:selectItem itemValue="3"/>
+                                        <f:selectItem itemValue="4"/>
+                                        <f:selectItem itemValue="5"/>
+                                        <f:ajax event="change" render="@form" listener="#{showUserForExpertProgramAction.recountEvaluation()}" />
+                                    </h:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Професійний досвід, який претендент хоче отримати під час стажування
+                                </td>
+                                <td><h:selectOneMenu value="#{showUserForExpertProgramAction.evaluate.expertAssessment5}" >
+                                        <f:selectItem itemValue="0"/>
+                                        <f:selectItem itemValue="1"/>
+                                        <f:selectItem itemValue="2"/>
+                                        <f:selectItem itemValue="3"/>
+                                        <f:selectItem itemValue="4"/>
+                                        <f:selectItem itemValue="5"/>
+                                        <f:ajax event="change" render="@form" listener="#{showUserForExpertProgramAction.recountEvaluation()}" />
+                                    </h:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td><b>СУММАРНИЙ БАЛ КАНДИДАТА:</b></td>
+                                <td>#{showUserForExpertProgramAction.program.totalEvaluation}</td>
+                            </tr>
+                        </table>
+
+                        <div class="formLine">
+                            <div class="formBottomButtons">
+                                <h:commandButton styleClass="formButton" style="float: right; margin-left: 5px;" action="#{showUserForExpertProgramAction.evaluation()}" value="Оцінити"/>
+                                <h:outputLink styleClass="formButton " style="float: right; margin-left: 5px;" value="javascript:history.back()" >Назад</h:outputLink>
+                            </div>
+                        </div>
+                    </h:form>
+
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

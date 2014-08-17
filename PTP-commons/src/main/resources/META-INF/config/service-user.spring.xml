@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sqldb="http://parkcode.com.ua/schema/sqldb"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://parkcode.com.ua/schema/sqldb http://parkcode.com.ua/schema/sqldb/sqldb-3.0.xsd"
+
+       default-lazy-init="true">
+
+
+    <!-- =================================================================== -->
+    <!-- Define user service bean                                            -->
+    <!-- =================================================================== -->
+    <bean id="userService" lazy-init="true" class="ua.com.parkcode.web.ptp.services.UserService" />
+
+
+
+
+    <!-- ============================ Simple site users ========================== -->
+
+
+
+
+    <!-- Select count of existing simple user with given email -->
+    <sqldb:selectSimpleObject id="selectCountSimpleUserByEmail" parent="query" queryMetadata="User">
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM @{tableName}
+            WHERE upper(user_email) = upper(:email)
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    <sqldb:selectSimpleObject id="selectCountSimpleUserByEmailAndPassword" parent="query" queryMetadata="UserFull">
+        <sqldb:queryTemplate>
+            SELECT count(*)
+            FROM @{tableName}
+            WHERE upper(user_email) = upper(:email)
+            AND upper(user_password) = upper(:password)
+        </sqldb:queryTemplate>
+    </sqldb:selectSimpleObject>
+
+    <sqldb:selectList id="selectUsersByStatusInProgram" 
+                      parent="query"
+                      queryMetadata="User">
+        <sqldb:queryTemplate>
+            ,USER_PROGRAM_REF
+            WHERE USER_PROGRAM_REF.user_uuid = usr.object_uuid
+            AND USER_PROGRAM_REF.program_uuid = :programUuid::UUID
+            AND USER_PROGRAM_REF.user_program_status = :status
+        </sqldb:queryTemplate>
+    </sqldb:selectList>
+
+    <sqldb:executeInsert id="insertSimpleUser" parent="query" queryMetadata="UserFull">
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="uuid">
+                <sqldb:selectUUID />
+            </sqldb:relation>
+            <sqldb:relation relationType="IN" propertyName="registrationDate">
+                <sqldb:selectCurrentTimestamp />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeInsert>
+
+
+
+    <sqldb:execute id="deleteScopeExpert" parent="query">
+        <sqldb:queryTemplate>
+        DELETE FROM scope_expert_table WHERE owner_uuid = :ownerUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+    <sqldb:execute id="insertScopeExpert" parent="query">
+        <sqldb:queryTemplate>
+        INSERT INTO scope_expert_table (object_uuid,
+        owner_uuid,
+        scope)
+        VALUES (:objectUUID::UUID,:ownerUUID::UUID, :scope)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+    <sqldb:execute id="deleteExpertInfo" parent="query">
+        <sqldb:queryTemplate>
+        DELETE FROM expert_info_table WHERE object_uuid = :objectUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+    <sqldb:execute id="insertExpertInfo" parent="query" queryMetadata="ExpertInfo">
+        <sqldb:queryTemplate>
+            INSERT INTO @{tableName} (object_uuid,
+            user_uuid,
+            name_en,
+            skype,
+            organization_name,
+            work_position,
+            organization_name_en,
+            work_position_en,
+            organization_web_site,
+            ownership,
+            index,
+            region,
+            city,
+            street,
+            house,
+            pavilion,
+            office,
+            work_phone,
+            fax,
+            work_email,
+            another_scope_expert,
+            expert_text) VALUES (:objectUUID::UUID,
+            :userUUID::UUID,
+            :nameEn,
+            :skype,
+            :organizationName,
+            :workPosition,
+            :organizationNameEn,
+            :workPositionEn,
+            :organizationWebSite,
+            :ownership,
+            :index,
+            :region,
+            :city,
+            :street,
+            :house,
+            :pavilion,
+            :office,
+            :workPhone,
+            :fax,
+            :workEmail,
+            :anotherScopeExpert,
+            :expertText
+            )
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+    <!--Update simple user-->
+    <sqldb:executeUpdateByID id="updateSimpleUser" parent="query" queryMetadata="User"/>
+
+    <sqldb:executeUpdateByID id="updateSimpleUserWithPassword" parent="query" queryMetadata="UserFull" />
+
+    <sqldb:executeUpdateByID id="activateUser" parent="query" queryMetadata="User">
+        <sqldb:doBefore>
+            <sqldb:relation relationType="IN" propertyName="activationDate">
+                <sqldb:selectCurrentTimestamp />
+            </sqldb:relation>
+        </sqldb:doBefore>
+    </sqldb:executeUpdateByID>
+
+
+    <sqldb:selectObject id="selectUserByUUID"
+                        parent="query"
+                        queryMetadata="User"
+                        returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            WHERE usr.object_uuid = :userUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+
+        <sqldb:doAfter>
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query">
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :userUUID::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="expertInfo"
+                            relationType="IN">
+                <sqldb:selectObject queryMetadata="ExpertInfo"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                    parent="query">
+                    <sqldb:queryTemplate>
+                        WHERE   exp_inf.user_uuid = :userUUID::UUID
+                    </sqldb:queryTemplate>
+                    <sqldb:doAfter mergeParentRelations="true">
+                        <sqldb:relation propertyName="scopeExpert">
+                            <sqldb:selectSimpleList parent="query"
+                                                      returnClass="java.lang.String">
+                                <sqldb:queryTemplate>
+                                    SELECT scp_exp.scope::VARCHAR
+                                    FROM scope_expert_table as scp_exp
+                                    WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectSimpleList>
+                        </sqldb:relation>
+                    </sqldb:doAfter>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfter>
+    </sqldb:selectObject>
+
+
+
+
+
+
+    <sqldb:selectList id="selectAllRegisteredUser"
+                      parent="query"
+                      queryMetadata="UserFull"
+                      returnClass="ua.com.parkcode.web.ptp.data.User">
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query" >
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+    <sqldb:selectList id="selectAllRegisteredExpertUser"
+                      parent="query"
+                      queryMetadata="User"
+                      returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            ,USER_ROLE_REF as usr_rol_ref
+            WHERE   usr_rol_ref.user_uuid = usr.object_uuid
+            AND     usr_rol_ref.role_uuid = (SELECT object_uuid FROM role_table WHERE role_type = 1)
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query" >
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="expertInfo"
+                            relationType="IN">
+                <sqldb:selectObject queryMetadata="ExpertInfo"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                    parent="query">
+                    <sqldb:queryTemplate>
+                        WHERE   exp_inf.user_uuid = :uuid::UUID
+                    </sqldb:queryTemplate>
+                    <sqldb:doAfter mergeParentRelations="true">
+                        <sqldb:relation propertyName="scopeExpert">
+                            <sqldb:selectSimpleList parent="query"
+                                                      returnClass="java.lang.String">
+                                <sqldb:queryTemplate>
+                                    SELECT scp_exp.scope::VARCHAR
+                                    FROM scope_expert_table as scp_exp
+                                    WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectSimpleList>
+                        </sqldb:relation>
+                    </sqldb:doAfter>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+
+
+
+ <sqldb:selectList id="selectAllRegisteredExpertUserOnProgram"
+                      parent="query"
+                      queryMetadata="User"
+                      returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            ,RECENSENT_PROGRAM_REF as rec_pgm_ref
+            WHERE rec_pgm_ref.recensent_uuid = usr.object_uuid
+            AND   rec_pgm_ref.program_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query" >
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="expertInfo"
+                            relationType="IN">
+                <sqldb:selectObject queryMetadata="ExpertInfo"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                    parent="query">
+                    <sqldb:queryTemplate>
+                        WHERE   exp_inf.user_uuid = :uuid::UUID
+                    </sqldb:queryTemplate>
+                    <sqldb:doAfter mergeParentRelations="true">
+                        <sqldb:relation propertyName="scopeExpert">
+                            <sqldb:selectSimpleList parent="query"
+                                                      returnClass="java.lang.String">
+                                <sqldb:queryTemplate>
+                                    SELECT scp_exp.scope::VARCHAR
+                                    FROM scope_expert_table as scp_exp
+                                    WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectSimpleList>
+                        </sqldb:relation>
+                    </sqldb:doAfter>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+
+
+
+    <sqldb:selectList id="selectAllUserInProgram"
+                      parent="query"
+                      queryMetadata="UserFull"
+                      returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            ,USER_PROGRAM_REF as usr_pgm_ref
+            WHERE   usr_pgm_ref.user_uuid = usr.object_uuid
+            AND     usr_pgm_ref.program_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query" >
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+    <sqldb:selectList id="selectAllUserInExpertProgram"
+                      parent="query"
+                      queryMetadata="UserFull"
+                      returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            ,USER_PROGRAM_REF as usr_pgm_ref
+            WHERE   usr_pgm_ref.user_uuid = usr.object_uuid
+            AND     usr_pgm_ref.program_uuid = :programUUID::UUID
+        </sqldb:queryTemplate>
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+
+        <sqldb:doAfterRow mergeParentRelations="true">
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query" >
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+        </sqldb:doAfterRow>
+    </sqldb:selectList>
+
+
+
+
+
+
+
+
+    <sqldb:selectObject id="selectUserForRememberPassword"
+                        parent="query"
+                        queryMetadata="UserFull"
+                        returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            WHERE usr.user_email = :email::VARCHAR
+        </sqldb:queryTemplate>
+
+    </sqldb:selectObject>
+
+
+
+    <sqldb:selectObject id="selectUserForWebLogin"
+                        parent="query"
+                        queryMetadata="UserFull"
+                        returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            WHERE usr.user_email = :email::VARCHAR
+            AND   usr.user_password = :password::VARCHAR
+        </sqldb:queryTemplate>
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+        <sqldb:doAfter>
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query">
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :uuid::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="expertInfo"
+                            relationType="IN">
+                <sqldb:selectObject queryMetadata="ExpertInfo"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                    parent="query">
+                    <sqldb:queryTemplate>
+                        WHERE   exp_inf.user_uuid = :uuid::UUID
+
+                    </sqldb:queryTemplate>
+                    <sqldb:join joinMetadata="Resource"
+                                joinColumn="object_uuid"
+                                referenceColumn="owner_uuid"
+                                resultPropertyName="rezume"
+                                returnClass="ua.com.parkcode.web.ptp.data.ResourceForExpert">
+                        <sqldb:joinCondition>
+                            AND res.resource_type = 5
+                        </sqldb:joinCondition>
+                    </sqldb:join>
+                    <sqldb:doAfter mergeParentRelations="true">
+                        <sqldb:relation propertyName="scopeExpert">
+                            <sqldb:selectSimpleList parent="query"
+                                                      returnClass="java.lang.String">
+                                <sqldb:queryTemplate>
+                                    SELECT scp_exp.scope::VARCHAR
+                                    FROM scope_expert_table as scp_exp
+                                    WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectSimpleList>
+                        </sqldb:relation>
+                    </sqldb:doAfter>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfter>
+    </sqldb:selectObject>
+
+
+    <sqldb:selectObject id="selectUserByWebCookieLogin"
+                        parent="query"
+                        queryMetadata="User"
+                        returnClass="ua.com.parkcode.web.ptp.data.User">
+        <sqldb:queryTemplate>
+            WHERE usr.object_uuid = :userUUID::UUID
+            AND   usr.user_password = :password::VARCHAR
+        </sqldb:queryTemplate>
+
+        <sqldb:join joinMetadata="Resource"
+                    joinColumn="object_uuid"
+                    referenceColumn="owner_uuid"
+                    resultPropertyName="photo"
+                    returnClass="ua.com.parkcode.web.ptp.data.ResourceForUser">
+            <sqldb:joinCondition>
+                AND res.resource_type = 0
+            </sqldb:joinCondition>
+        </sqldb:join>
+
+        <sqldb:doAfter>
+            <sqldb:relation propertyName="role"
+                            relationType="IN">
+                <sqldb:selectList queryMetadata="Role"
+                                  returnClass="ua.com.parkcode.web.ptp.data.Role"
+                                  parent="query">
+                    <sqldb:queryTemplate>
+                        ,USER_ROLE_REF as usr_rol_ref
+                        WHERE   usr_rol_ref.user_uuid = :userUUID::UUID
+                        AND     usr_rol_ref.role_uuid = role.object_uuid
+                    </sqldb:queryTemplate>
+
+                </sqldb:selectList>
+            </sqldb:relation>
+            <sqldb:relation propertyName="expertInfo"
+                            relationType="IN">
+                <sqldb:selectObject queryMetadata="ExpertInfo"
+                                    returnClass="ua.com.parkcode.web.ptp.data.ExpertInfo"
+                                    parent="query">
+                    <sqldb:queryTemplate>
+                        WHERE   exp_inf.user_uuid = :uuid::UUID
+
+                    </sqldb:queryTemplate>
+                    <sqldb:join joinMetadata="Resource"
+                                joinColumn="object_uuid"
+                                referenceColumn="owner_uuid"
+                                resultPropertyName="rezume"
+                                returnClass="ua.com.parkcode.web.ptp.data.ResourceForExpert">
+                        <sqldb:joinCondition>
+                            AND res.resource_type = 5
+                        </sqldb:joinCondition>
+                    </sqldb:join>
+                    <sqldb:doAfter mergeParentRelations="true">
+                        <sqldb:relation propertyName="scopeExpert">
+                            <sqldb:selectSimpleList parent="query"
+                                                    returnClass="java.lang.String">
+                                <sqldb:queryTemplate>
+                                    SELECT scp_exp.scope::VARCHAR
+                                    FROM scope_expert_table as scp_exp
+                                    WHERE scp_exp.owner_uuid = :expertInfoUuid::UUID
+                                </sqldb:queryTemplate>
+                            </sqldb:selectSimpleList>
+                        </sqldb:relation>
+                    </sqldb:doAfter>
+                </sqldb:selectObject>
+            </sqldb:relation>
+        </sqldb:doAfter>
+    </sqldb:selectObject>
+
+
+    <sqldb:execute id="insertUserRole" parent="query" >
+        <sqldb:queryTemplate>
+            INSERT INTO USER_ROLE_REF (user_uuid, role_uuid) VALUES (:userUUID::UUID, :roleUUID::UUID)
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+    <sqldb:execute id="deleteUserRole" parent="query" >
+        <sqldb:queryTemplate>
+            DELETE FROM USER_ROLE_REF WHERE user_uuid = :userUUID::UUID
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+
+
+    <sqldb:selectObject id="selectRoleByType" parent="query" queryMetadata="Role" returnClass="ua.com.parkcode.web.ptp.data.Role">
+        <sqldb:queryTemplate>
+            WHERE role.role_type = :roleType
+        </sqldb:queryTemplate>
+    </sqldb:selectObject>
+
+    <sqldb:selectList id="selectAllRoles" parent="query" queryMetadata="Role" returnClass="ua.com.parkcode.web.ptp.data.Role"/>
+
+
+    <sqldb:execute id="deleteUserByUuid" parent="query">
+        <sqldb:queryTemplate>
+            DELETE FROM RESOURCE_TABLE WHERE owner_uuid = :userUUID::UUID;
+            DELETE FROM PROPERTY_VALUE WHERE owner_uuid IN (select object_uuid from "public".user_program_ref WHERE user_uuid = :userUUID::UUID);
+            DELETE FROM USER_PROGRAM_REF WHERE user_uuid = :userUUID::UUID;
+            DELETE FROM USER_ROLE_REF WHERE user_uuid = :userUUID::UUID;
+            DELETE FROM USER_TABLE WHERE object_uuid = :userUUID::UUID;
+        </sqldb:queryTemplate>
+    </sqldb:execute>
+</beans>

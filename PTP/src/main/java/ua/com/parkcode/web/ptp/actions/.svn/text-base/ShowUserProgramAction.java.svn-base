@@ -1,0 +1,94 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ua.com.parkcode.web.ptp.actions;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.com.parkcode.web.ptp.ApplicationManager;
+import ua.com.parkcode.web.ptp.data.Program;
+import ua.com.parkcode.web.ptp.data.User;
+
+
+/**
+ * <b>Предназначение:</b><br/>
+ *   <p></p>
+ *
+ * <br/><b>Описание:</b><br/>
+ *   <p></p>
+ *
+ * <br/>Создан 2013.07.05<br/>
+ *
+ * @author Artem (g-art) Gerasimenko || gerasimenko.art@gmail.com
+ */
+@ManagedBean(name="userProgramAction")
+@RequestScoped
+public class ShowUserProgramAction extends AbstractProgramAction{
+
+    private static final long serialVersionUID = -7454593135184649441L;
+
+
+
+    private List<Program> userProgram;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowUserProgramAction.class);
+
+
+
+
+
+    public List<Program> getUserProgram()
+    {
+            userProgram = userActualProgram();
+        return userProgram;
+    }
+
+    public void setUserProgram(List<Program> userProgram)
+    {
+        this.userProgram = userProgram;
+    }
+
+
+    private List<Program> userActualProgram()
+    {
+        try
+        {
+            User loginUser = (User) getSession().getAttribute(ApplicationManager.ATTRIBUTE_NAME__LOGINED_USER);
+            List<Program> userPrograms = null;
+            if (loginUser != null)
+            {
+                userPrograms = getProgramService().selectUserEntryActualProgram(loginUser.getUuid());
+            }
+
+            List<Program> actualUserProgram = new ArrayList<Program>();
+
+            if(userPrograms != null && !userPrograms.isEmpty())
+            {
+                for(Program p : userPrograms)
+                {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(p.getProgramRegisteredEndDate());
+                    c.add(Calendar.DATE, 1);
+                    if (c.getTimeInMillis() > System.currentTimeMillis())
+                    {
+                        actualUserProgram.add(p);
+                    }
+                }
+            }
+
+            return actualUserProgram;
+        }
+        catch (Exception ex) {
+            LOGGER.error("Error ", ex);
+            return null;
+        }
+    }
+
+}

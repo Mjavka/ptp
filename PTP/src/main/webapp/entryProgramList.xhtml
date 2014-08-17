@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:ptp="http://parkcode.com.ua/facelets/ptp">
+
+
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+
+        <ui:param name="pageId"    value="entryProgramlist" />
+        <ui:param name="pageTitle" value="Список програм на які підписаний" />
+
+
+        <ui:define name="body">
+
+
+            <div class="centeredContent">
+                <ptp:formTitle value="Список програм, на які підписаний" />
+
+                <ptp:formErrorMessage provider="#{userProgramAction}" />
+
+                <div class="formContent">
+                    <h:form prependId="false">
+                        <ui:repeat value="#{userProgramAction.userProgram}" var="program">
+                            <div class="formLine programsLine">
+                                <ptp:formLabel value="#{program.name} (#{program.region}/ #{program.userStatus}" />
+                                <div class="inputElem">
+                                    <h:commandLink action="#{programAction.editProgram(program, programAction.loginedUser)}" onclick="open_pop_up('#pop-up');" rendered="#{program.userStatus.editable}">
+                                        Редагувати
+                                    </h:commandLink>
+                                    
+                                        /
+                                        <h:commandLink action="#{programAction.exitProgram(program, programAction.loginedUser)}" >
+                                            Відписатися
+                                        </h:commandLink>
+                                    
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </h:form>
+                </div>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
